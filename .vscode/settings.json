@@ -51,5 +51,7 @@
     //     "ProjectSettings/":true,
     //     "temp/":true,
     //     "Temp/":true
-  }
+  },
+  "files.autoSave": "onFocusChange",
+  "editor.tabSize": 4
 }
