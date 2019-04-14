@@ -1,0 +1,42 @@
+fileFormatVersion: 2
+guid: d0298aa1153b2614982bae6f43a83290
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Iosevka
+  fontNames:
+  - Iosevka
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 8a40fb00a5c88844c80fa28649122db9, type: 3}
+  - {fileID: 12800000, guid: 77faf56032ac5a040810b433021fddbd, type: 3}
+  - {fileID: 12800000, guid: 9c40ae90f4961644a97feb70ab2f03d2, type: 3}
+  - {fileID: 12800000, guid: 518d5532599787449a6af804bfc0c11c, type: 3}
+  - {fileID: 12800000, guid: 73eed732c6350df4996afc43785004bf, type: 3}
+  - {fileID: 12800000, guid: 58553642df6c0e34190c7841ac4c4ecd, type: 3}
+  - {fileID: 12800000, guid: 573d39a300a9cec41b9e70b8c243dc39, type: 3}
+  - {fileID: 12800000, guid: 903266160d9a5da4a922a9056ef5e849, type: 3}
+  - {fileID: 12800000, guid: 2c2954e67cc04fe4480dce05d64eb40a, type: 3}
+  - {fileID: 12800000, guid: b5b3cae73be377142844f541fd5d2edf, type: 3}
+  - {fileID: 12800000, guid: 7ebd09d8902b178498a9b1e374983a06, type: 3}
+  - {fileID: 12800000, guid: 51b61e49c15e1b04a9c41494e5bcad49, type: 3}
+  - {fileID: 12800000, guid: bc5ff0891aa8b114fabe047f9169dc62, type: 3}
+  - {fileID: 12800000, guid: 6050cb2b1b8e3d14a828eb93be60bc8a, type: 3}
+  - {fileID: 12800000, guid: ac12c54ba505fb04991d29932da878b3, type: 3}
+  - {fileID: 12800000, guid: 00ef1d7dc9a612f45ad20581a9a7a7f1, type: 3}
+  - {fileID: 12800000, guid: 21d3eeedace615847b42504d6bccfcbe, type: 3}
+  - {fileID: 12800000, guid: 309b1b1ea74a3574ca1a0a40adc00dc7, type: 3}
+  - {fileID: 12800000, guid: 5eb49c7e6db22cf419d69bb0538bf139, type: 3}
+  - {fileID: 12800000, guid: 3bf0a9bf0ae0dc544b70af208c650789, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

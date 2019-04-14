@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: 2c2954e67cc04fe4480dce05d64eb40a
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Iosevka
+  fontNames:
+  - Iosevka
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 00ef1d7dc9a612f45ad20581a9a7a7f1, type: 3}
+  - {fileID: 12800000, guid: 21d3eeedace615847b42504d6bccfcbe, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
