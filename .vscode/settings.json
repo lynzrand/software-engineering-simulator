@@ -53,5 +53,14 @@
     //     "Temp/":true
   },
   "files.autoSave": "onFocusChange",
-  "editor.tabSize": 4
+  "editor.tabSize": 4,
+  "protoc": {
+    "options": [
+      "--proto_path=protos/v3",
+      "--proto_path=protos/v2",
+      "--proto_path=${workspaceRoot}/lib/protos",
+      "--proto_path=${env.GOPATH}/src",
+      "--csharp_out=${workspaceRoot}/lib/generated"
+    ]
+  }
 }

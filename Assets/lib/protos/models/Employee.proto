@@ -1,0 +1,4 @@
+syntax = "proto3";
+package Sesim.Library.Models;
+
+message Employee { int64 id = 16; }

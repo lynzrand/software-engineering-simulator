@@ -4,9 +4,14 @@ using ProtoBuf;
 namespace Sesim.Library.Models
 {
     [ProtoContract]
-    public partial class Contract
+    public class SaveFile
     {
         [ProtoMember(16)]
-        public long id;
+        public long version = 0;
+
+        [ProtoMember(20)]
+        public Company company;
+
+
     }
 }

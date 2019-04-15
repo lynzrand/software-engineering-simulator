@@ -4,4 +4,6 @@ package Sesim.Library.Models;
 message Company {
   string name = 16;
   int64 time = 17;
+  int64 funds = 18;
+  float reputation = 19;
 }

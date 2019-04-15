@@ -1,0 +1,6 @@
+syntax = "proto3";
+package Sesim.Library.Models;
+message Contract {
+  int64 id = 16;
+  map<int32, float> languages = 17;
+}
