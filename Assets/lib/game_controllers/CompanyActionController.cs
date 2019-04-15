@@ -1,18 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Google.Protobuf;
+using Sesim.Library.Models;
 
-public class CompanyActionController : MonoBehaviour
+namespace Sesim.Game.Controllers
 {
-    // Start is called before the first frame update
-    void Start()
+    public class CompanyActionController : MonoBehaviour
     {
-        
-    }
+        public Company company;
+        // Start is called before the first frame update
+        void Start()
+        {
+            company = new Company();
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
     }
 }

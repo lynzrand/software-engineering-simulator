@@ -1,0 +1,7 @@
+syntax = "proto3";
+package Sesim.Library.Models;
+
+message Company {
+  string name = 16;
+  int64 time = 17;
+}
