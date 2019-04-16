@@ -1,0 +1,6 @@
+Ulid
+protobuf-net
+System.Memory
+System.Buffers
+System.Runtime.CompilerServices.Unsafe
+System.Numerics.Vectors

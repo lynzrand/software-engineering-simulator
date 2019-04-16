@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ulid</name>
+    </assembly>
+    <members>
+        <member name="T:System.Ulid">
+            <summary>
+            Represents a Universally Unique Lexicographically Sortable Identifier (ULID).
+            Spec: https://github.com/ulid/spec
+            </summary>
+        </member>
+    </members>
+</doc>

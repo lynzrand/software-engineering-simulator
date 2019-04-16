@@ -8,13 +8,19 @@
 
 - Unity 2018.3.12f1
 - [DotNet Framework 4.7.1][dnf471]
-- [Nuget][nuget_] (`choco install nuget.commandline`) `*1`
 
-`*1` 正在考虑更换成 [Paket][paket_]
+
+> 正在解决 Paket 和 Nuget 对 Unity3D 的包管理问题
+> 
+> - [Paket][paket_] (`choco install paket`)
+> 
+> - [Paket.Unity3D][]
 
 ## 依赖项
 
 - [protobuf-net][ptbnet] 3.0.0 ([BSD / Apache License][ptbnet_lic])
+- Akka.Hocon
+- Ulid
 
 
 [dnf471]: https://www.microsoft.com/en-us/download/details.aspx?id=56119
