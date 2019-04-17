@@ -13,6 +13,7 @@ namespace Sesim.Helpers.UI
             this.height = height;
         }
     }
+
     public static class ConsoleHelper
     {
         public static ConsoleSize CalculateConsoleSize(Text text)
@@ -20,11 +21,13 @@ namespace Sesim.Helpers.UI
             text.font.GetCharacterInfo(' ', out CharacterInfo info, text.fontSize, text.fontStyle);
             int fontWidth = info.advance;
             float fontHeight = text.lineSpacing * text.fontSize;
-            float boundingBoxWidth = text.preferredWidth;
-            float boundingBoxHeight = text.preferredHeight;
+            float boundingBoxWidth = text.rectTransform.rect.size.x;
+            float boundingBoxHeight = text.rectTransform.rect.size.y;
             int consoleWidth = Mathf.FloorToInt(boundingBoxWidth / fontWidth);
             int consoleHeight = Mathf.FloorToInt(boundingBoxHeight / fontHeight);
             return new ConsoleSize(consoleHeight, consoleWidth);
         }
     }
+
+    public delegate int RunConsoleApp(string[] args);
 }
