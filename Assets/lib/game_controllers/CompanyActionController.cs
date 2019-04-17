@@ -9,6 +9,10 @@ namespace Sesim.Game.Controllers
     public class CompanyActionController : MonoBehaviour
     {
         public Company company;
+
+        public Camera cam;
+
+
         // Start is called before the first frame update
         void Start()
         {
@@ -19,7 +23,17 @@ namespace Sesim.Game.Controllers
         // Update is called once per frame
         void Update()
         {
+            KeyCode key = Event.current.keyCode;
+            switch (key)
+            {
+                case KeyCode.A:
+                    // cam.x += 5.0f;
+                    break;
 
+                default:
+                    // noop
+                    break;
+            }
         }
 
 
