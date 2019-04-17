@@ -39,3 +39,5 @@ sysinfo.txt
 
 paket.local
 paket.lock
+
+bin/
