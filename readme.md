@@ -2,21 +2,25 @@
 
 ![logo](res/img/logo.png)
 
-**软件工程模拟器** 是软件工程课的作业。这是一款模拟软件开发过程的游戏，完成时间 Soon™。
+**软件工程模拟器** 是软件工程课的作业。这是一款模拟软件开发过程的游戏，完成时间 Soon™。在做完之后可能会上架 Steam。
 
-## 开发环境需求
+**Software Engineering Simulator** is a homework project for the Software Engineering class in my college. This is a game to simulate (at least partially) the process of developing a software with a team. Will be complete Soon™. Might be uploaded to Steam after completion.
+
+## Development Environment
 
 - Unity 2018.3.12f1
 - [DotNet Framework 4.7.1][dnf471]
+- NuGet
 
+*注：Unity 跟 NuGet 和 Paket 的兼容性都不太好，所以依赖项目前还是手动管理的。*
 
-> 正在解决 Paket 和 Nuget 对 Unity3D 的包管理问题
-> 
-> - [Paket][paket_] (`choco install paket`)
-> 
-> - [Paket.Unity3D][]
+*Note: Because Unity3D does not go well with NuGet nor Paket, the dependencies are managed by hand for now.*
 
-## 依赖项
+## Dependencies
+
+由于 Unity3D 的某些特性（只认 `Assets/` 里面的文件），以下依赖项的二进制文件都被包含在了本仓库中。
+
+Due to certain limitations of the Unity3D framework (only files in `Assets/` will be included for building), the binary release of all files below are contained in this repository.
 
 - [protobuf-net][ptbnet] 3.0.0 ([BSD / Apache License][ptbnet_lic])
 - [Akka.Hocon][hocon_] ([Apache 2.0 License][hocon__lic])
