@@ -34,8 +34,8 @@ public class SplashScreenController : MonoBehaviour
             (float)frames / 500,
             loadingDataSize
         );
-        if (frames > 500) shouldTransferScene = true;
-        if (shouldTransferScene) SceneManager.LoadScene("MainGameplayScene");
+        if (frames > 500) frames = 0;
+        // if (shouldTransferScene) SceneManager.LoadScene("MainGameplayScene");
     }
 
     string formatLoadingText(string action, string destination, float progress, Vector2Int size)
