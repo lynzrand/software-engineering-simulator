@@ -7,7 +7,7 @@ using Sesim.Helpers.UI;
 
 namespace Tests
 {
-    public class helpersTest
+    public class HelpersTest
     {
         [Test]
         public void TestProgressBarGenerator()
