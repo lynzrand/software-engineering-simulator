@@ -2,6 +2,8 @@
 
 ![logo](res/img/logo.png)
 
+**WARNING: This project is in alpha phase. Use at your own risk.**
+
 **软件工程模拟器** 是软件工程课的作业。这是一款模拟软件开发过程的游戏，完成时间 Soon™。在做完之后可能会上架 Steam。
 
 **Software Engineering Simulator** is a homework project for the Software Engineering class in my college. This is a game to simulate (at least partially) the process of developing a software with a team. Will be complete Soon™. Might be uploaded to Steam after completion.
@@ -39,3 +41,11 @@ Due to certain limitations of the Unity3D framework (only files in `Assets/` wil
 [ulid___lic]: https://github.com/Cysharp/Ulid/blob/master/LICENSE
 [iosvka]: https://github.com/be5invis/Iosevka
 [iosvka_lic]: https://github.com/be5invis/Iosevka/blob/master/LICENSE.md
+
+## License
+
+见[协议文件][lic]。
+
+See the [License file][lic].
+
+[lic]: https://github.com/01010101lzy/software-engineering-simulator/blob/master/license.md
