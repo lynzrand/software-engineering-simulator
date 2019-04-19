@@ -1,6 +1,6 @@
 using System;
 
-namespace Sesim.Game.Models
+namespace Sesim.Models
 {
     public class Tag
     {

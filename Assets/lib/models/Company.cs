@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using ProtoBuf;
 
-namespace Sesim.Library.Models
+namespace Sesim.Models
 {
     [ProtoContract]
     public partial class Company

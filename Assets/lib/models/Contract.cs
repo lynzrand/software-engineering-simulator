@@ -1,7 +1,7 @@
 using System;
 using ProtoBuf;
 
-namespace Sesim.Library.Models
+namespace Sesim.Models
 {
     [ProtoContract]
     public partial class Contract

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Sesim.Library.Helpers
+namespace Sesim.Helpers
 {
     public class SaveFileManager
     {
