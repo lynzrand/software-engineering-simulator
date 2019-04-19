@@ -1,7 +1,7 @@
 {
     "name": "Tests",
     "references": [
-        "Sesim.Helpers"
+        "Sesim"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
