@@ -23,7 +23,7 @@ namespace Sesim.Game.Controllers
         // Update is called once per frame
         void Update()
         {
-            KeyCode key = Event.current.keyCode;
+
             switch (key)
             {
                 case KeyCode.A:
