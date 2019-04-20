@@ -25,7 +25,8 @@
 Due to certain limitations of the Unity3D framework (only files in `Assets/` will be included for building), the binary release of all files below are contained in this repository.
 
 - [protobuf-net][ptbnet] 3.0.0 ([BSD / Apache License][ptbnet_lic])
-- [Akka.Hocon][hocon_] ([Apache 2.0 License][hocon__lic])
+- [Hocon][hocon_] ([Apache 2.0 License][hocon__lic])
+- [Wiry.Base32][base32] ([MIT License][base32_lic])
 - [Ulid][ulid__] ([MIT License][ulid___lic])
 - [Iosevka][iosvka] ([SIL OFL license][iosvka_lic])
 
@@ -37,6 +38,8 @@ Due to certain limitations of the Unity3D framework (only files in `Assets/` wil
 [ptbnet_lic]: https://github.com/mgravell/protobuf-net/blob/master/Licence.txt
 [hocon_]: https://github.com/akkadotnet/HOCON
 [hocon__lic]: https://github.com/akkadotnet/HOCON/blob/dev/LICENSE
+[base32]: https://github.com/wiry-net/Wiry.Base32
+[base32_lic]: https://github.com/wiry-net/Wiry.Base32/blob/master/LICENSE
 [ulid__]: https://github.com/Cysharp/Ulid
 [ulid___lic]: https://github.com/Cysharp/Ulid/blob/master/LICENSE
 [iosvka]: https://github.com/be5invis/Iosevka
