@@ -11,7 +11,7 @@ namespace Sesim.Models
         public string Name { get; set; }
 
         [ProtoMember(17)]
-        public long Time { get; set; }
+        public double Time { get; set; }
 
         [ProtoMember(18)]
         public long Funds { get; set; }
@@ -23,7 +23,7 @@ namespace Sesim.Models
         /// Increase time and recalculate params
         /// </summary>
         /// <param name="step">The amount of time to be increased</param>
-        public void Tick(int step = 1)
+        public void Tick(double step = 1)
         {
             Time += step;
         }

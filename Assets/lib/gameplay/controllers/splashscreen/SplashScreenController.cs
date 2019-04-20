@@ -30,7 +30,7 @@ namespace Sesim.Game.Controllers
             frames++;
 
             loadingDataSize = ConsoleHelper.GetConsoleSize(loadingDataView);
-            loadingDataView.text = formatLoadingText(
+            loadingDataView.text = FormatLoadingText(
                 "Testing progressbar",
                 $"frames {frames}",
                 (float)frames / 500,
@@ -40,13 +40,35 @@ namespace Sesim.Game.Controllers
             // if (shouldTransferScene) SceneManager.LoadScene("MainGameplayScene");
         }
 
-        string formatLoadingText(string action, string destination, float progress, Vector2Int size)
+        string FormatLoadingText(string action, string destination, float progress, Vector2Int size)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(ConsoleHelper.GenerateProgressBar(size.x, progress));
             sb.AppendLine();
             sb.Append(ConsoleHelper.GenerateTrimmedActionDescription(size.x, action, destination));
             return sb.ToString();
+        }
+
+        public void LoadedHandler()
+        {
+            //  call showMenu()
+        }
+
+        public void NewGameHandler()
+        {
+            SceneManager.LoadScene("MainGameplayScene");
+        }
+
+        public void LoadGameHandler()
+        {
+            SceneManager.LoadScene("MainGameplayScene");
+        }
+
+        public void SettingsHandler() { }
+
+        public void GameExitHandler()
+        {
+            UnityEngine.Application.Quit();
         }
     }
 }
