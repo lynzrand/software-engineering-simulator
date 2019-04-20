@@ -94,7 +94,7 @@ namespace Sesim.Helpers.Config
                 else throw new ArgumentException($"{farr} is not a valid keyframe representation");
             }
 
-            return new AnimationCurve(keyFrames);
+            return new AnimationCurve(keyFrames.ToArray());
 
         }
     }
