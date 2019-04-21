@@ -29,6 +29,7 @@ Due to certain limitations of the Unity3D framework (only files in `Assets/` wil
 - [Wiry.Base32][base32] ([MIT License][base32_lic])
 - [Ulid][ulid__] ([MIT License][ulid___lic])
 - [Iosevka][iosvka] ([SIL OFL license][iosvka_lic])
+- [Super Blur][sublur] ([MIT License][sublur_lic])
 
 
 [dnf471]: https://www.microsoft.com/en-us/download/details.aspx?id=56119
@@ -44,6 +45,8 @@ Due to certain limitations of the Unity3D framework (only files in `Assets/` wil
 [ulid___lic]: https://github.com/Cysharp/Ulid/blob/master/LICENSE
 [iosvka]: https://github.com/be5invis/Iosevka
 [iosvka_lic]: https://github.com/be5invis/Iosevka/blob/master/LICENSE.md
+[sublur]: https://github.com/PavelDoGreat/Super-Blur
+[sublur_lic]: https://github.com/PavelDoGreat/Super-Blur/blob/master/LICENSE
 
 ## License
 
