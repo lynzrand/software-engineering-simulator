@@ -28,13 +28,13 @@ namespace Sesim.Game.Controllers
             var key = Event.current;
 
             if (Input.GetKey(KeyCode.A))
-                cam.transform.Translate(new Vector3(-1f, 0f, 0f));
+                cam.transform.Translate(new Vector3(-30f, 0f, 0f) * Time.deltaTime);
             if (Input.GetKey(KeyCode.W))
-                cam.transform.Translate(new Vector3(0f, 1f, 0f));
+                cam.transform.Translate(new Vector3(0f, 30f, 0f) * Time.deltaTime);
             if (Input.GetKey(KeyCode.S))
-                cam.transform.Translate(new Vector3(0f, -1f, 0f));
+                cam.transform.Translate(new Vector3(0f, -30f, 0f) * Time.deltaTime);
             if (Input.GetKey(KeyCode.D))
-                cam.transform.Translate(new Vector3(1f, 0f, 0f));
+                cam.transform.Translate(new Vector3(30f, 0f, 0f) * Time.deltaTime);
         }
 
 
