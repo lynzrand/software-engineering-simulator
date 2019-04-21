@@ -21,13 +21,16 @@ namespace Sesim.Game.Controllers
         private Vector2Int loadingDataSize;
 
         public Text loadingDataView;
+        public Text versionText;
+        public Animator animator;
 
         private bool shouldTransferScene = false;
+        private bool loaded = false;
 
         // Update is called once per frame
         void Update()
         {
-            frames++;
+            if (!loaded) frames++;
 
             loadingDataSize = ConsoleHelper.GetConsoleSize(loadingDataView);
             loadingDataView.text = FormatLoadingText(
@@ -36,7 +39,7 @@ namespace Sesim.Game.Controllers
                 (float)frames / 500,
                 loadingDataSize
             );
-            if (frames > 500) frames = 0;
+            if (frames > 500) LoadedHandler();
             // if (shouldTransferScene) SceneManager.LoadScene("MainGameplayScene");
         }
 
@@ -52,6 +55,9 @@ namespace Sesim.Game.Controllers
         public void LoadedHandler()
         {
             //  call showMenu()
+            loaded = true;
+            animator.SetBool("Loaded", true);
+
         }
 
         public void NewGameHandler()
@@ -70,5 +76,10 @@ namespace Sesim.Game.Controllers
         {
             UnityEngine.Application.Quit();
         }
+    }
+
+    public class SplashScreenAnimationController : Animator
+    {
+
     }
 }
