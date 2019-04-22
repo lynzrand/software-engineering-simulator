@@ -55,6 +55,7 @@ namespace Sesim.Helpers.Config
     }
     #endregion
 
+
     #region parsers
     public interface IHoconParser<T>
     {
