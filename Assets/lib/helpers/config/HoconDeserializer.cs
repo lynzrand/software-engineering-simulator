@@ -8,8 +8,13 @@ namespace Sesim.Helpers.Config
 {
     public static class HoconConfigDeserializer
     {
-        private static Dictionary<string, HoconConfigCache> cache;
+        private static Dictionary<string, HoconConfigCache> cache =
+            new Dictionary<string, HoconConfigCache>();
+
         private static Mutex cacheMutex = new Mutex();
+
+        private static Dictionary<Type, Func<IHoconElement, object>> deserializeFuncs =
+            new Dictionary<Type, Func<IHoconElement, object>>();
 
         public static void ClearCache()
         {
