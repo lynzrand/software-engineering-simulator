@@ -62,5 +62,12 @@
       "--proto_path=${env.GOPATH}/src",
       "--csharp_out=${workspaceRoot}/lib/generated"
     ]
-  }
+  },
+  "cSpell.words": [
+    "conf",
+    "deserializable",
+    "hocon",
+    "i",
+    "object"
+  ]
 }
