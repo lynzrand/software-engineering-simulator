@@ -57,12 +57,17 @@ namespace Sesim.Helpers.Config
 
 
     #region parsers
-    public interface IHoconParser<T>
+    public interface IHoconDeserializer<T>
     {
         T ParseHocon(IHoconElement e);
     }
 
-    public class AnimationCurveParser : IHoconParser<AnimationCurve>
+    public interface IHoconDeserializable
+    {
+        void ReadFromHocon(IHoconElement e);
+    }
+
+    public class AnimationCurveParser : IHoconDeserializer<AnimationCurve>
     {
         float ConvFloat(IHoconElement el)
         {

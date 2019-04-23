@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
 using Hocon;
 
 namespace Sesim.Helpers.Config
@@ -8,15 +9,20 @@ namespace Sesim.Helpers.Config
     public static class HoconConfigDeserializer
     {
         private static Dictionary<string, HoconConfigCache> cache;
+        private static Mutex cacheMutex = new Mutex();
 
         public static void ClearCache()
         {
             cache.Clear();
         }
 
-        public static HoconConfigCache CacheType(Type tType)
+        public static void CacheType(Type t)
         {
+            _CacheType(t);
+        }
 
+        static HoconConfigCache _CacheType(Type tType)
+        {
             // Tries to get the specific attribute
             var attr = tType.GetCustomAttribute(typeof(HoconConfigAttribute)) as HoconConfigAttribute;
             if (attr == null) throw new UnableToDeserializeHoconException();
@@ -30,19 +36,16 @@ namespace Sesim.Helpers.Config
             var props = new Dictionary<string, PropertyInfo>();
             foreach (var prop in allProps)
             {
-                var pattr = prop.GetCustomAttribute(typeof(HoconNodeAttribute)) as HoconNodeAttribute;
-                if (pattr == null) continue;
-                var propName = pattr.key ?? prop.Name;
-                props.Add(propName, prop);
+                // get prop attribute
+                var pa = prop.GetCustomAttributes(typeof(HoconNodeAttribute)) as IEnumerable<HoconNodeAttribute>;
+
             }
 
             var fields = new Dictionary<string, FieldInfo>();
             foreach (var field in allFields)
             {
-                var fattr = field.GetCustomAttribute(typeof(HoconNodeAttribute)) as HoconNodeAttribute;
-                if (fattr == null) continue;
-                var fieldName = fattr.key ?? field.Name;
-                fields.Add(fieldName, field);
+                var fattr = field.GetCustomAttribute(typeof(HoconNodeAttribute)) as IEnumerable<HoconNodeAttribute>;
+
             }
             var configCache = new HoconConfigCache()
             {
@@ -50,13 +53,25 @@ namespace Sesim.Helpers.Config
                 props = props,
                 fields = fields,
             };
+
+            // Waits so only one thread can cache the type
+            cacheMutex.WaitOne();
+
+            // If other threads have already added this class when we are processing,
+            // just return the result.
+            if (cache.ContainsKey(attr.typeIdentifier)) return configCache;
+
             cache.Add(attr.typeIdentifier, configCache);
+
+            // Allow other threads to modify
+            cacheMutex.ReleaseMutex();
+
             return configCache;
         }
 
         public static T Deserilalize<T>(IHoconElement el, bool checkType = false) where T : new()
         {
-            var conf = CacheType(typeof(T));
+            var conf = _CacheType(typeof(T));
             var newT = new T();
 
             foreach (var kvp in conf.props)
