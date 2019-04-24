@@ -6,17 +6,18 @@ Allowed:
 - Download builds from the "Releases" page.
 - Download and compile your own build.
 - Test on your own machine, report bugs or feature request via issues or emails.
+- Fork the project.
 
 Discouraged:
 
-- Fork the project (especially if you aren't going to make a pull request).
 - Redistribute any build or source code on other platforms or websites.
 - Redistribute modified builds.
 
 Not allowed (without permission):
 
-- Sell this game.
+- Make money out of this game.
 - Post original code from this project onto Unity Asset Store.
+- Claim this project or parts that are not contributed by you your own work.
 
 All other rights are reserved by the Software Engineering Simulator development team.
 
