@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using Hocon;
+using Sesim.Helpers.Config.Deserializer;
 
 namespace Sesim.Helpers.Config
 {
@@ -13,8 +14,8 @@ namespace Sesim.Helpers.Config
 
         private static Mutex cacheMutex = new Mutex();
 
-        private static Dictionary<Type, Func<IHoconElement, object>> deserializeFuncs =
-            new Dictionary<Type, Func<IHoconElement, object>>();
+        private static Dictionary<Type, Converter<HoconValue, object>> deserializeFuncs =
+            new Dictionary<Type, Converter<HoconValue, object>>();
 
         public static void ClearCache()
         {
@@ -38,23 +39,30 @@ namespace Sesim.Helpers.Config
             var allProps = tType.GetProperties();
             var allFields = tType.GetType().GetFields();
 
-            var props = new Dictionary<string, PropertyInfo>();
+            var props = new Dictionary<string, (HoconNodeAttribute, PropertyInfo)>();
             foreach (var prop in allProps)
             {
                 // get prop attribute
                 var pa = prop.GetCustomAttributes(typeof(HoconNodeAttribute)) as IEnumerable<HoconNodeAttribute>;
-
+                foreach (var p in pa)
+                {
+                    props.Add(p.key ?? prop.Name, (p, prop));
+                }
             }
 
-            var fields = new Dictionary<string, FieldInfo>();
+            var fields = new Dictionary<string, (HoconNodeAttribute, FieldInfo)>();
             foreach (var field in allFields)
             {
-                var fattr = field.GetCustomAttribute(typeof(HoconNodeAttribute)) as IEnumerable<HoconNodeAttribute>;
-
+                var fa = field.GetCustomAttribute(typeof(HoconNodeAttribute)) as IEnumerable<HoconNodeAttribute>;
+                foreach (var f in fa)
+                {
+                    fields.Add(f.key ?? field.Name, (f, field));
+                }
             }
             var configCache = new HoconConfigCache()
             {
                 type = tType,
+                conf = attr,
                 props = props,
                 fields = fields,
             };
@@ -74,18 +82,65 @@ namespace Sesim.Helpers.Config
             return configCache;
         }
 
-        public static T Deserilalize<T>(IHoconElement el, bool checkType = false) where T : new()
+        public static dynamic Deserialize(IHoconElement el)
         {
+            if (el is HoconLong) return long.Parse((el as HoconLong).Value);
+            else if (el is HoconDouble) return double.Parse((el as HoconDouble).Value);
+            else if (el is HoconBool) return bool.Parse((el as HoconBool).Value);
+            else if (el is HoconQuotedString) return (el as HoconQuotedString).Value;
+            else if (el is HoconUnquotedString) return (el as HoconUnquotedString).Value;
+            else if (el is HoconTripleQuotedString) return (el as HoconTripleQuotedString).Value;
+            else if (el is HoconHex)
+                return long.Parse((el as HoconHex).Value, System.Globalization.NumberStyles.HexNumber);
+            else if (el is HoconArray)
+            {
+                var arr = el as HoconArray;
+                var result = new List<dynamic>();
+
+                foreach (var i in arr)
+                {
+                    result.Add(Deserialize(i));
+                }
+                return result;
+            }
+            else if (el is HoconObject)
+            {
+                var obj = el as HoconObject;
+                var typeIndicator = obj["$type"].Value.GetString();
+                if (!cache.ContainsKey(typeIndicator))
+                    throw new HoconParserException("Unable to determine the object's type");
+
+                var typeCache = cache[typeIndicator];
+                var type = typeCache.type;
+                var instance = type.TypeInitializer.Invoke(new object[0]);
+
+                foreach (var kvp in obj)
+                {
+                    if (typeCache.fields.ContainsKey(kvp.Key))
+                    {
+                        var field = typeCache.fields[kvp.Key];
+                        var attr = field.Item1;
+                        var fieldInfo = field.Item2;
+                        var converter = attr.converter ?? deserializeFuncs[fieldInfo.FieldType];
+                        if (converter == null) throw new UnableToDeserializeHoconException();
+                        var convetedValue = converter(kvp.Value.Value);
+                    }
+                }
+            }
+            else throw new UnableToDeserializeHoconException();
+        }
+
+        public static T Deserilalize<T>(HoconValue el, bool checkType = false) where T : new()
+        {
+            if (typeof(T) == typeof(string))
+            {
+
+            }
             var conf = _CacheType(typeof(T));
             var newT = new T();
 
-            foreach (var kvp in conf.props)
-            {
-                var name = kvp.Key;
-                var prop = kvp.Value;
-                // TODO write code that actually assigns value
-                prop.SetValue(newT, 0);
-            }
+            if (checkType) { }
+
 
             return newT;
         }
@@ -94,8 +149,9 @@ namespace Sesim.Helpers.Config
     struct HoconConfigCache
     {
         public Type type;
-        public IDictionary<string, PropertyInfo> props;
-        public IDictionary<string, FieldInfo> fields;
+        public HoconConfigAttribute conf;
+        public IDictionary<string, (HoconNodeAttribute, PropertyInfo)> props;
+        public IDictionary<string, (HoconNodeAttribute, FieldInfo)> fields;
     }
 
     public class UnableToDeserializeHoconException : Exception
@@ -139,8 +195,12 @@ namespace Sesim.Helpers.Config
     public class HoconNodeAttribute : Attribute
     {
         public string key;
-        public delegate object TransformFunc(IHoconElement el);
-        public HoconNodeAttribute(string key) { this.key = key; }
+        public Converter<IHoconElement, object> converter;
+        public HoconNodeAttribute(string key, Converter<IHoconElement, object> converter = null)
+        {
+            this.key = key;
+            this.converter = converter;
+        }
         public HoconNodeAttribute() { }
     }
 }
