@@ -60,12 +60,12 @@ namespace Sesim.Helpers.Config
     public interface IHoconDeserializer<T>
     {
         Type ExpectedType { get; }
-        T ParseHocon(IHoconElement e);
+        T ParseHocon(HoconValue e);
     }
 
     public interface IHoconDeserializable
     {
-        void ReadFromHocon(IHoconElement e);
+        void ReadFromHocon(HoconValue e);
     }
 
     #endregion

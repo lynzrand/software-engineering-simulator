@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Hocon;
+/*
+
+TODO: Rewrite
 
 namespace Sesim.Helpers.Config.Deserializer
 {
@@ -131,4 +134,4 @@ namespace Sesim.Helpers.Config.Deserializer
             else throw new Exception($"Expected map at {e.Raw}");
         }
     }
-}
+}*/
