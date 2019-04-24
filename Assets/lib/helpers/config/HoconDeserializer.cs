@@ -75,6 +75,7 @@ namespace Sesim.Helpers.Config
             if (cache.ContainsKey(attr.typeIdentifier)) return configCache;
 
             cache.Add(attr.typeIdentifier, configCache);
+            deserializeFuncs.Add(tType, GetDeserializeFunc(tType));
 
             // Allow other threads to modify
             cacheMutex.ReleaseMutex();
@@ -82,67 +83,79 @@ namespace Sesim.Helpers.Config
             return configCache;
         }
 
-        public static dynamic Deserialize(IHoconElement el)
+        // public static dynamic Deserialize(IHoconElement el)
+        // {
+        //     if (el is HoconLong) return long.Parse((el as HoconLong).Value);
+        //     else if (el is HoconDouble) return double.Parse((el as HoconDouble).Value);
+        //     else if (el is HoconBool) return bool.Parse((el as HoconBool).Value);
+        //     else if (el is HoconQuotedString) return (el as HoconQuotedString).Value;
+        //     else if (el is HoconUnquotedString) return (el as HoconUnquotedString).Value;
+        //     else if (el is HoconTripleQuotedString) return (el as HoconTripleQuotedString).Value;
+        //     else if (el is HoconHex)
+        //         return long.Parse((el as HoconHex).Value, System.Globalization.NumberStyles.HexNumber);
+        //     else if (el is HoconArray)
+        //     {
+        //         var arr = el as HoconArray;
+        //         var result = new List<dynamic>();
+
+        //         foreach (var i in arr)
+        //         {
+        //             result.Add(Deserialize(i));
+        //         }
+        //         return result;
+        //     }
+        //     else if (el is HoconObject)
+        //     {
+        //         var obj = el as HoconObject;
+        //         var typeIndicator = obj["$type"].Value.GetString();
+        //         if (!cache.ContainsKey(typeIndicator))
+        //             throw new HoconParserException("Unable to determine the object's type");
+
+        //         var typeCache = cache[typeIndicator];
+        //         var type = typeCache.type;
+        //         var instance = type.TypeInitializer.Invoke(new object[0]);
+
+        //         foreach (var kvp in obj)
+        //         {
+        //             if (typeCache.fields.ContainsKey(kvp.Key))
+        //             {
+        //                 var field = typeCache.fields[kvp.Key];
+        //                 var attr = field.Item1;
+        //                 var fieldInfo = field.Item2;
+        //                 var converter = attr.converter ?? deserializeFuncs[fieldInfo.FieldType];
+        //                 if (converter == null) throw new UnableToDeserializeHoconException();
+        //                 var convetedValue = converter(kvp.Value.Value);
+        //             }
+        //         }
+        //     }
+        //     else throw new UnableToDeserializeHoconException();
+        // }
+
+        private static Converter<HoconValue, object> GetDeserializeFunc(Type T, bool checkType = false)
+            => (HoconValue val) => Deserialize(val, T, checkType);
+
+        public static T Deserialize<T>(HoconValue v, bool checkType = false)
         {
-            if (el is HoconLong) return long.Parse((el as HoconLong).Value);
-            else if (el is HoconDouble) return double.Parse((el as HoconDouble).Value);
-            else if (el is HoconBool) return bool.Parse((el as HoconBool).Value);
-            else if (el is HoconQuotedString) return (el as HoconQuotedString).Value;
-            else if (el is HoconUnquotedString) return (el as HoconUnquotedString).Value;
-            else if (el is HoconTripleQuotedString) return (el as HoconTripleQuotedString).Value;
-            else if (el is HoconHex)
-                return long.Parse((el as HoconHex).Value, System.Globalization.NumberStyles.HexNumber);
-            else if (el is HoconArray)
-            {
-                var arr = el as HoconArray;
-                var result = new List<dynamic>();
-
-                foreach (var i in arr)
-                {
-                    result.Add(Deserialize(i));
-                }
-                return result;
-            }
-            else if (el is HoconObject)
-            {
-                var obj = el as HoconObject;
-                var typeIndicator = obj["$type"].Value.GetString();
-                if (!cache.ContainsKey(typeIndicator))
-                    throw new HoconParserException("Unable to determine the object's type");
-
-                var typeCache = cache[typeIndicator];
-                var type = typeCache.type;
-                var instance = type.TypeInitializer.Invoke(new object[0]);
-
-                foreach (var kvp in obj)
-                {
-                    if (typeCache.fields.ContainsKey(kvp.Key))
-                    {
-                        var field = typeCache.fields[kvp.Key];
-                        var attr = field.Item1;
-                        var fieldInfo = field.Item2;
-                        var converter = attr.converter ?? deserializeFuncs[fieldInfo.FieldType];
-                        if (converter == null) throw new UnableToDeserializeHoconException();
-                        var convetedValue = converter(kvp.Value.Value);
-                    }
-                }
-            }
-            else throw new UnableToDeserializeHoconException();
+            var tType = typeof(T);
+            return (T)Deserialize(v, tType, checkType);
         }
 
-        public static T Deserilalize<T>(HoconValue el, bool checkType = false) where T : new()
+        /*
+        Note:
+
+        大概这么写吧
+
+        1. 在第一次遇到这个类型的时候读取所有 attribute 数据
+        2. 读取类型 (Type, HoconConfigAttribute) 和它所有带 attribute 的 field (FieldInfo, HoconNodeAttribute) 和 property (PropertyInfo, HoconNodeAttribute) 的信息，还有这些 field 和 property 所对应的键名
+        3. 对于每一个键名，找出它所需要用的反序列化函数（attribute 里面定义的最优先，其次如果全局注册过了用全局的，最后还没有的话判断类型有没有实现 IHoconDeserializable 接口，都没有的话报错）
+        4. 把以上所有信息保存到一个 cache，向另一个 cache 保存下面的反序列化函数
+        5. 每次碰到需要反序列化这个类型的场合，从 cache 找到这个类型的信息，对每个键执行反序列化函数，并把结果赋值给对象。
+         */
+
+        public static object Deserialize(HoconValue el, Type T, bool checkType = false)
         {
-            if (typeof(T) == typeof(string))
-            {
-
-            }
-            var conf = _CacheType(typeof(T));
-            var newT = new T();
-
-            if (checkType) { }
-
-
-            return newT;
+            // TODO: Write func according to note
+            throw new NotImplementedException();
         }
     }
 
