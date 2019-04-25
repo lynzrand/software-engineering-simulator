@@ -187,7 +187,7 @@ namespace Sesim.Helpers.Config
          */
 
         private static Converter<HoconValue, object> GetDeserializeFunc(Type T, bool checkType = false)
-            => (HoconValue val) => DeserializeNonTrivial(val, T, checkType);
+            => (HoconValue val) => DeserializeNonTrivial(val.GetObject(), T, checkType: checkType);
 
         public static T Deserialize<T>(HoconValue v, bool checkType = false)
         {
@@ -199,18 +199,28 @@ namespace Sesim.Helpers.Config
         {
             return deserializeFuncs[T](v);
         }
-
-        public static object DeserializeNonTrivial(HoconValue v, Type T, bool checkType = false)
+        public static object Deserialize(HoconValue v, out Type T)
         {
-            var cfg = _CacheType(T);
+            var obj = v.GetObject();
+            var typeIdentifier = obj.GetField("$type").GetString();
+            var cfg = cache[typeIdentifier];
+            T = cfg.type;
+            return DeserializeNonTrivial(obj, cfg.type, cfg, false);
+        }
+
+        public static object DeserializeNonTrivial(
+            HoconObject obj, Type T,
+            HoconConfigCache cfg = null, bool checkType = false)
+        {
+            cfg = cfg ?? _CacheType(T);
 
             if (checkType)
-                if (v.GetObject().GetField("$type").GetString() != cfg.conf.typeIdentifier)
+                if (obj.GetField("$type").GetString() != cfg.conf.typeIdentifier)
                     throw new UnableToDeserializeHoconException();
 
             var result = T.GetConstructor(new Type[0]).Invoke(new object[0]);
 
-            foreach (var kvp in v.GetObject())
+            foreach (var kvp in obj)
             {
                 if (!cfg.nodes.ContainsKey(kvp.Key)) continue;
                 var attr = cfg.nodes[kvp.Key];
@@ -228,7 +238,7 @@ namespace Sesim.Helpers.Config
         }
     }
 
-    struct HoconConfigCache
+    public class HoconConfigCache
     {
         public Type type;
         public bool isDeserializerTrivial;
