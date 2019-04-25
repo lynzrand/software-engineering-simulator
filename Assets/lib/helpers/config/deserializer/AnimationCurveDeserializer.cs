@@ -5,12 +5,10 @@ using Hocon;
 
 namespace Sesim.Helpers.Config.Deserializer
 {
-    public class AnimationCurveParser : IHoconDeserializer<AnimationCurve>
+    public static class AnimationCurveParser
     {
-        public Type ExpectedType => typeof(AnimationCurve);
 
-
-        public AnimationCurve ParseHocon(HoconValue e)
+        public static AnimationCurve ParseHocon(HoconValue e)
         {
             if (e.Type != HoconType.Array)
                 throw new ArgumentException($"The element {e} must be an array");

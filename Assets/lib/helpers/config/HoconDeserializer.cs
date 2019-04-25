@@ -12,7 +12,7 @@ namespace Sesim.Helpers.Config
         private static Dictionary<string, HoconConfigCache> cache =
             new Dictionary<string, HoconConfigCache>();
 
-        private static Mutex cacheMutex = new Mutex();
+        private static ReaderWriterLockSlim cacheLock = new ReaderWriterLockSlim();
 
         private static Dictionary<Type, Converter<HoconValue, object>> deserializeFuncs =
             new Dictionary<Type, Converter<HoconValue, object>>();
@@ -24,16 +24,30 @@ namespace Sesim.Helpers.Config
 
         public static void CacheType(Type T)
         {
-            _CacheType(T);
+            _CacheType(T, isRoot: true);
         }
 
-        internal static HoconConfigCache _CacheType(Type T)
+        internal static HoconConfigCache _CacheType(
+            Type T,
+            HashSet<HoconNodeAttribute> unresolvedNodes = null,
+            HashSet<Type> unresolvedTypes = null,
+            bool isRoot = false)
         {
+
             // Tries to get the specific attribute
             var attr = T.GetCustomAttribute(typeof(HoconConfigAttribute)) as HoconConfigAttribute;
             if (attr == null) throw new UnableToDeserializeHoconException();
 
+            // try acquire lock
+            cacheLock.EnterReadLock();
             if (cache.ContainsKey(attr.typeIdentifier)) return cache[attr.typeIdentifier];
+            cacheLock.ExitReadLock();
+
+            // initialize wipTypes
+            unresolvedNodes = unresolvedNodes ?? new HashSet<HoconNodeAttribute>();
+            unresolvedTypes = unresolvedTypes ?? new HashSet<Type>();
+
+            if (!unresolvedTypes.Contains(T)) unresolvedTypes.Add(T);
 
             // Get all properties and fields to find those with HoconNodeAttribute
             var allProps = T.GetProperties();
@@ -49,35 +63,9 @@ namespace Sesim.Helpers.Config
                 {
                     a.isProperty = true;
                     a.propertyInfo = prop;
-                    if (a.converter == null)
-                    {
-                        if (typeof(IHoconDeserializable).IsAssignableFrom(type))
-                        {
-                            var methodInfo =
-                                type.GetRuntimeMethod(
-                                    "ReadFromHocon",
-                                    new Type[] { typeof(HoconValue) });
-
-                            a.converter =
-                                (HoconValue v) =>
-                                    methodInfo.Invoke(
-                                        type.TypeInitializer.Invoke(new object[0]),
-                                        new object[] { v });
-                        }
-                        else
-                        {
-                            try
-                            {
-                                _CacheType(type);
-                                a.converter = GetDeserializeFunc(type);
-                            }
-                            catch (Exception e)
-                            {
-                                throw new UnableToDeserializeHoconException();
-                            }
-                        }
-                    }
-                    nodes.Add(a.key ?? prop.Name, a);
+                    resolveType(type, a, unresolvedNodes, unresolvedTypes);
+                    if (a.key == null) a.key = prop.Name;
+                    nodes.Add(a.key, a);
                 }
             }
 
@@ -90,45 +78,21 @@ namespace Sesim.Helpers.Config
                 {
                     a.isProperty = false;
                     a.fieldInfo = field;
-                    if (a.converter == null)
-                    {
-                        if (typeof(IHoconDeserializable).IsAssignableFrom(type))
-                        {
-                            var methodInfo =
-                                type.GetRuntimeMethod(
-                                    "ReadFromHocon",
-                                    new Type[] { typeof(HoconValue) });
-
-                            a.converter =
-                                (HoconValue v) =>
-                                    methodInfo.Invoke(
-                                        type.TypeInitializer.Invoke(new object[0]),
-                                        new object[] { v });
-                        }
-                        else
-                        {
-                            try
-                            {
-                                _CacheType(type);
-                                a.converter = GetDeserializeFunc(type);
-                            }
-                            catch (Exception e)
-                            {
-                                throw new UnableToDeserializeHoconException();
-                            }
-                        }
-                    }
-                    nodes.Add(a.key ?? field.Name, a);
+                    resolveType(type, a, unresolvedNodes, unresolvedTypes);
+                    if (a.key == null) a.key = field.Name;
+                    nodes.Add(a.key, a);
                 }
             }
             var configCache = new HoconConfigCache()
             {
                 type = T,
                 conf = attr,
+                nodes = nodes,
+                isDeserializerTrivial = true
             };
 
             // Waits so only one thread can cache the type
-            cacheMutex.WaitOne();
+            cacheLock.EnterWriteLock();
 
             // If other threads have already added this class when we are processing,
             // just return the result.
@@ -137,67 +101,77 @@ namespace Sesim.Helpers.Config
             cache.Add(attr.typeIdentifier, configCache);
             deserializeFuncs.Add(T, GetDeserializeFunc(T));
 
-            // Allow other threads to modify
-            cacheMutex.ReleaseMutex();
+            unresolvedTypes.Remove(T);
 
+            if (isRoot)
+            {
+                // We expect no unresolved types here; if there is any then there's a bug
+                if (unresolvedTypes.Count > 0)
+                {
+                    throw new UnableToDeserializeHoconException($"Unable to cache types {unresolvedTypes}");
+                }
+
+                // assign deserialize functions to unresolved nodes
+                foreach (var node in unresolvedNodes)
+                {
+                    if (deserializeFuncs.ContainsKey(node.Type))
+                    {
+                        node.converter = deserializeFuncs[node.Type];
+                        unresolvedNodes.Remove(node);
+                    }
+                }
+
+                // We also expect no unresolved node here; if there's any then it's also a bug
+                if (unresolvedNodes.Count > 0)
+                {
+                    throw new UnableToDeserializeHoconException($"Unable to cache nodes {unresolvedNodes}");
+                }
+
+            }
+
+            // Allow other threads to modify
+            cacheLock.ExitWriteLock();
             return configCache;
         }
 
-        // public static dynamic Deserialize(IHoconElement el)
-        // {
-        //     if (el is HoconLong) return long.Parse((el as HoconLong).Value);
-        //     else if (el is HoconDouble) return double.Parse((el as HoconDouble).Value);
-        //     else if (el is HoconBool) return bool.Parse((el as HoconBool).Value);
-        //     else if (el is HoconQuotedString) return (el as HoconQuotedString).Value;
-        //     else if (el is HoconUnquotedString) return (el as HoconUnquotedString).Value;
-        //     else if (el is HoconTripleQuotedString) return (el as HoconTripleQuotedString).Value;
-        //     else if (el is HoconHex)
-        //         return long.Parse((el as HoconHex).Value, System.Globalization.NumberStyles.HexNumber);
-        //     else if (el is HoconArray)
-        //     {
-        //         var arr = el as HoconArray;
-        //         var result = new List<dynamic>();
-
-        //         foreach (var i in arr)
-        //         {
-        //             result.Add(Deserialize(i));
-        //         }
-        //         return result;
-        //     }
-        //     else if (el is HoconObject)
-        //     {
-        //         var obj = el as HoconObject;
-        //         var typeIndicator = obj["$type"].Value.GetString();
-        //         if (!cache.ContainsKey(typeIndicator))
-        //             throw new HoconParserException("Unable to determine the object's type");
-
-        //         var typeCache = cache[typeIndicator];
-        //         var type = typeCache.type;
-        //         var instance = type.TypeInitializer.Invoke(new object[0]);
-
-        //         foreach (var kvp in obj)
-        //         {
-        //             if (typeCache.fields.ContainsKey(kvp.Key))
-        //             {
-        //                 var field = typeCache.fields[kvp.Key];
-        //                 var attr = field.Item1;
-        //                 var fieldInfo = field.Item2;
-        //                 var converter = attr.converter ?? deserializeFuncs[fieldInfo.FieldType];
-        //                 if (converter == null) throw new UnableToDeserializeHoconException();
-        //                 var convetedValue = converter(kvp.Value.Value);
-        //             }
-        //         }
-        //     }
-        //     else throw new UnableToDeserializeHoconException();
-        // }
-
-        private static Converter<HoconValue, object> GetDeserializeFunc(Type T, bool checkType = false)
-            => (HoconValue val) => Deserialize(val, T, checkType);
-
-        public static T Deserialize<T>(HoconValue v, bool checkType = false)
+        private static void resolveType(
+            Type type,
+            HoconNodeAttribute a,
+            HashSet<HoconNodeAttribute> unresolvedNodes,
+            HashSet<Type> unresolvedTypes)
         {
-            var tType = typeof(T);
-            return (T)Deserialize(v, tType, checkType);
+            if (a.converter == null)
+            {
+                if (typeof(IHoconDeserializable).IsAssignableFrom(type))
+                {
+                    var methodInfo = type.GetRuntimeMethod(
+                            "ReadFromHocon", new Type[] { typeof(HoconValue) });
+                    a.converter = (HoconValue v) => methodInfo.Invoke(
+                        type.TypeInitializer.Invoke(new object[0]),
+                        new object[] { v });
+                }
+                else
+                {
+                    if (unresolvedTypes.Contains(type))
+                        unresolvedNodes.Add(a);
+                    else
+                        _CacheType(type, unresolvedNodes, unresolvedTypes);
+                }
+            }
+        }
+
+        public static void AssignType(Type T, Converter<HoconValue, object> converter)
+        {
+            cacheLock.EnterWriteLock();
+            deserializeFuncs.Add(T, converter);
+            cacheLock.ExitWriteLock();
+        }
+
+        public static void DeassignType(Type T)
+        {
+            cacheLock.EnterWriteLock();
+            deserializeFuncs.Remove(T);
+            cacheLock.ExitWriteLock();
         }
 
         /*
@@ -212,25 +186,65 @@ namespace Sesim.Helpers.Config
         5. 每次碰到需要反序列化这个类型的场合，从 cache 找到这个类型的信息，对每个键执行反序列化函数，并把结果赋值给对象。
          */
 
-        public static object Deserialize(HoconValue el, Type T, bool checkType = false)
+        private static Converter<HoconValue, object> GetDeserializeFunc(Type T, bool checkType = false)
+            => (HoconValue val) => DeserializeNonTrivial(val, T, checkType);
+
+        public static T Deserialize<T>(HoconValue v, bool checkType = false)
         {
-            // TODO: Write func according to note
+            var tType = typeof(T);
+            return (T)deserializeFuncs[tType](v);
+        }
+
+        public static object Deserialize(HoconValue v, Type T)
+        {
+            return deserializeFuncs[T](v);
+        }
+
+        public static object DeserializeNonTrivial(HoconValue v, Type T, bool checkType = false)
+        {
             var cfg = _CacheType(T);
 
-            throw new NotImplementedException();
+            if (checkType)
+                if (v.GetObject().GetField("$type").GetString() != cfg.conf.typeIdentifier)
+                    throw new UnableToDeserializeHoconException();
+
+            var result = T.GetConstructor(new Type[0]).Invoke(new object[0]);
+
+            foreach (var kvp in v.GetObject())
+            {
+                if (!cfg.nodes.ContainsKey(kvp.Key)) continue;
+                var attr = cfg.nodes[kvp.Key];
+                var value = attr.converter(kvp.Value.Value);
+                if (attr.isProperty)
+                {
+                    attr.propertyInfo.SetValue(result, value);
+                }
+                else
+                {
+                    attr.fieldInfo.SetValue(result, value);
+                }
+            }
+            return result;
         }
     }
 
     struct HoconConfigCache
     {
         public Type type;
+        public bool isDeserializerTrivial;
         public HoconConfigAttribute conf;
         public IDictionary<string, HoconNodeAttribute> nodes;
     }
 
     public class UnableToDeserializeHoconException : Exception
     {
-        public UnableToDeserializeHoconException() { }
+        string msg;
+        public override string Message { get => msg; }
+        public UnableToDeserializeHoconException(string msg = null)
+        {
+            this.msg = msg;
+        }
+
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct,
@@ -275,18 +289,15 @@ namespace Sesim.Helpers.Config
         public bool isField { get => !isProperty; set => isProperty = !value; }
         public FieldInfo fieldInfo;
         public PropertyInfo propertyInfo;
+
+        public Type Type { get => isProperty ? propertyInfo.DeclaringType : fieldInfo.DeclaringType; }
+
         public HoconNodeAttribute(string key, Converter<HoconValue, object> converter = null)
         {
             this.key = key;
             this.converter = converter;
         }
         public HoconNodeAttribute() { }
-    }
-
-    public interface IHoconDeserializer<T>
-    {
-        Type ExpectedType { get; }
-        T ParseHocon(HoconValue e);
     }
 
     public interface IHoconDeserializable
