@@ -4,6 +4,7 @@ using ProtoBuf;
 using Sesim.Helpers.Config;
 using Sesim.Models.Exceptions;
 using UnityEngine;
+using Wiry.Base32;
 
 namespace Sesim.Models
 {
@@ -13,7 +14,7 @@ namespace Sesim.Models
         public string category;
         public string title;
         public string description;
-        AnimationCurve abundancyCurve;
+        AnimationCurve abundanceCurve;
 
         public ContractFactory()
         {
@@ -32,5 +33,16 @@ namespace Sesim.Models
     {
         [ProtoMember(16)]
         public long id;
+
+        public string Base32String
+        {
+            get
+            {
+                return Base32Encoding.ZBase32.GetString(new byte[]{
+                (byte)(id>>56), (byte)(id>>48), (byte)(id>>40), (byte)(id>>32),
+                (byte)(id>>24), (byte)(id>>16), (byte)(id>>8), (byte)id
+            });
+            }
+        }
     }
 }
