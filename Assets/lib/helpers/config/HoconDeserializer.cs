@@ -27,7 +27,7 @@ namespace Sesim.Helpers.Config
             _CacheType(T);
         }
 
-        static HoconConfigCache _CacheType(Type T)
+        internal static HoconConfigCache _CacheType(Type T)
         {
             // Tries to get the specific attribute
             var attr = T.GetCustomAttribute(typeof(HoconConfigAttribute)) as HoconConfigAttribute;
@@ -282,4 +282,16 @@ namespace Sesim.Helpers.Config
         }
         public HoconNodeAttribute() { }
     }
+
+    public interface IHoconDeserializer<T>
+    {
+        Type ExpectedType { get; }
+        T ParseHocon(HoconValue e);
+    }
+
+    public interface IHoconDeserializable
+    {
+        void ReadFromHocon(HoconValue e);
+    }
+
 }

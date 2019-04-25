@@ -1,137 +1,112 @@
 using System;
 using System.Collections.Generic;
 using Hocon;
-/*
 
-TODO: Rewrite
-
-namespace Sesim.Helpers.Config.Deserializer
+public static class HoconPrimitiveDeserializers
 {
-
-    public class GenericHoconDeserializer<T> where T : new()
+    public static bool ParseBool(HoconValue e)
     {
-        public T ParseHocon(IHoconElement e)
-        {
-            if (e is HoconObject)
-            {
-                var eo = e as HoconObject;
-                var t = new T();
-
-                return t;
-            }
-            else throw new ArgumentException();
-        }
+        return e.GetBoolean();
     }
 
-
-
-    public class ByteDeserializer : IHoconDeserializer<Byte>
+    public static byte ParseByte(HoconValue e)
     {
-        public Type ExpectedType => typeof(Byte);
-
-        public Byte ParseHocon(IHoconElement e)
-        {
-            if (e is HoconLong) return Byte.Parse(((HoconLong)e).Value);
-            else throw new Exception($"Expected integer at {e.Raw}");
-        }
-    }
-    public class ShortDeserializer : IHoconDeserializer<short>
-    {
-        public Type ExpectedType => typeof(short);
-
-        public short ParseHocon(IHoconElement e)
-        {
-            if (e is HoconLong) return short.Parse(((HoconLong)e).Value);
-            else throw new Exception($"Expected integer at {e.Raw}");
-        }
-    }
-    public class IntDeserializer : IHoconDeserializer<int>
-    {
-        public Type ExpectedType => typeof(int);
-
-        public int ParseHocon(IHoconElement e)
-        {
-            if (e is HoconLong) return int.Parse(((HoconLong)e).Value);
-            else throw new Exception($"Expected integer at {e.Raw}");
-        }
+        return e.GetByte();
     }
 
-    public class LongDeserializer : IHoconDeserializer<long>
+    public static short ParseShort(HoconValue e)
     {
-        public Type ExpectedType => typeof(long);
-
-        public long ParseHocon(IHoconElement e)
-        {
-            if (e is HoconLong) return long.Parse(((HoconLong)e).Value);
-            else throw new Exception($"Expected integer at {e.Raw}");
-        }
+        return (short)e.GetInt();
     }
 
-    public class DoubleDeserializer : IHoconDeserializer<double>
+    public static int ParseInt(HoconValue e)
     {
-        public Type ExpectedType => typeof(double);
-
-        public double ParseHocon(IHoconElement e)
-        {
-            if (e is HoconDouble) return double.Parse(((HoconLong)e).Value);
-            else throw new Exception($"Expected number at {e.Raw}");
-        }
+        return e.GetInt();
     }
 
-    public class FloatDeserializer : IHoconDeserializer<float>
+    public static long ParseLong(HoconValue e)
     {
-        public Type ExpectedType => typeof(float);
-
-        public float ParseHocon(IHoconElement e)
-        {
-            if (e is HoconDouble) return float.Parse(((HoconLong)e).Value);
-            else throw new Exception($"Expected number at {e.Raw}");
-        }
+        return e.GetLong();
     }
 
-    public class ArrayDeserializer<T> : IHoconDeserializer<IList<T>>
+    public static double ParseDouble(HoconValue e)
     {
-        public ArrayDeserializer(Converter<IHoconElement, T> func)
-        {
-            this.func = func;
-        }
-        public Type ExpectedType => throw new NotImplementedException();
-
-        public Converter<IHoconElement, T> func;
-
-        public IList<T> ParseHocon(IHoconElement e)
-        {
-            if (e is HoconArray)
-            {
-                var arr = e as HoconArray;
-                return arr.ConvertAll(func);
-            }
-            else throw new Exception($"Expected array at {e.Raw}");
-        }
+        return e.GetDouble();
     }
 
-    public class MapDeserializer<TKey, TVal> : IHoconDeserializer<IDictionary<TKey, TVal>>
+    public static float ParseFloat(HoconValue e)
     {
-        public Type ExpectedType => typeof(IDictionary<TKey, TVal>);
-
-        public Converter<string, TKey> keyFunc;
-        public Converter<IHoconElement, TVal> valFunc;
-
-        public IDictionary<TKey, TVal> ParseHocon(IHoconElement e)
-        {
-            if (e is HoconObject)
-            {
-                var obj = e as HoconObject;
-                var map = new Dictionary<TKey, TVal>();
-                foreach (var key in obj.Keys)
-                {
-                    var transKey = keyFunc(key);
-                    var transVal = valFunc(obj[key]);
-                    map.Add(transKey, transVal);
-                }
-                return map;
-            }
-            else throw new Exception($"Expected map at {e.Raw}");
-        }
+        return e.GetFloat();
     }
-}*/
+
+    public static IList<bool> ParseBoolList(HoconValue e)
+    {
+        return e.GetBooleanList();
+    }
+
+    public static IList<byte> ParseByteList(HoconValue e)
+    {
+        return e.GetByteList();
+    }
+
+    public static IList<short> ParseShortList(HoconValue e)
+    {
+        return e.GetArray().ConvertAll(ParseShort);
+    }
+
+    public static IList<int> ParseIntList(HoconValue e)
+    {
+        return e.GetIntList();
+    }
+
+    public static IList<long> ParseLongList(HoconValue e)
+    {
+        return e.GetLongList();
+    }
+
+    public static IList<float> ParseFloatList(HoconValue e)
+    {
+        return e.GetFloatList();
+    }
+
+    public static IList<double> ParseDoubleList(HoconValue e)
+    {
+        return e.GetDoubleList();
+    }
+
+    public static IList<HoconValue> ParseList(HoconValue e)
+    {
+        return e.GetArray();
+    }
+
+    public static IList<T> ParseList<T>(HoconValue e, Converter<HoconValue, T> conv)
+    {
+        return e.GetArray().ConvertAll(conv);
+    }
+
+    public static IDictionary<string, object> ParseDictionary(HoconValue e)
+    {
+        return e.GetObject().Unwrapped;
+    }
+
+    public static IDictionary<string, TVal> ParseDictionary<TVal>(HoconValue e, Converter<HoconValue, TVal> valConv)
+    {
+        var dict = new Dictionary<string, TVal>();
+        foreach (var kvp in e.GetObject())
+        {
+            dict.Add(kvp.Key, valConv(kvp.Value.Value));
+        }
+        return dict;
+    }
+
+    public static IDictionary<TKey, TVal> ParseDictionary<TKey, TVal>(HoconValue e,
+    Converter<string, TKey> keyConv, Converter<HoconValue, TVal> valConv)
+    {
+        var dict = new Dictionary<TKey, TVal>();
+        foreach (var kvp in e.GetObject())
+        {
+            dict.Add(keyConv(kvp.Key), valConv(kvp.Value.Value));
+        }
+        return dict;
+    }
+}

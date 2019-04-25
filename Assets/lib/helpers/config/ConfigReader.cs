@@ -55,19 +55,4 @@ namespace Sesim.Helpers.Config
     }
     #endregion
 
-
-    #region parsers
-    public interface IHoconDeserializer<T>
-    {
-        Type ExpectedType { get; }
-        T ParseHocon(HoconValue e);
-    }
-
-    public interface IHoconDeserializable
-    {
-        void ReadFromHocon(HoconValue e);
-    }
-
-    #endregion
-
 }
