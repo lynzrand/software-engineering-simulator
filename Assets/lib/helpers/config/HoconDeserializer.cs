@@ -155,22 +155,39 @@ namespace Sesim.Helpers.Config
                     if (unresolvedTypes.Contains(type))
                         unresolvedNodes.Add(a);
                     else
-                        _CacheType(type, unresolvedNodes, unresolvedTypes);
+                    {
+                        var conf = _CacheType(type, unresolvedNodes, unresolvedTypes);
+                        a.converter = deserializeFuncs[a.Type];
+                    }
                 }
             }
         }
 
-        public static void AssignType(Type T, Converter<HoconValue, object> converter)
+        public static void AssignTypeConverter(Type T, Converter<HoconValue, object> converter)
         {
             cacheLock.EnterWriteLock();
             deserializeFuncs.Add(T, converter);
             cacheLock.ExitWriteLock();
         }
 
-        public static void DeassignType(Type T)
+        public static void AssignTypeConverters(IDictionary<Type, Converter<HoconValue, object>> converters)
+        {
+            cacheLock.EnterWriteLock();
+            foreach (var kvp in converters) deserializeFuncs.Add(kvp.Key, kvp.Value);
+            cacheLock.ExitWriteLock();
+        }
+
+        public static void UnassignTypeConverter(Type T)
         {
             cacheLock.EnterWriteLock();
             deserializeFuncs.Remove(T);
+            cacheLock.ExitWriteLock();
+        }
+
+        public static void UnassignTypeConvertesr(ICollection<Type> Ts)
+        {
+            cacheLock.EnterWriteLock();
+            foreach (var type in Ts) deserializeFuncs.Remove(type);
             cacheLock.ExitWriteLock();
         }
 
@@ -187,7 +204,7 @@ namespace Sesim.Helpers.Config
          */
 
         private static Converter<HoconValue, object> GetDeserializeFunc(Type T, bool checkType = false)
-            => (HoconValue val) => DeserializeNonTrivial(val.GetObject(), T, checkType: checkType);
+            => (HoconValue val) => DeserializeTrivial(val.GetObject(), T, checkType: checkType);
 
         public static T Deserialize<T>(HoconValue v, bool checkType = false)
         {
@@ -205,10 +222,10 @@ namespace Sesim.Helpers.Config
             var typeIdentifier = obj.GetField("$type").GetString();
             var cfg = cache[typeIdentifier];
             T = cfg.type;
-            return DeserializeNonTrivial(obj, cfg.type, cfg, false);
+            return DeserializeTrivial(obj, cfg.type, cfg, false);
         }
 
-        public static object DeserializeNonTrivial(
+        public static object DeserializeTrivial(
             HoconObject obj, Type T,
             HoconConfigCache cfg = null, bool checkType = false)
         {
@@ -236,6 +253,32 @@ namespace Sesim.Helpers.Config
             }
             return result;
         }
+
+        public static IList<T> ParseList<T>(HoconValue e, Converter<HoconValue, T> conv)
+        {
+            return e.GetArray().ConvertAll(conv);
+        }
+
+        public static IDictionary<string, TVal> ParseDictionary<TVal>(HoconValue e, Converter<HoconValue, TVal> valConv)
+        {
+            var dict = new Dictionary<string, TVal>();
+            foreach (var kvp in e.GetObject())
+            {
+                dict.Add(kvp.Key, valConv(kvp.Value.Value));
+            }
+            return dict;
+        }
+
+        public static IDictionary<TKey, TVal> ParseDictionary<TKey, TVal>(HoconValue e, Converter<string, TKey> keyConv, Converter<HoconValue, TVal> valConv)
+        {
+            var dict = new Dictionary<TKey, TVal>();
+            foreach (var kvp in e.GetObject())
+            {
+                dict.Add(keyConv(kvp.Key), valConv(kvp.Value.Value));
+            }
+            return dict;
+        }
+
     }
 
     public class HoconConfigCache
@@ -257,8 +300,9 @@ namespace Sesim.Helpers.Config
 
     }
 
-    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct,
-     Inherited = true)]
+    [System.AttributeUsage(
+        System.AttributeTargets.Class | System.AttributeTargets.Struct,
+        Inherited = true)]
     /// <summary>
     /// Indicating one class or struct can be deserialized from a HOCON config file or node
     /// </summary>
@@ -288,8 +332,9 @@ namespace Sesim.Helpers.Config
         }
     }
 
-    [System.AttributeUsage(System.AttributeTargets.Field | System.AttributeTargets.Property,
-     Inherited = true)]
+    [System.AttributeUsage(
+        System.AttributeTargets.Field | System.AttributeTargets.Property,
+        Inherited = true)]
     public class HoconNodeAttribute : Attribute
     {
         public string key;
