@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Buffers;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
+using System;
+using System.Collections.Generic;
 using Sesim.Helpers.UI;
 using System.Text;
 
@@ -12,74 +9,46 @@ namespace Sesim.Game.Controllers
 {
     public class SplashScreenController : MonoBehaviour
     {
-        // Start is called before the first frame update
-        void Start()
+        private Vector2Int consoleSize;
+        public Text console;
+        float uiScale = 1;
+
+        // 500 lines should be more than enough
+        private List<string> cache = new List<string>(500);
+
+
+        public IEnumerator<dynamic> Start()
         {
-        }
-
-        private int frames = 0;
-        private Vector2Int loadingDataSize;
-
-        public Text loadingDataView;
-        public Text versionText;
-        public Animator animator;
-
-        private bool shouldTransferScene = false;
-        private bool loaded = false;
-
-        // Update is called once per frame
-        void Update()
-        {
-            if (!loaded) frames++;
-
-            loadingDataSize = ConsoleHelper.GetConsoleSize(loadingDataView);
-            loadingDataView.text = FormatLoadingText(
-                "Testing progressbar",
-                $"frames {frames}",
-                (float)frames / 500,
-                loadingDataSize
-            );
-            if (frames > 500) LoadedHandler();
-            // if (shouldTransferScene) SceneManager.LoadScene("MainGameplayScene");
-        }
-
-        string FormatLoadingText(string action, string destination, float progress, Vector2Int size)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(ConsoleHelper.GenerateProgressBar(size.x, progress));
-            sb.AppendLine();
-            sb.Append(ConsoleHelper.GenerateTrimmedActionDescription(size.x, action, destination));
-            return sb.ToString();
-        }
-
-        public void LoadedHandler()
-        {
-            //  call showMenu()
-            loaded = true;
-            animator.SetBool("Loaded", true);
+            yield return null;
 
         }
 
-        public void NewGameHandler()
+        int counter = 0;
+        int maxCounter = 1024;
+        void addLog()
         {
-            SceneManager.LoadScene("MainGameplayScene");
-        }
 
-        public void LoadGameHandler()
+        }
+        public void Update()
         {
-            SceneManager.LoadScene("MainGameplayScene");
+            uiScale = console.canvas.scaleFactor * 3 / 4;
+            counter++;
+            if (counter > maxCounter) counter = 0;
+            consoleSize = ConsoleHelper.GetConsoleSize(console, uiScale);
+            if (cache.Count >= 500)
+            {
+                cache.RemoveAt(0);
+            }
+            cache.Add(counter.ToString());
+
+            var sb = new StringBuilder();
+            for (int i = Math.Max(0, cache.Count - consoleSize.y); i < cache.Count; i++)
+            {
+                sb.AppendLine(cache[i]);
+            }
+            sb.Append(ConsoleHelper.GenerateProgressBar(consoleSize.x, (float)counter / maxCounter,
+            filled: '#', empty: '-', filledCap: '#'));
+            console.text = sb.ToString();
         }
-
-        public void SettingsHandler() { }
-
-        public void GameExitHandler()
-        {
-            UnityEngine.Application.Quit();
-        }
-    }
-
-    public class SplashScreenAnimationController : Animator
-    {
-
     }
 }

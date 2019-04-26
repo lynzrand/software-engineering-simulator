@@ -14,17 +14,21 @@ namespace Sesim.Helpers.UI
         /// </summary>
         /// <param name="text">The textarea to be used</param>
         /// <returns>The console's size in x and y axes</returns>
-        public static Vector2Int GetConsoleSize(Text text)
+        public static Vector2Int GetConsoleSize(Text text, float uiScale = 1)
         {
-            text.font.GetCharacterInfo(' ', out CharacterInfo info, text.fontSize, text.fontStyle);
-            int fontWidth = info.advance;
-            float fontHeight = text.lineSpacing * text.fontSize;
-            float boundingBoxWidth = text.rectTransform.rect.size.x;
-            float boundingBoxHeight = text.rectTransform.rect.size.y;
+            var result = text.font.GetCharacterInfo(' ', out CharacterInfo info);
+            float fontWidth = info.advance;
+            float fontHeight = text.font.lineHeight * text.lineSpacing;
+            if (text.rectTransform.rect.width == 0)
+                text.rectTransform.ForceUpdateRectTransforms();
+
+            float boundingBoxWidth = text.GetComponent<RectTransform>().rect.width * uiScale;
+            float boundingBoxHeight = text.GetComponent<RectTransform>().rect.height * uiScale;
             int consoleWidth = Mathf.FloorToInt(boundingBoxWidth / fontWidth);
             int consoleHeight = Mathf.FloorToInt(boundingBoxHeight / fontHeight);
             if (consoleWidth < 0) consoleWidth = 0;
             if (consoleHeight < 0) consoleHeight = 0;
+            Debug.Log((uiScale, fontWidth, fontHeight, boundingBoxWidth, boundingBoxHeight, consoleWidth, consoleHeight));
             return new Vector2Int(x: consoleWidth, y: consoleHeight);
         }
 
