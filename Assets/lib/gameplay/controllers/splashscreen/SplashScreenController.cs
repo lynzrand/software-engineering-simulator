@@ -72,14 +72,15 @@ namespace Sesim.Game.Controllers
 
         public void Update()
         {
-            uiScale = console.canvas.scaleFactor * 3 / 4;
+            var screenDpi = Screen.dpi;
+            uiScale = screenDpi / 96;
+
             counter++;
             if (counter > maxCounter) counter = 0;
             consoleSize = ConsoleHelper.GetConsoleSize(console, uiScale);
-            Debug.Log(counter);
-            Debug.LogWarning("Warning test");
-            Debug.LogError("meow!");
-            Debug.LogAssertion("Assert failed!");
+
+            Debug.Log($"Canvas ScaleFactor = {uiScale}, DPI = {screenDpi}, console size = {consoleSize}");
+
             var sb = new StringBuilder();
             for (int i = Math.Max(0, cache.Count - consoleSize.y); i < cache.Count; i++)
             {

@@ -16,20 +16,23 @@ namespace Sesim.Helpers.UI
         /// <returns>The console's size in x and y axes</returns>
         public static Vector2Int GetConsoleSize(Text text, float uiScale = 1)
         {
-            text.font.RequestCharactersInTexture(" ");
-            var result = text.font.GetCharacterInfo(' ', out CharacterInfo info);
-            float fontWidth = info.advance;
-            float fontHeight = text.font.lineHeight * text.lineSpacing;
+            text.font.RequestCharactersInTexture(" ", text.fontSize, text.fontStyle);
+            text.font.GetCharacterInfo(' ', out CharacterInfo info, text.fontSize, text.fontStyle);
+
+            float fontWidth = info.advance * uiScale;
+            float fontHeight = text.font.lineHeight * text.lineSpacing / uiScale;
+
             if (text.rectTransform.rect.width == 0)
                 text.rectTransform.ForceUpdateRectTransforms();
 
             float boundingBoxWidth = text.GetComponent<RectTransform>().rect.width * uiScale;
             float boundingBoxHeight = text.GetComponent<RectTransform>().rect.height * uiScale;
+
             int consoleWidth = Mathf.FloorToInt(boundingBoxWidth / fontWidth);
             int consoleHeight = Mathf.FloorToInt(boundingBoxHeight / fontHeight);
             if (consoleWidth < 0) consoleWidth = 0;
             if (consoleHeight < 0) consoleHeight = 0;
-            // Debug.Log((uiScale, fontWidth, fontHeight, boundingBoxWidth, boundingBoxHeight, consoleWidth, consoleHeight));
+            Debug.Log((uiScale, fontWidth, fontHeight, boundingBoxWidth, boundingBoxHeight, consoleWidth, consoleHeight));
             return new Vector2Int(x: consoleWidth, y: consoleHeight);
         }
 
@@ -50,13 +53,13 @@ namespace Sesim.Helpers.UI
         public static string GenerateProgressBar(
             int width, float progress,
             char startCap = '[', char endCap = ']',
-            char filled = '=', char empty = ' ', char filledCap = '>')
+            char filled = '=', char empty = ' ', char filledCap = '>', bool useCap = true)
         {
             if (progress < 0) progress = 0; else if (progress > 1) progress = 1;
             StringBuilder sb = new StringBuilder();
             int progressBarSize = width - 2;
             int progressBarFilledSize = Mathf.RoundToInt(progressBarSize * progress);
-            bool filledHasCap = (progress > 0 && progress < 1);
+            bool filledHasCap = (useCap && progress > 0 && progress < 1);
             if (filledHasCap && progressBarFilledSize > 0) progressBarFilledSize -= 1;
             sb.Append(startCap);
             sb.Append(filled, progressBarFilledSize);
