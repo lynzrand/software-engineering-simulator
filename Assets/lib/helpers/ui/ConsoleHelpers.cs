@@ -16,6 +16,7 @@ namespace Sesim.Helpers.UI
         /// <returns>The console's size in x and y axes</returns>
         public static Vector2Int GetConsoleSize(Text text, float uiScale = 1)
         {
+            text.font.RequestCharactersInTexture(" ");
             var result = text.font.GetCharacterInfo(' ', out CharacterInfo info);
             float fontWidth = info.advance;
             float fontHeight = text.font.lineHeight * text.lineSpacing;
@@ -28,7 +29,7 @@ namespace Sesim.Helpers.UI
             int consoleHeight = Mathf.FloorToInt(boundingBoxHeight / fontHeight);
             if (consoleWidth < 0) consoleWidth = 0;
             if (consoleHeight < 0) consoleHeight = 0;
-            Debug.Log((uiScale, fontWidth, fontHeight, boundingBoxWidth, boundingBoxHeight, consoleWidth, consoleHeight));
+            // Debug.Log((uiScale, fontWidth, fontHeight, boundingBoxWidth, boundingBoxHeight, consoleWidth, consoleHeight));
             return new Vector2Int(x: consoleWidth, y: consoleHeight);
         }
 
