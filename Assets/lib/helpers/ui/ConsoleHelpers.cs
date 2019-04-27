@@ -14,25 +14,27 @@ namespace Sesim.Helpers.UI
         /// </summary>
         /// <param name="text">The textarea to be used</param>
         /// <returns>The console's size in x and y axes</returns>
-        public static Vector2Int GetConsoleSize(Text text, float uiScale = 1)
+        public static Vector2Int GetConsoleSize(Text text)
         {
             text.font.RequestCharactersInTexture(" ", text.fontSize, text.fontStyle);
             text.font.GetCharacterInfo(' ', out CharacterInfo info, text.fontSize, text.fontStyle);
 
-            float fontWidth = info.advance * uiScale;
-            float fontHeight = text.font.lineHeight * text.lineSpacing / uiScale;
+            var scaleFactor = text.canvas.scaleFactor;
 
-            if (text.rectTransform.rect.width == 0)
-                text.rectTransform.ForceUpdateRectTransforms();
+            // Unity requires fonts to be pixel perfect whether the "pixel perfect"
+            // tick is ticked or not in the root canvas
+            float fontWidth = Mathf.Round(info.advance * scaleFactor) / scaleFactor;
+            float fontHeight = Mathf.Round(text.fontSize * text.lineSpacing * scaleFactor) / scaleFactor;
 
-            float boundingBoxWidth = text.GetComponent<RectTransform>().rect.width * uiScale;
-            float boundingBoxHeight = text.GetComponent<RectTransform>().rect.height * uiScale;
+            var rect = text.GetComponent<RectTransform>().rect;
+
+            float boundingBoxWidth = rect.xMax - rect.xMin;
+            float boundingBoxHeight = rect.yMax - rect.yMin;
 
             int consoleWidth = Mathf.FloorToInt(boundingBoxWidth / fontWidth);
             int consoleHeight = Mathf.FloorToInt(boundingBoxHeight / fontHeight);
             if (consoleWidth < 0) consoleWidth = 0;
             if (consoleHeight < 0) consoleHeight = 0;
-            Debug.Log((uiScale, fontWidth, fontHeight, boundingBoxWidth, boundingBoxHeight, consoleWidth, consoleHeight));
             return new Vector2Int(x: consoleWidth, y: consoleHeight);
         }
 

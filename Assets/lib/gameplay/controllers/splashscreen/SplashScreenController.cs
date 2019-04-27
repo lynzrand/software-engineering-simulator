@@ -77,9 +77,7 @@ namespace Sesim.Game.Controllers
 
             counter++;
             if (counter > maxCounter) counter = 0;
-            consoleSize = ConsoleHelper.GetConsoleSize(console, uiScale);
-
-            Debug.Log($"Canvas ScaleFactor = {uiScale}, DPI = {screenDpi}, console size = {consoleSize}");
+            consoleSize = ConsoleHelper.GetConsoleSize(console);
 
             var sb = new StringBuilder();
             for (int i = Math.Max(0, cache.Count - consoleSize.y); i < cache.Count; i++)
