@@ -1,8 +1,48 @@
 ---
 title: 软件开发计划书
+
+toc: true
+toc-title: 目录
+toc-depth: 2
+numbersections: true
+
+lang: zh-CN
+
+fontsize: 11pt
+linestretch: 1.05
+
+linkcolor: blue
+
+documentclass: scrartcl 
+
+mainfont: Tinos
+mainfontoptions:
+  - BoldFont=Tinos Bold
+  - ItalicFont=Tinos Italic
+  - BoldItalicFont=Tinos Bold Italic
+CJKmainfont: Source Han Serif CN
+CJKmainfontoptions:
+  - BoldFont=Source Han Serif CN Bold
+  - ItalicFont=Source Han Serif CN Italic
+  - BoldItalicFont=Source Han Serif CN Bold Italic
+monofont: Iosevka
+monofontoptions:
+  - BoldFont=Iosevka Bold
+  - ItalicFont=Iosevka Italic
+  - BoldItalicFont=Iosevka Bold Italic
+CJKmonofont: Source Han Sans SC
+CJKmonofontoptions:
+  - BoldFont=Source Han Sans SC Bold
+  - ItalicFont=Source Han Sans SC Italic
+  - BoldItalicFont=Source Han Sans SC Bold Italic
+
+header-includes:
+  - \usepackage{xeCJK}
+  - \XeTeXlinebreaklocale "zh"
+  - \XeTeXlinebreakskip = 0pt plus 1pt minus 0.1pt
 ---
 
-[TOC]
+<!-- [TOC] -->
 
 # 引言
 
@@ -10,7 +50,9 @@ title: 软件开发计划书
 
 <!-- 不想说空话，就这样了吧 -->
 
-编写此计划的目的是为了合理安排组织成员，有效利用时间，以确保项目进度，预见项目风险等活动。使项目严格按照软件开发流程进行，遵循正规的顺序开展。同时，项目开发人员通过此计划书明确项目目标和各自职责。它说明软件的开发方法，是一种计划，以指导工作只用。本计划书主要确定：
+编写此计划的目的是为了合理安排组织成员，有效利用时间，以确保项目进度，预见项目风险等活动。使项目严格按照软件开发流程进行，遵循正规的顺序开展。同时，项目开发人员通过此计划书明确项目目标和各自职责。它说明软件的开发方法、制定计划，以指导工作用。
+
+本计划书主要确定：
 
 - 软件开发的内容、生命周期；
 - 软件规范、方法和标准；
@@ -27,23 +69,25 @@ title: 软件开发计划书
 - 进度安排
 - 质量保证计划
 
-## 术语、缩写定义
+## 定义
 
-| 术语/缩写 | 定义                      |
-|-----------|---------------------------|
-| Unity     | [Unity3D][unity] 游戏引擎 |
-| NPC       | 非玩家角色                |
-
+- N/A: Not Applicable，无、不适用
+- 玩家: 指游玩此游戏的人
+- 系统/程序: 指游戏本身
+- Unity: [Unity3D][unity] 游戏引擎
 
 [unity]: https://unity.com
 
 ## 参考资料
 
-目前唯一采用的参考资料为unity编程与操作规范，后续参考的资料会在后续环节补充说明。
+1. Unity Scripting Reference (<https://docs.unity3d.com/ScriptReference>)
+2. Unity Manual (<https://docs.unity3d.com/Manual>)
+3. Microsoft Docs (<https://docs.microsoft.com/zh-cn/>)
+
 
 ## 相关文档
 
-目前还没有引入相关文档，后期引用的文档将会在后续环节补充说明。
+1. 开发需求说明书 (<https://github.com/01010101lzy/software-engineering-simulator/blob/master/docs/homework/spec.md>)
 
 ## 版本历史
 
@@ -74,12 +118,15 @@ title: 软件开发计划书
 
 ### 主要性能点
 
-- 对于大量数据和决策的处理
+由于本程序是一个游戏，每一帧的更新操作都需要在至多 1/30 s 内计算完成。
 
-### 主要接口点
+### 主要接口
 
-- 图形显示界面和数据集的接口调用
-- 用户操作接口
+- （后期）面向高级玩家的插件和 Mod（模组）系统
+
+## 目标用户
+
+本游戏的目标用户是普通及偏硬核的电脑游戏玩家。
 
 # 项目组织
 
@@ -90,7 +137,7 @@ title: 软件开发计划书
 - 美术工作人员将负责图形界面的设计、建模等工作；
 - 音乐工作人员将负责游戏的配乐等工作。
 
-
+人员与职务的安排如下表（暂定，使用 GitHub 用户名以方便追踪）：
 
 | 人员            | 职务             |
 |-----------------|------------------|
@@ -100,6 +147,8 @@ title: 软件开发计划书
 | @Maplecr        | 软件             |
 | @MoonLight23333 | 软件             |
 | @Dimpurr        | 音乐（外援）     |
+
+: 人员安排表
 
 # 生命周期
 
@@ -163,6 +212,10 @@ title: 软件开发计划书
 
 # 软件项目进度计划
 
+![](assets/gantt.png)
+
+<!-- Gantt 图原始代码 (mermaidjs):
+
 ```mermaid
 gantt
     dateformat YYYY-MM-DD
@@ -186,17 +239,7 @@ gantt
     section 测试
     单元测试                : d1, 2019-05-01, 2019-05-26
     集成测试                : d2, 2019-05-05, 2019-06-03
-```
-
-
-<!-- legacy code
-
-![1556208865875](assets/1556208865875.png)
-
-说明：需求分析总共需要五个工作日，主要分为行为需求分析、确认选题、确定编程的语言和工具、指定项目交付日期。系统设计总共需要六个工作日，主要分为审核初步软件规范、制定功能规范、根据功能规范开发原型、审核功能规范。编码总共需要二十四个工作日，主要分为确定模块化参数、分派任务、编写代码。测试总共需要二十四个工作日，主要分为开发人员测试、单元测试、集成测试。其中特别说明的是编码和测试两项任务所需的工作日有互相包含的关系。
- -->
-
-
+``` -->
 
 # 风险分析
 

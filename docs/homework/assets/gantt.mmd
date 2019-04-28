@@ -1,0 +1,22 @@
+gantt
+    dateformat YYYY-MM-DD
+    section 需求分析
+    行为需求分析            : done, a1, 2019-04-08, 1d
+    确定选题                : done, a2, after a1, 2d
+    确定编程语言和工具      : done, a3, after a2, 1d
+    指定交付期限            : done, a4, after a3, 1d
+
+    section 系统设计
+    初步计划                : done, b1, 2019-04-15, 1d
+    制定功能规范            : active, b2, after b1, 10d
+    开发原型                : active, b3, after b1, 10d
+    审核规范                : active, b4, after b2, 1d
+
+    section 编码
+    确定模块划分            : active, c1, after b4, 3d
+    指派任务                : c2, 2d after b2, 2d
+    编写代码                : c3, after c2, 2019-05-26
+
+    section 测试
+    单元测试                : d1, 2019-05-01, 2019-05-26
+    集成测试                : d2, 2019-05-05, 2019-06-03
