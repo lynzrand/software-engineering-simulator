@@ -158,8 +158,8 @@ namespace Sesim.Helpers.UI
 
         public static Base16ColorScheme MaterialPaleNight = new Base16ColorScheme(
             base00: "292D3E",
-            base01: "444267",
-            base02: "32374D",
+            base01: "32374D",
+            base02: "444267",
             base03: "676E95",
             base04: "8796B0",
             base05: "959DCB",
