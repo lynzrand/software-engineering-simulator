@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Sesim.Models;
-using ProtoBuf;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
