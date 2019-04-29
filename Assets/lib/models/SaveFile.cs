@@ -1,15 +1,13 @@
 using System;
-using ProtoBuf;
+using MessagePack;
 
 namespace Sesim.Models
 {
-    [ProtoContract]
+    [MessagePackObject(keyAsPropertyName: true)]
     public class SaveFile
     {
-        [ProtoMember(16)]
         public long version = 0;
 
-        [ProtoMember(20)]
         public Company company;
 
 

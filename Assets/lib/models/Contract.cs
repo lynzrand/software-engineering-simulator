@@ -1,6 +1,6 @@
 using System;
 using Hocon;
-using ProtoBuf;
+using MessagePack;
 using Sesim.Helpers.Config;
 using Sesim.Models.Exceptions;
 using UnityEngine;
@@ -28,10 +28,9 @@ namespace Sesim.Models
         }
     }
 
-    [ProtoContract]
+    [MessagePackObject(keyAsPropertyName: true)]
     public partial class Contract
     {
-        [ProtoMember(16)]
         public long id;
 
         public string Base32String

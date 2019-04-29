@@ -1,3 +1,14 @@
-﻿{
-	"name": "Sesim"
+{
+    "name": "Sesim",
+    "references": [
+        "MessagePack"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
 }

@@ -1,31 +1,38 @@
 using System;
 using System.Collections.Generic;
-using ProtoBuf;
+using MessagePack;
 
 namespace Sesim.Models
 {
-    [ProtoContract]
+    [MessagePackObject(keyAsPropertyName: true)]
     public partial class Company
     {
-        [ProtoMember(16)]
-        public string Name { get; set; }
+        // 7200 ticks / day, 300 ticks / hour, should be enough to play with
+        public static int TICKS_PER_DAY = 7200;
+        public static int TICKS_PER_HOUR = TICKS_PER_DAY / 24;
 
-        [ProtoMember(17)]
-        public double Time { get; set; }
+        public string name { get; set; }
 
-        [ProtoMember(18)]
-        public long Funds { get; set; }
+        /// <summary>
+        /// In-game time measured in ticks. One hour in game time equals 300 ticks
+        /// </summary>
+        /// <value></value>
+        public int time;
 
-        [ProtoMember(19)]
-        public float Reputation { get; set; }
+        public decimal fund;
+
+        public float reputation;
+
+        // Reserved for mods
+        public Dictionary<string, dynamic> extraData;
 
         /// <summary>
         /// Increase time and recalculate params
         /// </summary>
         /// <param name="step">The amount of time to be increased</param>
-        public void Tick(double step = 1)
+        public void Tick(int step = 1)
         {
-            Time += step;
+            time += step;
         }
     }
 }

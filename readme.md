@@ -20,21 +20,28 @@
 
 ## Dependencies
 
-由于 Unity3D 的某些特性（只认 `Assets/` 里面的文件），以下依赖项的二进制文件都被包含在了本仓库中。
+由于 Unity3D 的某些特性（只认 `Assets/` 里面的文件），以下依赖项的二进制文件或源代码都被包含在了本仓库中。
 
-Due to certain limitations of the Unity3D framework (only files in `Assets/` will be included for building), the binary release of all files below are contained in this repository.
+Due to certain limitations of the Unity3D framework (only files in `Assets/` will be included for building), the binary release or source code of all dependencies below are contained in this repository.
 
-- [protobuf-net][ptbnet] 3.0.0 ([BSD / Apache License][ptbnet_lic])
+- [MessagePack-CSharp][msgpak] ([MIT License][msgpak_lic])
 - [Hocon][hocon_] ([Apache 2.0 License][hocon__lic])
 - [Wiry.Base32][base32] ([MIT License][base32_lic])
 - [Ulid][ulid__] ([MIT License][ulid___lic])
 - [Iosevka][iosvka] ([SIL OFL license][iosvka_lic])
 - [Super Blur][sublur] ([MIT License][sublur_lic])
 
+已不再使用的依赖项：
+
+Dependencies that are no longer used:
+
+- [protobuf-net][ptbnet] 3.0.0 ([BSD / Apache License][ptbnet_lic])
 
 [dnf471]: https://www.microsoft.com/en-us/download/details.aspx?id=56119
 [nuget_]: https://www.nuget.org/
 [paket_]: https://fsprojects.github.io/Paket/
+[msgpak]: https://github.com/neuecc/MessagePack-CSharp
+[msgpak_lic]: https://github.com/neuecc/MessagePack-CSharp/blob/master/LICENSE
 [ptbnet]: https://github.com/mgravell/protobuf-net
 [ptbnet_lic]: https://github.com/mgravell/protobuf-net/blob/master/Licence.txt
 [hocon_]: https://github.com/akkadotnet/HOCON
