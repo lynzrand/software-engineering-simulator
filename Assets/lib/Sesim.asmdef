@@ -1,8 +1,6 @@
 {
     "name": "Sesim",
-    "references": [
-        "MessagePack"
-    ],
+    "references": [],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],

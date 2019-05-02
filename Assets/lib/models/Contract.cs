@@ -1,6 +1,5 @@
 using System;
 using Hocon;
-using MessagePack;
 using Sesim.Helpers.Config;
 using Sesim.Models.Exceptions;
 using UnityEngine;
@@ -35,13 +34,11 @@ namespace Sesim.Models
         public string description;
         public Ulid[] members;
         public Ulid taskId;
-        [IgnoreMember]
         public CompanyTask task;
         public float difficulty;
 
     }
 
-    [MessagePackObject(keyAsPropertyName: true)]
     public partial class CompanyTask
     {
         public Ulid id;

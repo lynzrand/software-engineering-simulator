@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using MessagePack;
 
 namespace Sesim.Models
 {
-    [MessagePackObject(keyAsPropertyName: true)]
     public partial class Company
     {
         // 7200 ticks / day, 300 ticks / hour, should be enough to play with

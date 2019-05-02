@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using MessagePack;
+using Ceras;
 using UnityEngine;
 
 namespace Sesim.Models
 {
-    [MessagePackObject(keyAsPropertyName: true)]
     public class Employee
     {
         // Ulids should be able to safely transform into MessagePack
