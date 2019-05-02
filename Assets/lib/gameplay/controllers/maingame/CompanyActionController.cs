@@ -14,6 +14,8 @@ namespace Sesim.Game.Controllers
         public Text timeDisplayer;
         public Camera cam;
 
+        public bool isFocused;
+
 
         // Start is called before the first frame update
         void Start()

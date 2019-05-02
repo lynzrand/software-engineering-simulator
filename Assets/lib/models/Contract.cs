@@ -28,20 +28,37 @@ namespace Sesim.Models
         }
     }
 
-    [MessagePackObject(keyAsPropertyName: true)]
     public partial class Contract
     {
-        public long id;
+        public Ulid id;
+        public string name;
+        public string description;
+        public Ulid[] members;
+        public Ulid taskId;
+        [IgnoreMember]
+        public CompanyTask task;
+        public float difficulty;
 
-        public string Base32String
-        {
-            get
-            {
-                return Base32Encoding.ZBase32.GetString(new byte[]{
-                (byte)(id>>56), (byte)(id>>48), (byte)(id>>40), (byte)(id>>32),
-                (byte)(id>>24), (byte)(id>>16), (byte)(id>>8), (byte)id
-            });
-            }
-        }
+    }
+
+    [MessagePackObject(keyAsPropertyName: true)]
+    public partial class CompanyTask
+    {
+        public Ulid id;
+
+        public string name;
+
+        public float totalWorkload;
+
+
+        public float testCoverage;
+
+        public bool testPassed;
+    }
+
+    public partial interface ICompleteCondition
+    {
+        // Predicate<CompanyTask> ConditionTester { get; }
+        bool TestCondition(CompanyTask task);
     }
 }

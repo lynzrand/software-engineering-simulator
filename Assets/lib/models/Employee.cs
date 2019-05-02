@@ -8,7 +8,12 @@ namespace Sesim.Models
     [MessagePackObject(keyAsPropertyName: true)]
     public class Employee
     {
+        // Ulids should be able to safely transform into MessagePack
+        public Ulid id;
+
         public string name;
+
+        public float experience;
 
         public float baseEfficiency;
 
@@ -38,7 +43,8 @@ namespace Sesim.Models
         public AnimationCurve efficiencyHealthCurve;
         public AnimationCurve efficiencyPressureCurve;
 
-        public void setEfficiencyTimeCurve(float startTime, float maxTime, float declineTime)
+        public void setEfficiencyTimeCurve(
+            float startTime = 0.3f, float maxTime = 2f, float declineTime = 6f)
         {
             efficiencyTimeCurve = new AnimationCurve(new Keyframe[]{
                 new Keyframe(0f,0f),
@@ -59,9 +65,9 @@ namespace Sesim.Models
         }
 
         public void setEfficiencyPressureCurve(
-            float zeroPressureEfficiency,
-            float maxEfficiencyPressure, float maxEfficiency,
-            float maxPressureEfficiency)
+            float zeroPressureEfficiency = 0.75f,
+            float maxEfficiencyPressure = 0.35f, float maxEfficiency = 1.6f,
+            float maxPressureEfficiency = 0.5f)
         {
             efficiencyPressureCurve = new AnimationCurve(new Keyframe[]{
                 new Keyframe(0f, zeroPressureEfficiency),
@@ -72,15 +78,20 @@ namespace Sesim.Models
 
         public float GetEfficiency(string name, int time)
         {
-            if (isWorking && abilities.TryGetValue(name, out float multiplier))
+            if (isWorking && abilities.TryGetValue(name, out float experience))
             {
-                var efficiency = baseEfficiency * multiplier;
+                var efficiency = baseEfficiency * EfficiencyExperienceMultiplier(experience);
                 var timeMultiplier = efficiencyTimeCurve.Evaluate((time - lastWorkTime) / 300f);
                 var healthMultiplier = efficiencyHealthCurve.Evaluate(health);
                 var pressureMultiplier = efficiencyPressureCurve.Evaluate(pressure);
                 return efficiency * timeMultiplier * healthMultiplier * pressureMultiplier;
             }
             else return 0;
+        }
+
+        public static float EfficiencyExperienceMultiplier(float exp)
+        {
+            return Mathf.Log(exp + 1, 2) + 0.5f;
         }
     }
 }
