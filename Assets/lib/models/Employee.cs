@@ -38,7 +38,7 @@ namespace Sesim.Models
         public Vector3 position;
         public Quaternion rotation;
 
-        // Curves are totally covered by MessagePack so no worries!
+        // Curves are totally covered by Ceras so no worries!
         public AnimationCurve efficiencyTimeCurve;
         public AnimationCurve efficiencyHealthCurve;
         public AnimationCurve efficiencyPressureCurve;
@@ -77,15 +77,25 @@ namespace Sesim.Models
             });
         }
 
-        public float GetEfficiency(string name, int time)
+        public float GetEfficiency(string name, int time,
+            bool useTime = true, bool useHealth = true, bool usePressure = true)
         {
             if (isWorking && abilities.TryGetValue(name, out float experience))
             {
                 var efficiency = baseEfficiency * EfficiencyExperienceMultiplier(experience);
-                // TODO: Implement health and pressure features
-                var timeMultiplier = efficiencyTimeCurve.Evaluate((time - lastWorkTime) / 300f);
-                var healthMultiplier = efficiencyHealthCurve.Evaluate(health);
-                var pressureMultiplier = efficiencyPressureCurve.Evaluate(pressure);
+
+                var timeMultiplier = useTime
+                    ? efficiencyTimeCurve?.Evaluate((time - lastWorkTime) / 300f) ?? 1f
+                    : 1f;
+
+                var healthMultiplier = useHealth
+                    ? efficiencyHealthCurve?.Evaluate(health) ?? 1f
+                    : 1f;
+
+                var pressureMultiplier = usePressure
+                    ? efficiencyPressureCurve?.Evaluate(pressure) ?? 1f
+                    : 1f;
+
                 return efficiency * timeMultiplier * healthMultiplier * pressureMultiplier;
                 // return efficiency;
             }
