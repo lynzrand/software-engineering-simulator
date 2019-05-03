@@ -13,7 +13,7 @@ namespace Sesim.Models
         public string category;
         public string title;
         public string description;
-        AnimationCurve abundanceCurve;
+        public AnimationCurve abundanceCurve;
 
         public ContractFactory()
         {

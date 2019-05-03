@@ -15,10 +15,14 @@ namespace Sesim.Models
     }
     #endregion
 
-    #region stages
+
+    #region Waterfall Model
     public class WaterfallModel : ISoftwareDevModel
     {
         public ISoftwareDevStage[] stages => throw new NotImplementedException();
     }
     #endregion
+
+
+
 }

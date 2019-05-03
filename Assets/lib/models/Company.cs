@@ -9,7 +9,7 @@ namespace Sesim.Models
         public static int TICKS_PER_DAY = 7200;
         public static int TICKS_PER_HOUR = TICKS_PER_DAY / 24;
 
-        public string name { get; set; }
+        public string name;
 
         /// <summary>
         /// In-game time measured in ticks. One hour in game time equals 300 ticks
@@ -20,6 +20,8 @@ namespace Sesim.Models
         public decimal fund;
 
         public float reputation;
+
+
 
         // Reserved for mods
         public Dictionary<string, dynamic> extraData;

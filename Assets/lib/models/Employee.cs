@@ -12,19 +12,20 @@ namespace Sesim.Models
 
         public string name;
 
-        public float experience;
+        public float experience = 0.414f;
 
         public float baseEfficiency;
 
         public Dictionary<string, float> abilities;
 
-        public List<Trait> traits;
+        // TODO: implement
+        // public List<Trait> traits;
 
         public decimal salary;
 
-        public float health;
+        public float health = 1.0f;
 
-        public float pressure;
+        public float pressure = 1.0f;
 
         public int lastWorkTime;
 
@@ -42,7 +43,7 @@ namespace Sesim.Models
         public AnimationCurve efficiencyHealthCurve;
         public AnimationCurve efficiencyPressureCurve;
 
-        public void setEfficiencyTimeCurve(
+        public void SetEfficiencyTimeCurve(
             float startTime = 0.3f, float maxTime = 2f, float declineTime = 6f)
         {
             efficiencyTimeCurve = new AnimationCurve(new Keyframe[]{
@@ -53,7 +54,7 @@ namespace Sesim.Models
             });
         }
 
-        public void setEfficiencyHealthCurve(
+        public void SetEfficiencyHealthCurve(
             float oneTangent, float zeroTangent,
             float oneWeight = 0.333f, float zeroWeight = 0.333f)
         {
@@ -63,7 +64,7 @@ namespace Sesim.Models
             });
         }
 
-        public void setEfficiencyPressureCurve(
+        public void SetEfficiencyPressureCurve(
             float zeroPressureEfficiency = 0.75f,
             float maxEfficiencyPressure = 0.35f, float maxEfficiency = 1.6f,
             float maxPressureEfficiency = 0.5f)
@@ -80,10 +81,12 @@ namespace Sesim.Models
             if (isWorking && abilities.TryGetValue(name, out float experience))
             {
                 var efficiency = baseEfficiency * EfficiencyExperienceMultiplier(experience);
-                var timeMultiplier = efficiencyTimeCurve.Evaluate((time - lastWorkTime) / 300f);
-                var healthMultiplier = efficiencyHealthCurve.Evaluate(health);
-                var pressureMultiplier = efficiencyPressureCurve.Evaluate(pressure);
-                return efficiency * timeMultiplier * healthMultiplier * pressureMultiplier;
+                // TODO: Implement health and pressure features
+                // var timeMultiplier = efficiencyTimeCurve.Evaluate((time - lastWorkTime) / 300f);
+                // var healthMultiplier = efficiencyHealthCurve.Evaluate(health);
+                // var pressureMultiplier = efficiencyPressureCurve.Evaluate(pressure);
+                // return efficiency * timeMultiplier * healthMultiplier * pressureMultiplier;
+                return efficiency;
             }
             else return 0;
         }
