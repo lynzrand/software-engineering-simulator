@@ -14,22 +14,22 @@ namespace Sesim.Models
 
         public float experience = 0.414f;
 
-        public float baseEfficiency;
+        public float baseEfficiency = 1f;
 
         public Dictionary<string, float> abilities;
 
         // TODO: implement
         // public List<Trait> traits;
 
-        public decimal salary;
+        public decimal salary = 0;
 
         public float health = 1.0f;
 
         public float pressure = 1.0f;
 
-        public int lastWorkTime;
+        public int lastWorkTime = 0;
 
-        public bool isWorking;
+        public bool isWorking = true;
 
         // This field is reserved for mods
         public Dictionary<string, dynamic> extraData;
@@ -44,18 +44,19 @@ namespace Sesim.Models
         public AnimationCurve efficiencyPressureCurve;
 
         public void SetEfficiencyTimeCurve(
-            float startTime = 0.3f, float maxTime = 2f, float declineTime = 6f)
+            float startEfficiency = 0.5f, float startTime = 0.3f,
+            float maxTime = 2f, float declineTime = 6f)
         {
             efficiencyTimeCurve = new AnimationCurve(new Keyframe[]{
-                new Keyframe(0f,0f),
+                new Keyframe(0f, startEfficiency),
                 new Keyframe(startTime, 1f),
-                new Keyframe(maxTime, 1),
-                new Keyframe(declineTime, 0)
+                new Keyframe(maxTime, 1f),
+                new Keyframe(declineTime, 0f)
             });
         }
 
         public void SetEfficiencyHealthCurve(
-            float oneTangent, float zeroTangent,
+            float oneTangent = 0f, float zeroTangent = 0f,
             float oneWeight = 0.333f, float zeroWeight = 0.333f)
         {
             efficiencyHealthCurve = new AnimationCurve(new Keyframe[]{
@@ -82,18 +83,18 @@ namespace Sesim.Models
             {
                 var efficiency = baseEfficiency * EfficiencyExperienceMultiplier(experience);
                 // TODO: Implement health and pressure features
-                // var timeMultiplier = efficiencyTimeCurve.Evaluate((time - lastWorkTime) / 300f);
-                // var healthMultiplier = efficiencyHealthCurve.Evaluate(health);
-                // var pressureMultiplier = efficiencyPressureCurve.Evaluate(pressure);
-                // return efficiency * timeMultiplier * healthMultiplier * pressureMultiplier;
-                return efficiency;
+                var timeMultiplier = efficiencyTimeCurve.Evaluate((time - lastWorkTime) / 300f);
+                var healthMultiplier = efficiencyHealthCurve.Evaluate(health);
+                var pressureMultiplier = efficiencyPressureCurve.Evaluate(pressure);
+                return efficiency * timeMultiplier * healthMultiplier * pressureMultiplier;
+                // return efficiency;
             }
             else return 0;
         }
 
         public static float EfficiencyExperienceMultiplier(float exp)
         {
-            return Mathf.Log(exp + 1, 2) + 0.5f;
+            return Mathf.Log(exp + 1, 2);
         }
     }
 }
