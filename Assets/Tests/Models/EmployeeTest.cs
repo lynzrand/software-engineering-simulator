@@ -37,23 +37,23 @@ namespace Tests
             e.SetEfficiencyTimeCurve(1f);
 
             // Test with basic multiplier
-            Assert.AreEqual(3f, e.GetEfficiency("java", 0), .01f, "Known type");
-            Assert.AreEqual(0f, e.GetEfficiency("lua", 0), .01f, "Known type, zero exp");
-            Assert.AreEqual(0f, e.GetEfficiency("javascript", 0), .01f, "Unknown type");
+            Assert.That(e.GetEfficiency("java", 0), Is.EqualTo(3f).Within(0.1f), "Known type");
+            Assert.That(e.GetEfficiency("lua", 0), Is.EqualTo(0f).Within(.01f), "Known type, zero exp");
+            Assert.That(e.GetEfficiency("javascript", 0), Is.EqualTo(0f).Within(.01f), "Unknown type");
 
             // Test through time
             e.SetEfficiencyTimeCurve();
-            Assert.AreEqual(1.5f, e.GetEfficiency("java", 0), .01f, "T=0 (startEfficiency)");
-            Assert.AreEqual(3f, e.GetEfficiency("java", 90), .01f, "T=startTime (max efficiency)");
-            Assert.AreEqual(3f, e.GetEfficiency("java", 600), .01f, "T=maxTime (max efficiency)");
-            Assert.AreEqual(1.5f, e.GetEfficiency("java", 1200), .01f, "T=(maxTime+declineTime)/2 (1/2 efficiency)");
-            Assert.AreEqual(0f, e.GetEfficiency("java", 1800), .01f, "T=declineTime (0 efficiency)");
+            Assert.That(e.GetEfficiency("java", 0), Is.EqualTo(1.5f).Within(.01f), "T=0 (startEfficiency)");
+            Assert.That(e.GetEfficiency("java", 90), Is.EqualTo(3f).Within(.01f), "T=startTime (max efficiency)");
+            Assert.That(e.GetEfficiency("java", 600), Is.EqualTo(3f).Within(.01f), "T=maxTime (max efficiency)");
+            Assert.That(e.GetEfficiency("java", 1200), Is.EqualTo(1.5f).Within(.01f), "T=(maxTime+declineTime)/2 (1/2 efficiency)");
+            Assert.That(e.GetEfficiency("java", 1800), Is.EqualTo(0f).Within(.01f), "T=declineTime (0 efficiency)");
 
             // Test through health
             e.health = 0.5f;
-            Assert.AreEqual(1.5f, e.GetEfficiency("java", 600), .01f, "health=0.5, half efficiency");
+            Assert.That(e.GetEfficiency("java", 600), Is.EqualTo(1.5f).Within(.01f), "health=0.5, half efficiency");
             e.health = 0f;
-            Assert.AreEqual(0f, e.GetEfficiency("java", 600), .01f, "health=0 (0 efficiency)");
+            Assert.That(e.GetEfficiency("java", 600), Is.EqualTo(0f).Within(.01f), "health=0 (0 efficiency)");
             // reset
             e.health = 1f;
 
@@ -61,13 +61,13 @@ namespace Tests
             e.SetEfficiencyPressureCurve();
             // no pressure
             e.pressure = 0f;
-            Assert.AreEqual(2.25f, e.GetEfficiency("java", 600), .01f, "pressure=0 (startEfficiency)");
+            Assert.That(e.GetEfficiency("java", 600), Is.EqualTo(2.25f).Within(.01f), "pressure=0 (startEfficiency)");
             // max efficiency
             e.pressure = 0.35f;
-            Assert.AreEqual(4.8f, e.GetEfficiency("java", 600), .01f, "pressure=maxEfficiencyPressure (maxEfficiency)");
+            Assert.That(e.GetEfficiency("java", 600), Is.EqualTo(4.8f).Within(.01f), "pressure=maxEfficiencyPressure (maxEfficiency)");
             // max pressure
             e.pressure = 1f;
-            Assert.AreEqual(1.5f, e.GetEfficiency("java", 600), .01f, "pressure=1 (maxPressureEfficiency)");
+            Assert.That(e.GetEfficiency("java", 600), Is.EqualTo(1.5f).Within(.01f), "pressure=1 (maxPressureEfficiency)");
 
         }
     }
