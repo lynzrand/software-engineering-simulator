@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Hocon;
 using Sesim.Helpers.Config;
 using Sesim.Models.Exceptions;
@@ -27,30 +28,57 @@ namespace Sesim.Models
         }
     }
 
+    public enum ContractStatus
+    {
+        Unaccepted,
+        Accepted,
+        Working,
+        Finished,
+        Aborted,
+        Other
+    }
+
+    /// <summary>
+    /// Represents a contract from a contractor
+    /// </summary>
     public partial class Contract
     {
         public Ulid id;
-        public string name;
-        public string description;
-        public Ulid[] members;
-        public Ulid taskId;
-        public CompanyTask task;
-        public float difficulty;
 
+        public string name;
+
+        public ContractStatus status;
+
+        public string description;
+
+        public string contractor;
+
+        public List<CompanyTask> task;
+
+        public float difficulty;
     }
 
+    /// <summary>
+    /// Represents a task in Company
+    /// </summary>
     public partial class CompanyTask
     {
         public Ulid id;
 
         public string name;
 
-        public float totalWorkload;
+        public ContractStatus status;
 
+        public List<Employee> members;
+
+        public float totalWorkload;
 
         public float testCoverage;
 
-        public bool testPassed;
+
+        public ICompleteCondition completeCondition;
+
+        public bool checkCompletion() => completeCondition.TestCondition(this);
     }
 
     public partial interface ICompleteCondition

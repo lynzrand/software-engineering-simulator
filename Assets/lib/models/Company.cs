@@ -21,6 +21,10 @@ namespace Sesim.Models
 
         public float reputation;
 
+        // TODO: add "cache" stuff for quick accessing of tasks and/or employees via identifier
+        public List<CompanyTask> tasks;
+        public List<Employee> employees;
+
 
 
         // Reserved for mods
@@ -33,6 +37,7 @@ namespace Sesim.Models
         public void Tick(int step = 1)
         {
             time += step;
+            // TODO: add "real" methods to calculate stuff
         }
     }
 }
