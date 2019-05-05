@@ -20,7 +20,7 @@ namespace Sesim.Game.Controllers
         // Start is called before the first frame update
         void Start()
         {
-            company = new Company();
+            // company = new Company();
         }
 
         // Update is called once per frame
