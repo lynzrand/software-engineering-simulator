@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ceras;
 
 namespace Sesim.Models
 {
@@ -8,6 +9,8 @@ namespace Sesim.Models
         // 7200 ticks / day, 300 ticks / hour, should be enough to play with
         public static int TICKS_PER_DAY = 7200;
         public static int TICKS_PER_HOUR = TICKS_PER_DAY / 24;
+
+        public bool isInitialized = false;
 
         public string name;
 
@@ -22,13 +25,36 @@ namespace Sesim.Models
         public float reputation;
 
         // TODO: add "cache" stuff for quick accessing of tasks and/or employees via identifier
+        public List<Contract> contracts;
         public List<CompanyTask> tasks;
         public List<Employee> employees;
 
-
+        public List<WorkPeriod> workTimes;
 
         // Reserved for mods
         public Dictionary<string, dynamic> extraData;
+
+        /// <summary>
+        /// Initialize before first play
+        /// </summary>
+        public void Init(string name = "")
+        {
+            this.name = name;
+            this.time = 0;
+            this.fund = decimal.Zero;
+            this.reputation = 0f;
+            this.tasks = new List<CompanyTask>();
+            this.contracts = new List<Contract>();
+            this.employees = new List<Employee>();
+            this.workTimes = new List<WorkPeriod>
+            {
+                new WorkPeriod(2700, 3450),
+                new WorkPeriod(3750, 5100)
+            };
+        }
+
+        [Exclude]
+        public bool isInWorkTime { get => workTimes.Exists(period => period.isInPeriod(time)); }
 
         /// <summary>
         /// Increase time and recalculate params
@@ -40,4 +66,19 @@ namespace Sesim.Models
             // TODO: add "real" methods to calculate stuff
         }
     }
+
+    public struct WorkPeriod
+    {
+        public WorkPeriod(int start, int end) { this.start = start; this.end = end; }
+
+        int start;
+        int end;
+
+        public int Start { get => start; set { if (value < Company.TICKS_PER_DAY) start = value; } }
+        public int End { get => start; set { if (value < Company.TICKS_PER_DAY) end = value; } }
+
+        public bool isInPeriod(int val)
+              => (val % Company.TICKS_PER_DAY) >= start && (val % Company.TICKS_PER_DAY) < end;
+    }
+
 }
