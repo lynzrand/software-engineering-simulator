@@ -81,4 +81,5 @@ namespace Sesim.Models
               => (val % Company.TICKS_PER_DAY) >= start && (val % Company.TICKS_PER_DAY) < end;
     }
 
+    
 }
