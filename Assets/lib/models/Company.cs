@@ -26,7 +26,6 @@ namespace Sesim.Models
 
         // TODO: add "cache" stuff for quick accessing of tasks and/or employees via identifier
         public List<Contract> contracts;
-        public List<CompanyTask> tasks;
         public List<Employee> employees;
 
         public List<WorkPeriod> workTimes;
@@ -43,7 +42,6 @@ namespace Sesim.Models
             this.time = 0;
             this.fund = decimal.Zero;
             this.reputation = 0f;
-            this.tasks = new List<CompanyTask>();
             this.contracts = new List<Contract>();
             this.employees = new List<Employee>();
             this.workTimes = new List<WorkPeriod>

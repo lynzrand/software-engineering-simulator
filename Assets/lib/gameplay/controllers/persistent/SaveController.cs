@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class SaveController : MonoBehaviour
+public class SaveController
 {
     static readonly string SAVEFILE_DIR = "Saves/%ID%";
 
@@ -34,8 +34,9 @@ public class SaveController : MonoBehaviour
             else
                 return null;
         });
+        config.VersionTolerance.Mode = VersionToleranceMode.Standard;
 
-        DontDestroyOnLoad(this.gameObject);
+        // DontDestroyOnLoad(this.gameObject);
     }
 
     /*

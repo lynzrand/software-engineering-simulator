@@ -28,7 +28,7 @@ namespace Sesim.Models
                 fund = this.company.fund,
                 reputation = this.company.reputation,
                 employeeCount = this.company.employees.Count,
-                taskCount = this.company.tasks.Count
+                contractCount = this.company.contracts.Count
             };
         }
     }
@@ -42,6 +42,6 @@ namespace Sesim.Models
         public decimal fund;
         public float reputation;
         public int employeeCount;
-        public int taskCount;
+        public int contractCount;
     }
 }
