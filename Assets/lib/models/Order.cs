@@ -6,6 +6,8 @@ namespace Sesim.Models
 {
     public partial class Order
     {
+        //主键
+        public Ulid ID;
         //订单名字
         public string Name;
 
