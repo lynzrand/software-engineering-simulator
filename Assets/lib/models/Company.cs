@@ -63,6 +63,16 @@ namespace Sesim.Models
             time += step;
             // TODO: add "real" methods to calculate stuff
         }
+
+        public void AddEmployee(Employee x)
+        {
+            employees.Add(x);
+        }
+
+        public void DelectEmployee(Ulid id)
+        {
+            employees.RemoveAll(e => e.id == id);
+        }
     }
 
     public struct WorkPeriod
@@ -79,11 +89,4 @@ namespace Sesim.Models
               => (val % Company.TICKS_PER_DAY) >= start && (val % Company.TICKS_PER_DAY) < end;
     }
 
-    public void AddEmployee(Employee x){
-        employees.Add(x);
-    }
-    
-    public void DelectEmployee(Ulid id){
-        employees.RemoveAll(e => e.id = id);
-    }
 }
