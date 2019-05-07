@@ -79,4 +79,11 @@ namespace Sesim.Models
               => (val % Company.TICKS_PER_DAY) >= start && (val % Company.TICKS_PER_DAY) < end;
     }
 
+    public void AddEmployee(Employee x){
+        employees.Add(x);
+    }
+    
+    public void DelectEmployee(Ulid id){
+        employees.RemoveAll(e => e.id = id);
+    }
 }
