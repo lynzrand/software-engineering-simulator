@@ -73,6 +73,16 @@ namespace Sesim.Models
         {
             employees.RemoveAll(e => e.id == id);
         }
+        
+        public void AddContract(Contract x)
+        {
+            contracts.Add(x);
+        }
+
+        public void DelectContract(Ulid id)
+        {
+            contracts.RemoveAll(c => c.id == id);
+        }
     }
 
     public struct WorkPeriod
