@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Sesim.Models
 {
@@ -24,7 +25,7 @@ namespace Sesim.Models
                 version = this.version,
                 id = this.id,
                 name = this.name,
-                ut = this.company.time,
+                ut = this.company.ut,
                 fund = this.company.fund,
                 reputation = this.company.reputation,
                 employeeCount = this.company.employees.Count,
@@ -43,5 +44,19 @@ namespace Sesim.Models
         public float reputation;
         public int employeeCount;
         public int contractCount;
+
+        public SaveMetadata() { }
+
+        public SaveMetadata(long version, Ulid id, string name, int ut, decimal fund, float reputation, int employeeCount, int contractCount)
+        {
+            this.version = version;
+            this.id = id;
+            this.name = name;
+            this.ut = ut;
+            this.fund = fund;
+            this.reputation = reputation;
+            this.employeeCount = employeeCount;
+            this.contractCount = contractCount;
+        }
     }
 }

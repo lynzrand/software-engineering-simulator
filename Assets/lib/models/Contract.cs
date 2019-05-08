@@ -94,6 +94,11 @@ namespace Sesim.Models
         /// </summary>
         public float difficulty;
 
+        /// <summary>
+        /// True if maintenence is avaliable for this contract; else once finished it's over
+        /// </summary>
+        public bool hasExtendedMaintencePeriod = false;
+
         #endregion
 
         #region Contract - Timings
@@ -161,11 +166,16 @@ namespace Sesim.Models
         public List<Employee> members;
 
         /// <summary>
-        /// The programming language preference of this contract.
+        /// The technology stack preference of this contract.
         /// Higher number for higher preference and higher bonus in work,
         /// 0 or null (no such key) means not applicable.
         /// </summary>
-        public Dictionary<string, float> programmingLanguagePreference;
+        public Dictionary<string, float> techStackPreference;
+
+        /// <summary>
+        /// The technology stack actrually used in this project
+        /// </summary>
+        public string techStack;
 
         /// <summary>
         /// The total workload of this contract.
@@ -175,12 +185,44 @@ namespace Sesim.Models
         /// <summary>
         /// The current work amount of this contract.
         /// </summary>
-        public double completedWorkload;
+        public double completedWork;
+
+        [Exclude]
+        public float Progress { get => (float)(completedWork / totalWorkload); }
 
         /// <summary>
         /// The reward the user's company recieves upon deposit.
         /// </summary>
         public ContractReward depositReward;
+
+        public void UpdateProgress(int ut, int dTime = 1)
+        {
+            float delta = 0f;
+            foreach (var employee in members)
+            {
+                var employeeEfficiency = employee.GetEfficiency(techStack, ut);
+                var work = employeeEfficiency * dTime;
+                delta += work;
+            }
+            completedWork += delta;
+        }
+
+        public void AutoCheckStatus(int ut)
+        {
+            switch (status)
+            {
+                case ContractStatus.Working when completeCondition.CompleteTest(ut, this):
+                    if (hasExtendedMaintencePeriod) status = ContractStatus.Maintaining;
+                    else status = ContractStatus.Finished;
+                    break;
+                case ContractStatus.Working when completeCondition.BreakTest(ut, this):
+                    status = ContractStatus.Aborted;
+                    break;
+                case ContractStatus.Maintaining when completeCondition.CompleteMaintenceTest(ut, this):
+                    status = ContractStatus.Finished;
+                    break;
+            }
+        }
 
         #endregion
 
@@ -206,26 +248,32 @@ namespace Sesim.Models
         /// </summary>
         public ICompleteCondition completeCondition = new TrivialCompleteCondition();
 
-        /// <summary>
-        /// Checks the if this contract completes
-        /// </summary>
-        /// <returns>True if this contract matches complete conditions</returns>
-        public bool checkCompletion() => completeCondition.TestCondition(this);
-
         #endregion
     }
 
     public interface ICompleteCondition
     {
         // Predicate<CompanyTask> ConditionTester { get; }
-        bool TestCondition(Contract task);
+        bool CompleteTest(int ut, Contract task);
+        bool CompleteMaintenceTest(int ut, Contract task);
+        bool BreakTest(int ut, Contract task);
     }
 
     public class TrivialCompleteCondition : ICompleteCondition
     {
-        public bool TestCondition(Contract task)
+        public bool BreakTest(int ut, Contract task)
         {
-            return task.completedWorkload >= task.totalWorkload;
+            return task.timeLimit < ut;
+        }
+
+        public bool CompleteMaintenceTest(int ut, Contract task)
+        {
+            return task.extendedTimeLimit < ut;
+        }
+
+        public bool CompleteTest(int ut, Contract task)
+        {
+            return task.completedWork >= task.totalWorkload;
         }
     }
     #endregion

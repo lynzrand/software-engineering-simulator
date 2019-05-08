@@ -43,6 +43,13 @@ namespace Sesim.Models
         public AnimationCurve efficiencyHealthCurve;
         public AnimationCurve efficiencyPressureCurve;
 
+        public Employee()
+        {
+            SetEfficiencyHealthCurve();
+            SetEfficiencyPressureCurve();
+            SetEfficiencyTimeCurve();
+        }
+
         public void SetEfficiencyTimeCurve(
             float startEfficiency = 0.5f, float startTime = 0.3f,
             float maxTime = 2f, float declineTime = 6f)
@@ -77,10 +84,10 @@ namespace Sesim.Models
             });
         }
 
-        public float GetEfficiency(string name, int time,
+        public float GetEfficiency(string techStackName, int time,
             bool useTime = true, bool useHealth = true, bool usePressure = true)
         {
-            if (isWorking && abilities.TryGetValue(name, out float experience))
+            if (isWorking && abilities.TryGetValue(techStackName, out float experience))
             {
                 var efficiency = baseEfficiency * EfficiencyExperienceMultiplier(experience);
 
@@ -100,6 +107,27 @@ namespace Sesim.Models
                 // return efficiency;
             }
             else return 0;
+        }
+
+        /// <summary>
+        /// Update working status for this employee (and track work start time)
+        /// </summary>
+        /// <param name="ut"></param>
+        /// <param name="shouldWork"></param>
+        public void UpdateWorkStatus(int ut, bool shouldWork)
+        {
+            if (shouldWork)
+            {
+                if (!isWorking)
+                {
+                    isWorking = true;
+                    lastWorkTime = ut;
+                }
+            }
+            else
+            {
+                isWorking = false;
+            }
         }
 
         public static float EfficiencyExperienceMultiplier(float exp)
