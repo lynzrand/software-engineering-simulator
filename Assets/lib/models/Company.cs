@@ -83,17 +83,17 @@ namespace Sesim.Models
             employees.Add(x);
         }
 
-        public void DelectEmployee(Ulid id)
+        public void RemoveEmployee(Ulid id)
         {
             employees.RemoveAll(e => e.id == id);
         }
-        
+
         public void AddContract(Contract x)
         {
             contracts.Add(x);
         }
 
-        public void DelectContract(Ulid id)
+        public void RemoveContract(Ulid id)
         {
             contracts.RemoveAll(c => c.id == id);
         }
