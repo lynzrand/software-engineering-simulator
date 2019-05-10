@@ -8,7 +8,21 @@
 
 **Software Engineering Simulator** is a homework project for the Software Engineering class in my college. This is a game to simulate (at least partially) the process of developing a software with a team. Will be complete Soon™. Might be uploaded to Steam after completion.
 
-## Development Environment
+## 文档 Documents
+
+供开发人员查看的文档（阶段性目标等）现在发布在 Notion 上。外部开发人员（如果有）可以参看以下文档（简体中文）：
+
+Documents for developers (e.g. partial goals) are published on Notion. External developers (if any) can refer to the following docs (written in Simplified Chinese):
+
+- [文档首页][sesim_notion_mainpage]
+- [计划列表][sesim_notion_kanban]
+- [文章、想法和碎碎念][sesim_notion_thoughts]
+
+[sesim_notion_mainpage]: https://www.notion.so/4e4e8da938f64a1596c4beefd1ddaa4e
+[sesim_notion_kanban]: https://www.notion.so/bdf8e75603534a38a816715151869410?v=2243fa7afb5c4630a72d78bbce567172
+[sesim_notion_thoughts]: https://www.notion.so/06c779fd600e4ad2bdeb73069892108b?v=40c98345647c47d4aefa38e63d453daf
+
+## 开发环境 Development Environment
 
 - Unity 2018.3.12f1
 - [DotNet Framework 4.7.1][dnf471]
@@ -18,7 +32,7 @@
 
 *Note: Because Unity3D does not go well with NuGet nor Paket, the dependencies are managed by hand for now.*
 
-## Dependencies
+## 依赖项 Dependencies
 
 由于 Unity3D 的某些特性（只认 `Assets/` 里面的文件），以下依赖项的二进制文件或源代码都被包含在了本仓库中。
 
@@ -61,7 +75,7 @@ Dependencies that are no longer used:
 [ptbnet]: https://github.com/mgravell/protobuf-net
 [ptbnet_lic]: https://github.com/mgravell/protobuf-net/blob/master/Licence.txt
 
-## License
+## 协议 License
 
 见[协议文件][lic]。
 
