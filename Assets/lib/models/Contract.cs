@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using Ceras;
 using Hocon;
 using Sesim.Helpers.Config;
-using Sesim.Models.Exceptions;
 using UnityEngine;
-using Wiry.Base32;
 
 namespace Sesim.Models
 {
