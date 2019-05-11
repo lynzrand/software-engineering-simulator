@@ -95,9 +95,9 @@ namespace Sesim.Models
         public float difficulty;
 
         /// <summary>
-        /// True if maintenence is avaliable for this contract; else once finished it's over
+        /// True if maintenance is avaliable for this contract; else once finished it's over
         /// </summary>
-        public bool hasExtendedMaintencePeriod = false;
+        public bool hasExtendedMaintenancePeriod = false;
 
         #endregion
 
@@ -173,7 +173,7 @@ namespace Sesim.Models
         public Dictionary<string, float> techStackPreference;
 
         /// <summary>
-        /// The technology stack actrually used in this project
+        /// The technology stack actually used in this project
         /// </summary>
         public string techStack;
 
@@ -191,7 +191,7 @@ namespace Sesim.Models
         public float Progress { get => (float)(completedWork / totalWorkload); }
 
         /// <summary>
-        /// The reward the user's company recieves upon deposit.
+        /// The reward the user's company receives upon deposit.
         /// </summary>
         public ContractReward depositReward;
 
@@ -212,13 +212,13 @@ namespace Sesim.Models
             switch (status)
             {
                 case ContractStatus.Working when completeCondition.CompleteTest(ut, this):
-                    if (hasExtendedMaintencePeriod) status = ContractStatus.Maintaining;
+                    if (hasExtendedMaintenancePeriod) status = ContractStatus.Maintaining;
                     else status = ContractStatus.Finished;
                     break;
                 case ContractStatus.Working when completeCondition.BreakTest(ut, this):
                     status = ContractStatus.Aborted;
                     break;
-                case ContractStatus.Maintaining when completeCondition.CompleteMaintenceTest(ut, this):
+                case ContractStatus.Maintaining when completeCondition.CompleteMaintenanceTest(ut, this):
                     status = ContractStatus.Finished;
                     break;
             }
@@ -229,17 +229,17 @@ namespace Sesim.Models
         #region Contract - Reward and completion
 
         /// <summary>
-        /// The reward the user's company recieves once this project is completed.
+        /// The reward the user's company receives once this project is completed.
         /// </summary>
         public ContractReward completeReward;
 
         /// <summary>
-        /// The reward the user's company recieves in maintence period.
+        /// The reward the user's company receives in maintenance period.
         /// </summary>
-        public ContractReward maintainenceMonthlyReward;
+        public ContractReward maintenanceMonthlyReward;
 
         /// <summary>
-        /// The punishment the user's company recieves if he breaks the contract.
+        /// The punishment the user's company receives if he breaks the contract.
         /// </summary>
         public ContractReward breakContractPunishment;
 
@@ -255,7 +255,7 @@ namespace Sesim.Models
     {
         // Predicate<CompanyTask> ConditionTester { get; }
         bool CompleteTest(int ut, Contract task);
-        bool CompleteMaintenceTest(int ut, Contract task);
+        bool CompleteMaintenanceTest(int ut, Contract task);
         bool BreakTest(int ut, Contract task);
     }
 
@@ -266,7 +266,7 @@ namespace Sesim.Models
             return task.timeLimit < ut;
         }
 
-        public bool CompleteMaintenceTest(int ut, Contract task)
+        public bool CompleteMaintenanceTest(int ut, Contract task)
         {
             return task.extendedTimeLimit < ut;
         }
