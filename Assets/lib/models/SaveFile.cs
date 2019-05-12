@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ceras;
 
 namespace Sesim.Models
 {
@@ -18,6 +19,7 @@ namespace Sesim.Models
 
         public DifficultySettings settings;
 
+        [Exclude]
         public SaveMetadata Metadata
         {
             get => new SaveMetadata
@@ -57,6 +59,10 @@ namespace Sesim.Models
             this.reputation = reputation;
             this.employeeCount = employeeCount;
             this.contractCount = contractCount;
+        }
+
+        public override string ToString(){
+            return $"Savefile(version: {version}, id: {id}, name: \"{name}\", ut: {ut}, fund: {fund}, reputation: {reputation}, employeeCount: {employeeCount}, contractCount: {contractCount})";
         }
     }
 }

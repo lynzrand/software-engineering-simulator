@@ -15,13 +15,13 @@ public class SaveController
     static readonly string SAVEFILE_DIR = "Saves/%ID%";
 
 
-    SaveFile saveData;
+    public SaveFile saveData;
     byte[] saveBuffer = null;
 
-    CerasSerializer ceras = new CerasSerializer();
-    SerializerConfig config = new SerializerConfig();
+    public CerasSerializer ceras = new CerasSerializer();
+    public SerializerConfig config = new SerializerConfig();
 
-    string savePosition;
+    public string savePosition;
 
     // Start is called before the first frame update
     void Start()
