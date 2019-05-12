@@ -1,0 +1,25 @@
+sudo: required
+language: bash
+
+services:
+    - docker
+
+env:
+    global:
+        - "IMAGE_NAME=gableroux/unity3d:2018.3.12f1"
+        - "BUILD_NAME=SoftwareEngineeringSimulator"
+
+before-install:
+    - docker pull $IMAGE_NAME
+    
+jobs:
+    include:
+        - 
+            stage: test
+            script: "chmod +x ./ci/docker_test.sh && ./ci/docker_test.sh"
+            env: TEST_PLATFORM=editmode
+            addons:
+                artifacts:
+                    target_paths:
+                        - "$(pwd)/$TEST_PLATFORM-results.xml"
+
