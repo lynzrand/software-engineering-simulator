@@ -16,7 +16,7 @@ jobs:
     include:
         - 
             stage: test
-            script: "chmod +x ./ci/docker_test.sh && ./ci/docker_test.sh"
+            script: "chmod +x ./ci/* && ./ci/docker_test.sh"
             env: TEST_PLATFORM=editmode
             addons:
                 artifacts:
