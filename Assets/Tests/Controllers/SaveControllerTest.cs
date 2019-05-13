@@ -30,6 +30,10 @@ namespace Sesim.Tests.Controllers
                             id = System.Ulid.NewUlid(),
                             name = "Mock-up Contract",
                         },
+                        new Models.Contract(){
+                            id = System.Ulid.NewUlid(),
+                            name = "Mock-up Contract 2",
+                        },
                     },
                     employees = new List<Models.Employee>(){
                         new Models.Employee(){
