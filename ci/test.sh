@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-set -x
 
 echo "Testng for $TEST_PLATFORM"
+set -x
 
 ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} \
   -projectPath $(pwd) \
@@ -23,6 +23,7 @@ elif [ $UNITY_EXIT_CODE -eq 3 ]; then
 else
   echo "Unexpected exit code $UNITY_EXIT_CODE";
 fi
+set +x
 
 ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} -quit -batchmode -returnlicense -logfile
 
