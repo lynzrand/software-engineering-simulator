@@ -43,3 +43,4 @@ paket.local
 paket.lock
 
 bin/
+/*.ulf
