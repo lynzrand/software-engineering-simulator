@@ -2,6 +2,8 @@
 
 ![logo](res/img/logo.png)
 
+![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator.svg?style=for-the-badge) ![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator/master.svg?label=stable&style=for-the-badge) ![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator/stable.svg?label=stable&style=for-the-badge)
+
 **WARNING: This project is in alpha phase. Use at your own risk.**
 
 **软件工程模拟器** 是软件工程课的作业。这是一款模拟软件开发过程的游戏，完成时间 Soon™。在做完之后可能会上架 Steam。

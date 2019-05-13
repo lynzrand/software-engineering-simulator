@@ -25,7 +25,7 @@ else
 fi
 set +x
 
-${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} -quit -batchmode -returnlicense -logfile
+# ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} -quit -batchmode -returnlicense -logfile
 
 cat $(pwd)/$TEST_PLATFORM-results.xml | grep test-run | grep Passed
 exit $UNITY_TEST_EXIT_CODE
