@@ -2,7 +2,7 @@
 
 ![logo](res/img/logo.png)
 
-![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator.svg?style=for-the-badge) ![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator/master.svg?label=stable&style=for-the-badge) ![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator/stable.svg?label=stable&style=for-the-badge)
+![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator.svg?label=test&style=for-the-badge) ![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator/master.svg?label=master&style=for-the-badge) ![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator/stable.svg?label=stable&style=for-the-badge)
 
 **WARNING: This project is in alpha phase. Use at your own risk.**
 
