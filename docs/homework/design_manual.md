@@ -48,11 +48,13 @@ header-includes:
 
 ## 目的
 
+本文档编写的目的是为了规范软件代码的结构等方面，防止在之后的开发中出现软件结构混乱、命名冲突等问题。
 
+## 命名规范
 
-## 范围
+代码的命名和编写规范见 [这篇关于命名规范的文档][cs_coding_standards]
 
-
+[cs_coding_standards]: http://github.com/ktaranov/naming-convention/blob/master/C%23%20Coding%20Standards%20and%20Naming%20Convensions
 
 ## 定义
 
@@ -81,3 +83,52 @@ header-includes:
 
 [git_history]: https://github.com/01010101lzy/software-engineering-simulator/commits/master/docs/homework/design_manual.md
 
+# 总体设计
+
+待补充。
+
+## 总体结构设计
+
+待补充。
+
+## 硬件运行环境设计
+
+待补充。
+
+## 软件运行环境设计
+
+待补充。
+
+## 功能模块清单
+
+待补充。
+
+# 模块功能分配
+
+待补充。
+
+## 公用模块功能分配
+
+待补充。
+
+## 专用模块功能分配
+
+待补充。
+
+# 存档结构设计
+
+待补充。
+
+# 其他设计
+
+待补充。
+
+# 系统错误处理机制
+
+待补充。
+
+# 测试计划
+
+截至本次文档更新时，开发组已在 Travis CI 上设置了测试流水线。流水线在每一次代码提交之后都会对当前提交的版本进行单元测试和集成测试，并将测试结果发回代码所有者和组长的邮箱中。
+
+[travis_repo]: https://travis-ci.com/01010101lzy/software-engineering-simulator/
