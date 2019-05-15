@@ -26,7 +26,9 @@ namespace Sesim.Models
         public float reputation;
 
         // TODO: add "cache" stuff for quick accessing of tasks and/or employees via identifier
+        public List<Contract> avaliableContracts;
         public List<Contract> contracts;
+        public List<Employee> avaliableEmployees;
         public List<Employee> employees;
 
         public List<WorkPeriod> workTimes;
@@ -61,6 +63,11 @@ namespace Sesim.Models
         [Exclude]
         public bool IsInWorkTime { get => workTimes.Exists(period => period.isInPeriod(ut)); }
 
+        /// <summary>
+        /// Update company status to that after `deltaT` time. May perform multiple 
+        /// iterations if `deltaT` is too large.
+        /// </summary>
+        /// <param name="deltaT">Delta time</param>
         public void Update(double deltaT)
         {
             if (deltaT <= maxDeltaTPerStep)
@@ -77,11 +84,10 @@ namespace Sesim.Models
                     RawUpdate(deltaT / iterCount);
                 }
             }
-
         }
 
         /// <summary>
-        /// Increase time and recalculate params
+        /// Re-calculate the company params after time increases
         /// </summary>
         /// <param name="deltaT">The amount of time to be increased</param>
         public void RawUpdate(double deltaT)
@@ -109,9 +115,9 @@ namespace Sesim.Models
             employees.Add(x);
         }
 
-        public void RemoveEmployee(Ulid id)
+        public bool RemoveEmployee(Ulid id)
         {
-            employees.RemoveAll(e => e.id == id);
+            return employees.RemoveAll(e => e.id == id) > 0;
         }
 
         public void AddContract(Contract x)
@@ -119,9 +125,9 @@ namespace Sesim.Models
             contracts.Add(x);
         }
 
-        public void RemoveContract(Ulid id)
+        public bool RemoveContract(Ulid id)
         {
-            contracts.RemoveAll(c => c.id == id);
+            return contracts.RemoveAll(c => c.id == id) > 0;
         }
 
         public static string UtToTimeString(double ut)
