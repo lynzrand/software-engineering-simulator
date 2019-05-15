@@ -104,19 +104,19 @@ namespace Sesim.Models
         /// <summary>
         /// The time that this contract spawns.
         /// </summary>
-        public int startTime;
+        public double startTime;
 
         /// <summary>
         /// The time this contract lives to until it disappear in contract view.
         /// </summary>
-        public int liveTime;
+        public double liveTime;
 
         /// <summary>
         /// The duration length of this contract's live period
         /// </summary>
         /// <value></value>
         [Exclude]
-        public int LiveDuration
+        public double LiveDuration
         {
             get => liveTime - startTime;
             set => liveTime = startTime + value;
@@ -125,14 +125,14 @@ namespace Sesim.Models
         /// <summary>
         /// The time this contract allows to be worked on to.
         /// </summary>
-        public int timeLimit;
+        public double timeLimit;
 
         /// <summary>
         /// The duration length of this contract's live period
         /// </summary>
         /// <value></value>
         [Exclude]
-        public int LimitDuration
+        public double LimitDuration
         {
             get => timeLimit - startTime;
             set => timeLimit = startTime + value;
@@ -141,14 +141,14 @@ namespace Sesim.Models
         /// <summary>
         /// The time this contract's support period extends to.
         /// </summary>
-        public int extendedTimeLimit;
+        public double extendedTimeLimit;
 
         /// <summary>
         /// The duration length of this contract's live period.
         /// </summary>
         /// <value></value>
         [Exclude]
-        public int ExtendedLimitDuration
+        public double ExtendedLimitDuration
         {
             get => extendedTimeLimit - startTime;
             set => extendedTimeLimit = startTime + value;
@@ -193,16 +193,19 @@ namespace Sesim.Models
         /// </summary>
         public ContractReward depositReward;
 
-        public void UpdateProgress(double ut, double deltaT = 1)
+        public void UpdateProgress(double ut, double deltaT)
         {
-            double delta = 0;
-            foreach (var employee in members)
+            if (status == ContractStatus.Working || status == ContractStatus.Maintaining)
             {
-                var employeeEfficiency = employee.GetEfficiency(techStack, ut);
-                var work = employeeEfficiency * deltaT;
-                delta += work;
+                double delta = 0;
+                foreach (var employee in members)
+                {
+                    var employeeEfficiency = employee.GetEfficiency(techStack, ut);
+                    var work = employeeEfficiency * deltaT / Company.ticksPerHour;
+                    delta += work;
+                }
+                completedWork += delta;
             }
-            completedWork += delta;
         }
 
         public void AutoCheckStatus(double ut)

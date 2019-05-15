@@ -7,8 +7,8 @@ namespace Sesim.Models
     public partial class Company
     {
         // 7200 ticks / day, 300 ticks / hour, should be enough to play with
-        public const int TICKS_PER_DAY = 7200;
-        public const int TICKS_PER_HOUR = TICKS_PER_DAY / 24;
+        public const int ticksPerDay = 7200;
+        public const int ticksPerHour = ticksPerDay / 24;
 
         public bool isInitialized = false;
 
@@ -57,10 +57,10 @@ namespace Sesim.Models
         /// <summary>
         /// Increase time and recalculate params
         /// </summary>
-        /// <param name="step">The amount of time to be increased</param>
-        public void FixedUpdate(double step = 1)
+        /// <param name="deltaT">The amount of time to be increased</param>
+        public void FixedUpdate(double deltaT)
         {
-            ut += step;
+            ut += deltaT;
             // cache
             var isInWorkTime = this.IsInWorkTime;
             // Update employees
@@ -71,7 +71,7 @@ namespace Sesim.Models
             // Update contracts
             foreach (var contract in contracts)
             {
-                contract.UpdateProgress(ut, step);
+                contract.UpdateProgress(ut, deltaT);
                 contract.AutoCheckStatus(ut);
             }
 
@@ -106,11 +106,11 @@ namespace Sesim.Models
         double start;
         double end;
 
-        public double Start { get => start; set { if (value < Company.TICKS_PER_DAY) start = value; } }
-        public double End { get => end; set { if (value < Company.TICKS_PER_DAY) end = value; } }
+        public double Start { get => start; set { if (value < Company.ticksPerDay) start = value; } }
+        public double End { get => end; set { if (value < Company.ticksPerDay) end = value; } }
 
         public bool isInPeriod(double ut)
-              => (ut % Company.TICKS_PER_DAY) >= start && (ut % Company.TICKS_PER_DAY) < end;
+              => (ut % Company.ticksPerDay) >= start && (ut % Company.ticksPerDay) < end;
     }
 
 }
