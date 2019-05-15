@@ -10,66 +10,69 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class SaveController
+namespace Sesim.Game.Controllers.Persistent
 {
-    static readonly string SAVEFILE_DIR = "Saves/%ID%";
-
-
-    public SaveFile saveData;
-    byte[] saveBuffer = null;
-
-    public CerasSerializer ceras = new CerasSerializer();
-    public SerializerConfig config = new SerializerConfig();
-
-    public string savePosition;
-
-    // Start is called before the first frame update
-    void Start()
+    public class SaveController
     {
+        static readonly string SAVEFILE_DIR = "Saves/%ID%";
 
-        config.OnResolveFormatter.Add((s, t) =>
+
+        public SaveFile saveData;
+        byte[] saveBuffer = null;
+
+        public CerasSerializer ceras = new CerasSerializer();
+        public SerializerConfig config = new SerializerConfig();
+
+        public string savePosition;
+
+        // Start is called before the first frame update
+        void Start()
         {
-            if (t == typeof(Ulid))
-                return new Sesim.Helpers.Ceras.UlidFormatter();
-            else
-                return null;
-        });
-        config.VersionTolerance.Mode = VersionToleranceMode.Standard;
 
-        // DontDestroyOnLoad(this.gameObject);
-    }
+            config.OnResolveFormatter.Add((s, t) =>
+            {
+                if (t == typeof(Ulid))
+                    return new Sesim.Helpers.Ceras.UlidFormatter();
+                else
+                    return null;
+            });
+            config.VersionTolerance.Mode = VersionToleranceMode.Standard;
 
-    /*
-        Save folders are structured like this:
+            // DontDestroyOnLoad(this.gameObject);
+        }
 
-        Saves/
-            <Ulid of this save>/
-                meta.bin                    - savefile metadata
-                save.bin                    - actrual savefile
-            .../
-     */
+        /*
+            Save folders are structured like this:
 
-    void resolveSavePos(Ulid saveId)
-    {
-        var dataPos = Application.dataPath;
-        savePosition = Directory
-            .GetParent(dataPos)
-            .CreateSubdirectory("Saves")
-            .CreateSubdirectory(saveId.ToString())
-            .FullName;
-    }
+            Saves/
+                <Ulid of this save>/
+                    meta.bin                    - savefile metadata
+                    save.bin                    - actrual savefile
+                .../
+         */
 
-    async void SaveAsync()
-    {
-        resolveSavePos(saveData.id);
-        var saveSize = ceras.Serialize<SaveFile>(saveData, ref saveBuffer);
-        var saveFile = File.OpenWrite(savePosition + "/save.bin");
-        await saveFile.WriteAsync(saveBuffer, 0, saveSize);
-        saveFile.Close();
+        void resolveSavePos(Ulid saveId)
+        {
+            var dataPos = Application.dataPath;
+            savePosition = Directory
+                .GetParent(dataPos)
+                .CreateSubdirectory("Saves")
+                .CreateSubdirectory(saveId.ToString())
+                .FullName;
+        }
 
-        var metaSize = ceras.Serialize<SaveMetadata>(saveData.Metadata, ref saveBuffer);
-        var metaFile = File.OpenWrite(savePosition + "/meta.bin");
-        await metaFile.WriteAsync(saveBuffer, 0, metaSize);
-        metaFile.Close();
+        async void SaveAsync()
+        {
+            resolveSavePos(saveData.id);
+            var saveSize = ceras.Serialize<SaveFile>(saveData, ref saveBuffer);
+            var saveFile = File.OpenWrite(savePosition + "/save.bin");
+            await saveFile.WriteAsync(saveBuffer, 0, saveSize);
+            saveFile.Close();
+
+            var metaSize = ceras.Serialize<SaveMetadata>(saveData.Metadata, ref saveBuffer);
+            var metaFile = File.OpenWrite(savePosition + "/meta.bin");
+            await metaFile.WriteAsync(saveBuffer, 0, metaSize);
+            metaFile.Close();
+        }
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
 
-namespace Sesim.Game.Controllers
+namespace Sesim.Game.Controllers.MainGame
 {
     public class CompanyActionController : MonoBehaviour
     {
@@ -55,6 +55,22 @@ namespace Sesim.Game.Controllers
         // Update is called once per frame
         void Update()
         {
+            UpdateCompany();
+
+            // var key = Event.current;
+
+            // if (Input.GetKey(KeyCode.A))
+            //     cam.transform.Translate(new Vector3(-30f, 0f, 0f) * Time.deltaTime);
+            // if (Input.GetKey(KeyCode.W))
+            //     cam.transform.Translate(new Vector3(0f, 30f, 0f) * Time.deltaTime);
+            // if (Input.GetKey(KeyCode.S))
+            //     cam.transform.Translate(new Vector3(0f, -30f, 0f) * Time.deltaTime);
+            // if (Input.GetKey(KeyCode.D))
+            //     cam.transform.Translate(new Vector3(30f, 0f, 0f) * Time.deltaTime);
+        }
+
+        private void UpdateCompany()
+        {
             double deltaT = Time.deltaTime * tickPerSecondAt1x * timeWarpMultiplier;
             if (deltaT <= maxDeltaTPerStep)
             {
@@ -71,17 +87,6 @@ namespace Sesim.Game.Controllers
                 }
             }
             Debug.Log($"time: {UtToTimeString(company.ut)}@{timeWarpMultiplier}x, delta-t: {deltaT.ToString("#.0000")}T, progress: {company.contracts[0].Progress}, status: {company.contracts[0].status}");
-
-            // var key = Event.current;
-
-            // if (Input.GetKey(KeyCode.A))
-            //     cam.transform.Translate(new Vector3(-30f, 0f, 0f) * Time.deltaTime);
-            // if (Input.GetKey(KeyCode.W))
-            //     cam.transform.Translate(new Vector3(0f, 30f, 0f) * Time.deltaTime);
-            // if (Input.GetKey(KeyCode.S))
-            //     cam.transform.Translate(new Vector3(0f, -30f, 0f) * Time.deltaTime);
-            // if (Input.GetKey(KeyCode.D))
-            //     cam.transform.Translate(new Vector3(30f, 0f, 0f) * Time.deltaTime);
         }
 
         public static string UtToTimeString(double ut)
