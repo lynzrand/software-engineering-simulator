@@ -156,14 +156,36 @@ header-includes:
 | 类名[^1]                              | 用途                               |
 |---------------------------------------|------------------------------------|
 | `MainGame.CompanyActionController`    | 进行游戏每帧的状态更新等工作       |
-| `MainGame.*PanelController`           | 控制游戏中的面板显示数据           |
+| `MainGame.*PanelController` [^2]      | 控制游戏中的面板显示数据           |
 | `Persistent.PersistentUIController`   | 用于控制在场景切换时不被销毁的对象 |
 | `Persistent.SaveController`           | 用于管理存档文件                   |
-| `Splashscreen.MainMenuController`     | 用于管理主菜单                     |
-| `Splashscreen.SplashScreenController` | 用于控制加载界面                   |
+| `SplashScreen.MainMenuController`     | 用于管理主菜单                     |
+| `SplashScreen.SplashScreenController` | 用于控制加载界面                   |
+| `SplashScreen.SettingsController`     | 用于控制设置界面                   |
 
 [^1]: 所有控制器都在 `Sesim.Controllers` 命名空间下。
+[^2]: 指以 `PanelController` 结尾的所有面板控制器
 
+### `MainGame.CompanyActionController`
+### `MainGame.*PanelController`
+### `Persistent.PersistentUIController`
+### `Persistent.SaveController`
+### `SplashScreen.MainMenuController`
+### `SplashScreen.SplashScreenController`
+### `SplashScreen.SettingsController`
+
+待补完。
+
+## 辅助模块设计
+
+辅助模块辅助控制器进行操作，和/或提供对常用操作的抽象处理。
+
+: 主要辅助模块表（部分还未实现）
+
+| 类名[^3]                              | 用途                               |
+|---------------------------------------|------------------------------------|
+
+[^3]: 所有辅助模块均在 `Sesim.Helper` 命名空间下
 # 存档结构设计
 
 SESim 的存档使用 Ceras 序列化器序列化为二进制存储。存档使用的序列化/反序列化器支持在以后的更新中添加或删除键值，所以此表的内容在开发过程中还有可能继续修改。每一个存档被存储为两个部分：元数据 `SaveMetadata` 和存档本身 `SaveFile`。存档各部分结构如下：
@@ -268,19 +290,86 @@ SESim 的存档使用 Ceras 序列化器序列化为二进制存储。存档使�
 | `fund`       | decimal | 资金增加量 |
 | `reputation` | float   | 声望增加量 |
 
-# 配置文件结构设计
+# 配置文件设计
 
-待补充
+在游戏设计稳定之后，玩家可以使用配置文件自定义游戏的行为。配置文件应当放在游戏根目录 `GameData` 文件夹下，以 UTF-8 字符集、 `.conf` 扩展名的纯文本文件存储，并采用 HOCON 格式编写。每一个配置文件均会被解释成对单个对象的配置。对于 HOCON 格式的介绍说明见[其作者在 GitHub 发布的文档][akka_hocon]。由于截至本文档最后一次编辑时，配置文件的设计还没有定稿，所以以下内容均为提案。
+
+[akka_hocon]: https://github.com/akkadotnet/HOCON
+
+下面列出了两份配置文件的示例：
+
+```hocon
+// 这是一份定义订单生成器的配置文件（节选)
+// 配置文件类型标注
+$type: contractFactory
+// 配置的键-值对
+name: androidMarketApplication
+category: applicationContract
+title: "Make a market app in Android for SomeCompany"
+// -- snip --
+difficulty-multiplier: {
+  // 配置可以按照定义嵌套
+  method: exponential
+  fund: 1.08
+  reputation: 1.21
+}
+```
+
+```hocon
+// 这是一份查找并修改符合要求的配置的文件示例
+$find: {
+  // 定义查找条件
+  $type: contractFactory
+  category: applicationContract
+  duration: {
+    // select those shorter than 30 days
+    easy: { $lt: 30 }
+  }
+  limit: 1
+}
+$do: {
+  duration: {
+    // 对配置进行修改
+    easy: { $inc: 15 }
+  }
+  modules: {
+    // 查找、修改的操作可以嵌套
+    $find: { name: exampleModule }
+    $do: { exampleValue: 1 }
+  }
+}
+```
+
+对于在一个文件内定义多个配置的情况，用户可以在配置文件的最底层使用数组语法定义多个对象，如下：
+
+```hocon
+[
+  {
+    $type: something
+    // -- config 1 --
+  }
+  {
+    $type: somethingElse
+    // -- config 2 --
+  }
+]
+```
 
 # 其他设计
 
-待补充。
+## 接口设计
+
+为了加强游戏的可扩展性，
+
+待补完。
 
 # 错误处理机制
 
-待补充。
+如果游戏某项功能在运行过程中遇到错误，错误将被 Unity 的记录系统记录到日志中，并在屏幕上显示相应错误记录。如果错误十分严重、会阻碍游戏继续运行，游戏将会弹窗显示错误并立即退出。
 
 # 测试计划
+
+本项目的单元测试和集成测试代码均位于 `Assets/Test` 目录下。
 
 截至本次文档更新时，开发组已在 Travis CI 上设置了测试流水线。流水线在每一次代码提交之后都会对当前提交的版本进行单元测试和集成测试，并将测试结果发回代码所有者和组长的邮箱中。
 
