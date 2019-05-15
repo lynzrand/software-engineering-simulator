@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ceras;
 
 namespace Sesim.Models
 {
@@ -18,6 +19,7 @@ namespace Sesim.Models
 
         public DifficultySettings settings;
 
+        [Exclude]
         public SaveMetadata Metadata
         {
             get => new SaveMetadata
@@ -57,6 +59,38 @@ namespace Sesim.Models
             this.reputation = reputation;
             this.employeeCount = employeeCount;
             this.contractCount = contractCount;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is SaveMetadata metadata &&
+                   version == metadata.version &&
+                   id == metadata.id &&
+                   name == metadata.name &&
+                   ut == metadata.ut &&
+                   fund == metadata.fund &&
+                   reputation == metadata.reputation &&
+                   employeeCount == metadata.employeeCount &&
+                   contractCount == metadata.contractCount;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1756717635;
+            hashCode = hashCode * -1521134295 + version.GetHashCode();
+            hashCode = hashCode * -1521134295 + id.GetHashCode();
+            hashCode = hashCode * -1521134295 + name.GetHashCode();
+            hashCode = hashCode * -1521134295 + ut.GetHashCode();
+            hashCode = hashCode * -1521134295 + fund.GetHashCode();
+            hashCode = hashCode * -1521134295 + reputation.GetHashCode();
+            hashCode = hashCode * -1521134295 + employeeCount.GetHashCode();
+            hashCode = hashCode * -1521134295 + contractCount.GetHashCode();
+            return hashCode;
+        }
+
+        public override string ToString()
+        {
+            return $"Savefile(version: {version}, id: {id}, name: \"{name}\", ut: {ut}, fund: {fund}, reputation: {reputation}, employeeCount: {employeeCount}, contractCount: {contractCount})";
         }
     }
 }
