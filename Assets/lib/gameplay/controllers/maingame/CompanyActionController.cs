@@ -11,7 +11,7 @@ namespace Sesim.Game.Controllers.MainGame
     public class CompanyActionController : MonoBehaviour
     {
         public static readonly double tickPerSecondAt1x = 60d;
-        public static readonly float maxDeltaTPerStep = 10.0f;
+
 
         public Company company;
         public Text warpDisplayer;
@@ -23,7 +23,7 @@ namespace Sesim.Game.Controllers.MainGame
         public float timeWarpMultiplier = 1.0f;
 
         // Start is called before the first frame update
-        void Start()
+        public void Start()
         {
             // Mock up a company before generator and savefile completes
             company = new Company();
@@ -71,38 +71,13 @@ namespace Sesim.Game.Controllers.MainGame
 
         private void UpdateCompany()
         {
-            double deltaT = Time.deltaTime * tickPerSecondAt1x * timeWarpMultiplier;
-            if (deltaT <= maxDeltaTPerStep)
-            {
-                company.FixedUpdate(deltaT);
-            }
-            else
-            {
-                // If time warp multiplier is too large, we need to split the
-                // calculation into multiple iterations to preserve accuracy.
-                int iterCount = (int)Math.Ceiling(deltaT / maxDeltaTPerStep);
-                for (int i = 0; i < iterCount; i++)
-                {
-                    company.FixedUpdate(deltaT / iterCount);
-                }
-            }
-            Debug.Log($"time: {UtToTimeString(company.ut)}@{timeWarpMultiplier}x, delta-t: {deltaT.ToString("#.0000")}T, progress: {company.contracts[0].Progress}, status: {company.contracts[0].status}");
+            var deltaT = Time.deltaTime * tickPerSecondAt1x * timeWarpMultiplier;
+            company.Update(deltaT);
+
+            // Log the update before our company is finished
+            Debug.Log($"time: {Company.UtToTimeString(company.ut)}@{timeWarpMultiplier}x, delta-t: {deltaT.ToString("#.0000")}T, progress: {company.contracts[0].Progress}, status: {company.contracts[0].status}");
         }
 
-        public static string UtToTimeString(double ut)
-        {
-            var time = UtToTime(ut);
-            return String.Format("Day{0:D4} {1:D2}:{2:00.0000}", time.days, time.hours, time.minutes);
-        }
-
-        public static (int days, int hours, double minutes) UtToTime(double ut)
-        {
-            int days = (int)Math.Floor(ut / Company.ticksPerDay);
-            int hours = (int)Math.Floor((ut % Company.ticksPerDay) / Company.ticksPerHour);
-            double minutes = (ut % Company.ticksPerHour) / (Company.ticksPerHour / 60);
-
-            return (days, hours, minutes);
-        }
 
     }
 }

@@ -9,6 +9,7 @@ namespace Sesim.Models
         // 7200 ticks / day, 300 ticks / hour, should be enough to play with
         public const int ticksPerDay = 7200;
         public const int ticksPerHour = ticksPerDay / 24;
+        public const float maxDeltaTPerStep = 10.0f;
 
         public bool isInitialized = false;
 
@@ -33,6 +34,12 @@ namespace Sesim.Models
         // Reserved for mods
         public Dictionary<string, dynamic> extraData;
 
+        [Exclude]
+        public string UtString { get => UtToTimeString(ut); }
+
+        [Exclude]
+        public (int days, int hours, double minutes) UtTime { get => UtToTime(ut); }
+
         /// <summary>
         /// Initialize before first play
         /// </summary>
@@ -54,11 +61,30 @@ namespace Sesim.Models
         [Exclude]
         public bool IsInWorkTime { get => workTimes.Exists(period => period.isInPeriod(ut)); }
 
+        public void Update(double deltaT)
+        {
+            if (deltaT <= maxDeltaTPerStep)
+            {
+                RawUpdate(deltaT);
+            }
+            else
+            {
+                // If time warp multiplier is too large, we need to split the
+                // calculation into multiple iterations to preserve accuracy.
+                int iterCount = (int)Math.Ceiling(deltaT / maxDeltaTPerStep);
+                for (int i = 0; i < iterCount; i++)
+                {
+                    RawUpdate(deltaT / iterCount);
+                }
+            }
+
+        }
+
         /// <summary>
         /// Increase time and recalculate params
         /// </summary>
         /// <param name="deltaT">The amount of time to be increased</param>
-        public void FixedUpdate(double deltaT)
+        public void RawUpdate(double deltaT)
         {
             ut += deltaT;
             // cache
@@ -97,6 +123,21 @@ namespace Sesim.Models
         {
             contracts.RemoveAll(c => c.id == id);
         }
+
+        public static string UtToTimeString(double ut)
+        {
+            var time = UtToTime(ut);
+            return String.Format("Day{0:D4} {1:D2}:{2:00.0000}", time.days, time.hours, time.minutes);
+        }
+
+        public static (int days, int hours, double minutes) UtToTime(double ut)
+        {
+            int days = (int)Math.Floor(ut / Company.ticksPerDay);
+            int hours = (int)Math.Floor((ut % Company.ticksPerDay) / Company.ticksPerHour);
+            double minutes = (ut % Company.ticksPerHour) / (Company.ticksPerHour / 60);
+            return (days, hours, minutes);
+        }
+
     }
 
     public struct WorkPeriod

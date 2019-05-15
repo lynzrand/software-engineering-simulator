@@ -559,6 +559,8 @@ MonoBehaviour:
   warpDisplayer: {fileID: 1494109434}
   timeDisplayer: {fileID: 1753565972}
   cam: {fileID: 464171393}
+  isFocused: 0
+  timeWarpMultiplier: 1
 --- !u!1 &464171391
 GameObject:
   m_ObjectHideFlags: 0
