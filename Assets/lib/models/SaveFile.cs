@@ -41,7 +41,7 @@ namespace Sesim.Models
         public long version = 0;
         public Ulid id;
         public string name;
-        public int ut;
+        public double ut;
         public decimal fund;
         public float reputation;
         public int employeeCount;

@@ -27,7 +27,7 @@ namespace Sesim.Models
 
         public float pressure = 1.0f;
 
-        public int lastWorkTime = 0;
+        public double lastWorkTime = 0;
 
         public bool isWorking = true;
 
@@ -84,7 +84,7 @@ namespace Sesim.Models
             });
         }
 
-        public float GetEfficiency(string techStackName, int time,
+        public float GetEfficiency(string techStackName, double ut,
             bool useTime = true, bool useHealth = true, bool usePressure = true)
         {
             if (isWorking && abilities.TryGetValue(techStackName, out float experience))
@@ -92,7 +92,7 @@ namespace Sesim.Models
                 var efficiency = baseEfficiency * EfficiencyExperienceMultiplier(experience);
 
                 var timeMultiplier = useTime
-                    ? efficiencyTimeCurve?.Evaluate((time - lastWorkTime) / 300f) ?? 1f
+                    ? efficiencyTimeCurve?.Evaluate((float)(ut - lastWorkTime) / 300) ?? 1f
                     : 1f;
 
                 var healthMultiplier = useHealth
@@ -114,7 +114,7 @@ namespace Sesim.Models
         /// </summary>
         /// <param name="ut"></param>
         /// <param name="shouldWork"></param>
-        public void UpdateWorkStatus(int ut, bool shouldWork)
+        public void UpdateWorkStatus(double ut, bool shouldWork)
         {
             if (shouldWork)
             {

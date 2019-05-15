@@ -193,19 +193,19 @@ namespace Sesim.Models
         /// </summary>
         public ContractReward depositReward;
 
-        public void UpdateProgress(int ut, int dTime = 1)
+        public void UpdateProgress(double ut, double deltaT = 1)
         {
-            float delta = 0f;
+            double delta = 0;
             foreach (var employee in members)
             {
                 var employeeEfficiency = employee.GetEfficiency(techStack, ut);
-                var work = employeeEfficiency * dTime;
+                var work = employeeEfficiency * deltaT;
                 delta += work;
             }
             completedWork += delta;
         }
 
-        public void AutoCheckStatus(int ut)
+        public void AutoCheckStatus(double ut)
         {
             switch (status)
             {
@@ -252,24 +252,24 @@ namespace Sesim.Models
     public interface ICompleteCondition
     {
         // Predicate<CompanyTask> ConditionTester { get; }
-        bool CompleteTest(int ut, Contract task);
-        bool CompleteMaintenanceTest(int ut, Contract task);
-        bool BreakTest(int ut, Contract task);
+        bool CompleteTest(double ut, Contract task);
+        bool CompleteMaintenanceTest(double ut, Contract task);
+        bool BreakTest(double ut, Contract task);
     }
 
     public class TrivialCompleteCondition : ICompleteCondition
     {
-        public bool BreakTest(int ut, Contract task)
+        public bool BreakTest(double ut, Contract task)
         {
             return task.timeLimit < ut;
         }
 
-        public bool CompleteMaintenanceTest(int ut, Contract task)
+        public bool CompleteMaintenanceTest(double ut, Contract task)
         {
             return task.extendedTimeLimit < ut;
         }
 
-        public bool CompleteTest(int ut, Contract task)
+        public bool CompleteTest(double ut, Contract task)
         {
             return task.completedWork >= task.totalWorkload;
         }

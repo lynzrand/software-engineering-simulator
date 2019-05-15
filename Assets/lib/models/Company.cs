@@ -18,7 +18,7 @@ namespace Sesim.Models
         /// In-game time measured in ticks. One hour in game time equals 300 ticks
         /// </summary>
         /// <value></value>
-        public int ut;
+        public double ut;
 
         public decimal fund;
 
@@ -58,7 +58,7 @@ namespace Sesim.Models
         /// Increase time and recalculate params
         /// </summary>
         /// <param name="step">The amount of time to be increased</param>
-        public void FixedUpdate(int step = 1)
+        public void FixedUpdate(double step = 1)
         {
             ut += step;
             // cache
@@ -101,16 +101,16 @@ namespace Sesim.Models
 
     public struct WorkPeriod
     {
-        public WorkPeriod(int start, int end) { this.start = start; this.end = end; }
+        public WorkPeriod(double start, double end) { this.start = start; this.end = end; }
 
-        int start;
-        int end;
+        double start;
+        double end;
 
-        public int Start { get => start; set { if (value < Company.TICKS_PER_DAY) start = value; } }
-        public int End { get => start; set { if (value < Company.TICKS_PER_DAY) end = value; } }
+        public double Start { get => start; set { if (value < Company.TICKS_PER_DAY) start = value; } }
+        public double End { get => end; set { if (value < Company.TICKS_PER_DAY) end = value; } }
 
-        public bool isInPeriod(int val)
-              => (val % Company.TICKS_PER_DAY) >= start && (val % Company.TICKS_PER_DAY) < end;
+        public bool isInPeriod(double ut)
+              => (ut % Company.TICKS_PER_DAY) >= start && (ut % Company.TICKS_PER_DAY) < end;
     }
 
 }
