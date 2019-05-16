@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 using Sesim.Models;
 using System;
 
-namespace Tests
+namespace Tests.Models
 {
     public class EmployeeTest
     {

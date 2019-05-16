@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-using Sesim.Game.Controllers;
+using Sesim.Game.Controllers.Persistent;
 using Ceras.Formatters;
 using Ceras;
 using Ceras.Helpers;

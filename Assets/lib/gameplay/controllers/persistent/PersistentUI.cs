@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Sesim.Game.Controllers
+namespace Sesim.Game.Controllers.Persistent
 {
     public class PersistentUI : MonoBehaviour
     {

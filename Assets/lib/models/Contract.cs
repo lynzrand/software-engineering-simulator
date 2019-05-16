@@ -104,19 +104,19 @@ namespace Sesim.Models
         /// <summary>
         /// The time that this contract spawns.
         /// </summary>
-        public int startTime;
+        public double startTime;
 
         /// <summary>
         /// The time this contract lives to until it disappear in contract view.
         /// </summary>
-        public int liveTime;
+        public double liveTime;
 
         /// <summary>
         /// The duration length of this contract's live period
         /// </summary>
         /// <value></value>
         [Exclude]
-        public int LiveDuration
+        public double LiveDuration
         {
             get => liveTime - startTime;
             set => liveTime = startTime + value;
@@ -125,14 +125,14 @@ namespace Sesim.Models
         /// <summary>
         /// The time this contract allows to be worked on to.
         /// </summary>
-        public int timeLimit;
+        public double timeLimit;
 
         /// <summary>
         /// The duration length of this contract's live period
         /// </summary>
         /// <value></value>
         [Exclude]
-        public int LimitDuration
+        public double LimitDuration
         {
             get => timeLimit - startTime;
             set => timeLimit = startTime + value;
@@ -141,14 +141,14 @@ namespace Sesim.Models
         /// <summary>
         /// The time this contract's support period extends to.
         /// </summary>
-        public int extendedTimeLimit;
+        public double extendedTimeLimit;
 
         /// <summary>
         /// The duration length of this contract's live period.
         /// </summary>
         /// <value></value>
         [Exclude]
-        public int ExtendedLimitDuration
+        public double ExtendedLimitDuration
         {
             get => extendedTimeLimit - startTime;
             set => extendedTimeLimit = startTime + value;
@@ -193,19 +193,22 @@ namespace Sesim.Models
         /// </summary>
         public ContractReward depositReward;
 
-        public void UpdateProgress(int ut, int dTime = 1)
+        public void UpdateProgress(double ut, double deltaT)
         {
-            float delta = 0f;
-            foreach (var employee in members)
+            if (status == ContractStatus.Working || status == ContractStatus.Maintaining)
             {
-                var employeeEfficiency = employee.GetEfficiency(techStack, ut);
-                var work = employeeEfficiency * dTime;
-                delta += work;
+                double delta = 0;
+                foreach (var employee in members)
+                {
+                    var employeeEfficiency = employee.GetEfficiency(techStack, ut);
+                    var work = employeeEfficiency * deltaT / Company.ticksPerHour;
+                    delta += work;
+                }
+                completedWork += delta;
             }
-            completedWork += delta;
         }
 
-        public void AutoCheckStatus(int ut)
+        public void AutoCheckStatus(double ut)
         {
             switch (status)
             {
@@ -252,24 +255,24 @@ namespace Sesim.Models
     public interface ICompleteCondition
     {
         // Predicate<CompanyTask> ConditionTester { get; }
-        bool CompleteTest(int ut, Contract task);
-        bool CompleteMaintenanceTest(int ut, Contract task);
-        bool BreakTest(int ut, Contract task);
+        bool CompleteTest(double ut, Contract task);
+        bool CompleteMaintenanceTest(double ut, Contract task);
+        bool BreakTest(double ut, Contract task);
     }
 
     public class TrivialCompleteCondition : ICompleteCondition
     {
-        public bool BreakTest(int ut, Contract task)
+        public bool BreakTest(double ut, Contract task)
         {
             return task.timeLimit < ut;
         }
 
-        public bool CompleteMaintenanceTest(int ut, Contract task)
+        public bool CompleteMaintenanceTest(double ut, Contract task)
         {
             return task.extendedTimeLimit < ut;
         }
 
-        public bool CompleteTest(int ut, Contract task)
+        public bool CompleteTest(double ut, Contract task)
         {
             return task.completedWork >= task.totalWorkload;
         }

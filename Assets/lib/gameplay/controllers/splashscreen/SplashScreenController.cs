@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Sesim.Helpers.UI;
 using System.Text;
 
-namespace Sesim.Game.Controllers
+namespace Sesim.Game.Controllers.SplashScreen
 {
     public class SplashScreenController : MonoBehaviour
     {
