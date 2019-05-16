@@ -75,7 +75,7 @@ namespace Sesim.Game.Controllers.MainGame
             company.Update(deltaT);
 
             // Log the update before our company is finished
-            Debug.Log($"time: {Company.UtToTimeString(company.ut)}@{timeWarpMultiplier}x, delta-t: {deltaT.ToString("#.0000")}T, progress: {company.contracts[0].Progress}, status: {company.contracts[0].status}");
+            Debug.Log($"time: {Company.UtToTimeString(company.ut)}@{timeWarpMultiplier}x, fps: {(1 / Time.unscaledDeltaTime).ToString("000.000")}, delta-t: {deltaT.ToString("#.0000")}T, progress: {company.contracts[0].Progress}, status: {company.contracts[0].status}");
         }
 
 
