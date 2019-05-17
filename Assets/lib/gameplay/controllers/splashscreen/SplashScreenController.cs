@@ -43,32 +43,25 @@ namespace Sesim.Game.Controllers.SplashScreen
             switch (type)
             {
                 case LogType.Assert:
-                    typeRepr = ApplyColor(typeRepr, scheme.base0F);
+                    typeRepr = ConsoleHelper.ApplyColor(typeRepr, scheme.base0F);
                     break;
                 case LogType.Error:
-                    typeRepr = ApplyColor(typeRepr, scheme.base08);
+                    typeRepr = ConsoleHelper.ApplyColor(typeRepr, scheme.base08);
                     break;
                 case LogType.Exception:
-                    typeRepr = ApplyColor(typeRepr, scheme.base09);
+                    typeRepr = ConsoleHelper.ApplyColor(typeRepr, scheme.base09);
                     break;
                 case LogType.Warning:
-                    typeRepr = ApplyColor(typeRepr, scheme.base0A);
+                    typeRepr = ConsoleHelper.ApplyColor(typeRepr, scheme.base0A);
                     break;
                 case LogType.Log:
-                    typeRepr = ApplyColor(typeRepr, scheme.base0C);
+                    typeRepr = ConsoleHelper.ApplyColor(typeRepr, scheme.base0C);
                     break;
             }
             cache.Add($"<b>[{timeStr}] [{typeRepr}]</b> {message}");
         }
 
-        public static string ColorToString(Color32 color)
-        {
-            return $"#{color.r.ToString("X2")}{color.g.ToString("X2")}{color.b.ToString("X2")}{color.a.ToString("X2")}";
-        }
-        public static string ApplyColor(string str, Color32 color)
-        {
-            return $"<color={ColorToString(color)}>{str}</color>";
-        }
+
 
         public void Update()
         {

@@ -16,8 +16,6 @@ namespace Sesim.Game.Controllers.MainGame
         public event AfterCompanyUpdateCallback AfterCompanyUpdate;
 
         public Company company;
-        public Text warpDisplayer;
-        public Text timeDisplayer;
         public Camera cam;
 
         public bool isFocused;
@@ -60,7 +58,16 @@ namespace Sesim.Game.Controllers.MainGame
             UpdateCompany();
 
             if (AfterCompanyUpdate != null) AfterCompanyUpdate.Invoke(this);
-            // var key = Event.current;
+            var key = Event.current;
+
+            if (Input.GetKeyDown(KeyCode.Period))
+                timeWarpMultiplier *= 2;
+            if (Input.GetKeyDown(KeyCode.Comma))
+                timeWarpMultiplier /= 2;
+            if (Input.GetKeyDown(KeyCode.X))
+                timeWarpMultiplier = 1;
+
+            timeWarpMultiplier = Mathf.Clamp(timeWarpMultiplier, 1, 128);
 
             // if (Input.GetKey(KeyCode.A))
             //     cam.transform.Translate(new Vector3(-30f, 0f, 0f) * Time.deltaTime);

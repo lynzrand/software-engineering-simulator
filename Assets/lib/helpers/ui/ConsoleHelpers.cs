@@ -110,9 +110,32 @@ namespace Sesim.Helpers.UI
             sb.Append(destination);
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Covert a Color32 color into a HEX string like `#66CCFFFF`
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static string ColorToString(Color32 color)
+            => $"#{color.r.ToString("X2")}{color.g.ToString("X2")}{color.b.ToString("X2")}{color.a.ToString("X2")}";
+
+        /// <summary>
+        /// Wraps a color tag around a string
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static string ApplyColor(string str, Color32 color)
+            => $"<color={ColorToString(color)}>{str}</color>";
+
+        public static string ColorOpeningTag(Color32 color)
+            => $"<color={ColorToString(color)}>";
+
+        public static string ColorClosingTag()
+            => "</color>";
+
+        public delegate int RunConsoleApp(string[] args);
+
     }
-
-    public delegate int RunConsoleApp(string[] args);
-
 
 }
