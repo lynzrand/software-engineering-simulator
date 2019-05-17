@@ -997,7 +997,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1343177663}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.2533599
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1643,6 +1643,7 @@ GameObject:
   - component: {fileID: 1702732392}
   - component: {fileID: 1702732394}
   - component: {fileID: 1702732395}
+  - component: {fileID: 1702732396}
   m_Layer: 5
   m_Name: StatusPanel
   m_TagString: Untagged
@@ -1752,6 +1753,23 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &1702732396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702732390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7258de2cd47a44c45982a1f69fa7aeb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentController: {fileID: 425257845}
+  timeDisplayer: {fileID: 1753565972}
+  warpDisplayer: {fileID: 1494109434}
+  fundDisplayer: {fileID: 0}
+  reputationDisplayer: {fileID: 0}
 --- !u!1 &1740973004
 GameObject:
   m_ObjectHideFlags: 0

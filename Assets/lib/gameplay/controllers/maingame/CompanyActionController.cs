@@ -12,6 +12,8 @@ namespace Sesim.Game.Controllers.MainGame
     {
         public static readonly double tickPerSecondAt1x = 60d;
 
+        public delegate void AfterCompanyUpdateCallback(CompanyActionController companyController);
+        public event AfterCompanyUpdateCallback AfterCompanyUpdate;
 
         public Company company;
         public Text warpDisplayer;
@@ -57,6 +59,7 @@ namespace Sesim.Game.Controllers.MainGame
         {
             UpdateCompany();
 
+            if (AfterCompanyUpdate != null) AfterCompanyUpdate.Invoke(this);
             // var key = Event.current;
 
             // if (Input.GetKey(KeyCode.A))
