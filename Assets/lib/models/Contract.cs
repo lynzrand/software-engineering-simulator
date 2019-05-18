@@ -95,7 +95,7 @@ namespace Sesim.Models
         /// <summary>
         /// True if maintenance is avaliable for this contract; else once finished it's over
         /// </summary>
-        public bool hasExtendedMaintenancePeriod = false;
+        public bool hasMaintenancePeriod = false;
 
         #endregion
 
@@ -110,6 +110,11 @@ namespace Sesim.Models
         /// The time this contract lives to until it disappear in contract view.
         /// </summary>
         public double liveTime;
+
+        /// <summary>
+        /// The time this contract is accepted by the player.
+        /// </summary>
+        public double depositTime;
 
         /// <summary>
         /// The duration length of this contract's live period
@@ -128,6 +133,11 @@ namespace Sesim.Models
         public double timeLimit;
 
         /// <summary>
+        /// The time this contract is completed by the player.
+        /// </summary>
+        public double completionTime;
+
+        /// <summary>
         /// The duration length of this contract's live period
         /// </summary>
         /// <value></value>
@@ -142,6 +152,7 @@ namespace Sesim.Models
         /// The time this contract's support period extends to.
         /// </summary>
         public double extendedTimeLimit;
+
 
         /// <summary>
         /// The duration length of this contract's live period.
@@ -208,21 +219,29 @@ namespace Sesim.Models
             }
         }
 
-        public void AutoCheckStatus(double ut)
+        public TransitionResult<ContractStatus> CheckStatus(double ut)
         {
+            ContractStatus oldStatus = status;
+            bool changed = true;
             switch (status)
             {
                 case ContractStatus.Working when completeCondition.CompleteTest(ut, this):
-                    if (hasExtendedMaintenancePeriod) status = ContractStatus.Maintaining;
+                    if (hasMaintenancePeriod) status = ContractStatus.Maintaining;
                     else status = ContractStatus.Finished;
                     break;
                 case ContractStatus.Working when completeCondition.BreakTest(ut, this):
                     status = ContractStatus.Aborted;
                     break;
+                case ContractStatus.Maintaining when completeCondition.ShouldReceiveMaintenanceRewardTest(ut, this):
+                    // leave changed = true
+                    break;
                 case ContractStatus.Maintaining when completeCondition.CompleteMaintenanceTest(ut, this):
                     status = ContractStatus.Finished;
                     break;
+                default:
+                    changed = false; break;
             }
+            return new TransitionResult<ContractStatus>(changed, oldStatus, status);
         }
 
         #endregion
@@ -252,16 +271,57 @@ namespace Sesim.Models
         #endregion
     }
 
+    public struct TransitionResult<T>
+    {
+        public bool changed;
+        public T oldValue;
+        public T newValue;
+
+        public TransitionResult(bool changed, T oldValue, T newValue)
+        {
+            this.changed = changed;
+            this.oldValue = oldValue;
+            this.newValue = newValue;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is TransitionResult<T> result &&
+                   changed == result.changed &&
+                   EqualityComparer<T>.Default.Equals(oldValue, result.oldValue) &&
+                   EqualityComparer<T>.Default.Equals(newValue, result.newValue);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 2013722904;
+            hashCode = hashCode * -1521134295 + changed.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(oldValue);
+            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(newValue);
+            return hashCode;
+        }
+    }
+
     public interface ICompleteCondition
     {
         // Predicate<CompanyTask> ConditionTester { get; }
         bool CompleteTest(double ut, Contract task);
         bool CompleteMaintenanceTest(double ut, Contract task);
+        bool ShouldReceiveMaintenanceRewardTest(double ut, Contract task);
         bool BreakTest(double ut, Contract task);
     }
 
     public class TrivialCompleteCondition : ICompleteCondition
     {
+
+        /// <summary>
+        /// The time period that the user get rewarded for maintaining.
+        /// </summary>
+        public double maintenanceRewardPeriod = 30 * 7200;
+
+        [Include]
+        public double lastCheckTime = -1;
+
         public bool BreakTest(double ut, Contract task)
         {
             return task.timeLimit < ut;
@@ -275,6 +335,14 @@ namespace Sesim.Models
         public bool CompleteTest(double ut, Contract task)
         {
             return task.completedWork >= task.totalWorkload;
+        }
+
+        public bool ShouldReceiveMaintenanceRewardTest(double ut, Contract task)
+        {
+            bool result = false;
+            result = !(Math.Floor((ut - task.completionTime) / maintenanceRewardPeriod) == Math.Floor((lastCheckTime - task.completionTime) / maintenanceRewardPeriod));
+            lastCheckTime = ut;
+            return result;
         }
     }
     #endregion

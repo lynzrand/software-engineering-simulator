@@ -14,6 +14,9 @@ namespace Sesim.Game.Controllers.MainGame
         public Text warpDisplayer;
         public Text fundDisplayer;
         public Text reputationDisplayer;
+        public Text employeeCountDisplayer;
+        public Text contractCountDisplayer;
+        public GameObject notificationDisplayer;
 
         public static Base16ColorScheme scheme = Base16ColorScheme.MaterialPaleNight;
 
@@ -27,12 +30,24 @@ namespace Sesim.Game.Controllers.MainGame
         {
             timeDisplayer.text = FormatTimeDisplay(src.company.ut, src.timeWarpMultiplier);
             warpDisplayer.text = FormatTimeWarp(src.timeWarpMultiplier);
+            fundDisplayer.text = FormatFund(src.company.fund);
+            reputationDisplayer.text = FormatReputation(src.company.reputation);
+        }
+
+        public static string FormatReputation(float reputation)
+        {
+            return reputation.ToString("0000.00");
+        }
+
+        public static string FormatFund(decimal fund)
+        {
+            return fund.ToString("000 000 000 000.00");
         }
 
         public static string FormatTimeDisplay(double ut, float warpSpeed)
         {
             var time = Company.UtToTime(ut);
-            return String.Format("Day<b>{0:0}</b> {1:00}:{2:00}<b>@{3:#}x</b>", time.days, time.hours, time.minutes, warpSpeed);
+            return String.Format("Day<b>{0:0000}</b> {1:00}:{2:00}<b>@{3:#}x</b>", time.days, time.hours, time.minutes, warpSpeed);
         }
 
         public static string FormatTimeWarp(float warpSpeed)

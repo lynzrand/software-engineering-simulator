@@ -48,6 +48,11 @@ namespace Sesim.Game.Controllers.MainGame
                 timeLimit = 7200 * 16,
                 totalWorkload = 30.0,
                 completedWork = 0.0,
+                completeReward = new ContractReward()
+                {
+                    fund = 10000,
+                    reputation = 10
+                },
                 techStack = "csharp"
             });
         }
