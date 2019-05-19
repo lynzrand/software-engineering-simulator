@@ -8,7 +8,13 @@ using UnityEngine;
 namespace Sesim.Models
 {
     #region Contract Factory
-    public class ContractFactory : IConfDeserializable
+    public interface IContractFactory
+    {
+        float GetWeight(Company c);
+        Contract GenerateContract(Company c);
+    }
+
+    public class ContractFactory : IConfDeserializable, IContractFactory
     {
         public string name;
         public string category;
@@ -24,6 +30,16 @@ namespace Sesim.Models
         public void DeserializeFromHocon(IHoconElement rootNode)
         {
             if (!(rootNode is HoconObject)) throw new DeformedObjectException();
+            throw new NotImplementedException();
+        }
+
+        public Contract GenerateContract(Company company)
+        {
+            throw new NotImplementedException();
+        }
+
+        public float GetWeight(Company company)
+        {
             throw new NotImplementedException();
         }
     }

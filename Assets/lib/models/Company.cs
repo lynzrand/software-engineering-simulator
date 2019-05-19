@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Ceras;
-
+using Sesim.Helpers.Gameplay;
 namespace Sesim.Models
 {
     public partial class Company
@@ -32,6 +32,9 @@ namespace Sesim.Models
         public List<Employee> employees;
 
         public List<WorkPeriod> workTimes;
+
+        [Exclude]
+        public List<ContractFactory> contractFactories;
 
         // Reserved for mods
         public Dictionary<string, dynamic> extraData;
@@ -108,8 +111,24 @@ namespace Sesim.Models
             }
         }
 
+        public void GenerateContract(int num = 1)
+        {
+            throw new NotImplementedException();
+            var picker = new WeightedRandomPicker<ContractFactory>();
+
+            foreach (var factory in contractFactories)
+                picker.AssignCandidate(factory, factory.GetWeight(this));
+
+            for (int i = 0; i < num; i++)
+            {
+                var factory = picker.Pick();
+                avaliableContracts.Add(factory.GenerateContract(this));
+            }
+        }
+
         public void AddEmployee(Employee x)
         {
+            avaliableEmployees.Remove(x);
             employees.Add(x);
         }
 
@@ -120,6 +139,7 @@ namespace Sesim.Models
 
         public void AddContract(Contract x)
         {
+            avaliableContracts.Remove(x);
             contracts.Add(x);
         }
 
