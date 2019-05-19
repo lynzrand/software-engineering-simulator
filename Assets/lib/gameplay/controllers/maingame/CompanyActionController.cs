@@ -12,10 +12,10 @@ namespace Sesim.Game.Controllers.MainGame
     {
         public static readonly double tickPerSecondAt1x = 60d;
 
+        public delegate void AfterCompanyUpdateCallback(CompanyActionController companyController);
+        public event AfterCompanyUpdateCallback AfterCompanyUpdate;
 
         public Company company;
-        public Text warpDisplayer;
-        public Text timeDisplayer;
         public Camera cam;
 
         public bool isFocused;
@@ -48,6 +48,11 @@ namespace Sesim.Game.Controllers.MainGame
                 timeLimit = 7200 * 16,
                 totalWorkload = 30.0,
                 completedWork = 0.0,
+                completeReward = new ContractReward()
+                {
+                    fund = 10000,
+                    reputation = 10
+                },
                 techStack = "csharp"
             });
         }
@@ -57,7 +62,17 @@ namespace Sesim.Game.Controllers.MainGame
         {
             UpdateCompany();
 
-            // var key = Event.current;
+            if (AfterCompanyUpdate != null) AfterCompanyUpdate.Invoke(this);
+            var key = Event.current;
+
+            if (Input.GetKeyDown(KeyCode.Period))
+                timeWarpMultiplier *= 2;
+            if (Input.GetKeyDown(KeyCode.Comma))
+                timeWarpMultiplier /= 2;
+            if (Input.GetKeyDown(KeyCode.X))
+                timeWarpMultiplier = 1;
+
+            timeWarpMultiplier = Mathf.Clamp(timeWarpMultiplier, 1, 128);
 
             // if (Input.GetKey(KeyCode.A))
             //     cam.transform.Translate(new Vector3(-30f, 0f, 0f) * Time.deltaTime);

@@ -104,10 +104,8 @@ namespace Sesim.Models
             foreach (var contract in contracts)
             {
                 contract.UpdateProgress(ut, deltaT);
-                contract.AutoCheckStatus(ut);
+                CheckContractStatus(contract);
             }
-
-            // TODO: update showed data
         }
 
         public void AddEmployee(Employee x)
@@ -128,6 +126,45 @@ namespace Sesim.Models
         public bool RemoveContract(Ulid id)
         {
             return contracts.RemoveAll(c => c.id == id) > 0;
+        }
+
+        /// <summary>
+        /// Checks the status of the contract and switches if applicable. This method
+        /// also applies the reward to the company.
+        /// </summary>
+        /// <param name="c"></param>
+        public void CheckContractStatus(Contract c)
+        {
+            var result = c.CheckStatus(ut);
+            if (result.changed)
+            {
+                if (result.oldValue == ContractStatus.Working && result.newValue == ContractStatus.Maintaining)
+                {
+                    ApplyReward(c.completeReward);
+                }
+                else if (result.oldValue == ContractStatus.Working && result.newValue == ContractStatus.Finished)
+                {
+                    ApplyReward(c.completeReward);
+                }
+                else if (result.oldValue == ContractStatus.Maintaining && result.newValue == ContractStatus.Maintaining)
+                {
+                    ApplyReward(c.maintenanceMonthlyReward);
+                }
+                else if (result.newValue == ContractStatus.Aborted)
+                {
+                    ApplyReward(c.breakContractPunishment);
+                }
+            }
+        }
+
+        /// <summary>
+        /// This method unconditionally applies the reward to the company
+        /// </summary>
+        /// <param name="reward"></param>
+        public void ApplyReward(ContractReward reward)
+        {
+            this.fund += reward.fund;
+            this.reputation += reward.reputation;
         }
 
         public static string UtToTimeString(double ut)
