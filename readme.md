@@ -2,7 +2,7 @@
 
 ![logo](res/img/logo.png)
 
-![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator.svg?label=test&style=for-the-badge) ![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator/master.svg?label=master&style=for-the-badge) ![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator/stable.svg?label=stable&style=for-the-badge)
+![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator.svg?label=latest&style=for-the-badge) ![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator/master.svg?label=master&style=for-the-badge) ![](https://img.shields.io/travis/com/01010101lzy/software-engineering-simulator/stable.svg?label=stable&style=for-the-badge)
 
 **WARNING: This project is in alpha phase. Use at your own risk.**
 
@@ -12,9 +12,21 @@
 
 ## 文档 Documents
 
-供开发人员查看的文档（阶段性目标等）现在发布在 Notion 上。外部开发人员（如果有）可以参看以下文档（简体中文）：
+供开发人员查看的文档（阶段性目标等；简体中文）如下：
 
-Documents for developers (e.g. partial goals) are published on Notion. External developers (if any) can refer to the following docs (written in Simplified Chinese):
+Documents for developers (e.g. partial goals; written in Simplified Chinese) are listed below:
+
+#### “瀑布” 类型的文档 Docs for "waterfall" style development
+
+- [开发计划书][sesim_dev_plan]
+- [需求说明书][sesim_spec]
+- [设计说明][sesim_design_manual]
+
+[sesim_dev_plan]: https://github.com/01010101lzy/software-engineering-simulator/blob/master/docs/homework/dev_plan.md
+[sesim_spec]: https://github.com/01010101lzy/software-engineering-simulator/blob/master/docs/homework/spec.md
+[sesim_design_manual]: https://github.com/01010101lzy/software-engineering-simulator/blob/master/docs/homework/design_manual.md
+
+#### “敏捷” 类型的文档 Docks for agile development (those that really work)
 
 - [文档首页][sesim_notion_mainpage]
 - [计划列表][sesim_notion_kanban]
