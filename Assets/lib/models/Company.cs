@@ -39,7 +39,10 @@ namespace Sesim.Models
         public List<WorkPeriod> workTimes;
 
         [Exclude]
-        public List<ContractFactory> contractFactories;
+        public List<IPickedGenerator<Contract, Company>> contractFactories;
+
+        [Exclude]
+        public List<IPickedGenerator<Employee, Company>> employeeGenerators;
 
         // Reserved for mods
         public Dictionary<string, dynamic> extraData;
@@ -63,8 +66,11 @@ namespace Sesim.Models
             this.avaliableContracts = new List<Contract>();
             this.employees = new List<Employee>();
             this.avaliableEmployees = new List<Employee>();
-            this.contractFactories = new List<ContractFactory>(){
+            this.contractFactories = new List<IPickedGenerator<Contract, Company>>{
                 new ContractFactory()
+            };
+            this.employeeGenerators = new List<IPickedGenerator<Employee, Company>>{
+                new EmployeeGenerator()
             };
             this.workTimes = new List<WorkPeriod>
             {
@@ -153,7 +159,7 @@ namespace Sesim.Models
             if (num < 0) throw new ArgumentException("Contract number should be positive!");
             if (num == 0) return;
 
-            var picker = new WeightedRandomPicker<ContractFactory>();
+            var picker = new WeightedRandomPicker<IPickedGenerator<Contract, Company>>();
 
             foreach (var factory in contractFactories)
             {
@@ -163,7 +169,7 @@ namespace Sesim.Models
             for (int i = 0; i < num; i++)
             {
                 var factory = picker.Pick();
-                avaliableContracts.Add(factory.GenerateContract(this));
+                avaliableContracts.Add(factory.Generate(this));
             }
         }
 

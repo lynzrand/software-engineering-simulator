@@ -4,18 +4,8 @@ using UnityEngine;
 
 namespace Sesim.Models
 {
-
-    public interface ICompanyRelatedGenerator<T>
+    public class EmployeeGenerator : IPickedGenerator<Employee, Company>
     {
-        float GetWeight(Company c);
-
-        T Generate(Company C);
-    }
-
-    public class EmployeeGenerator : ICompanyRelatedGenerator<Employee>
-    {
-
-        //create the Employee
         public float GetWeight(Company c)
         {
             return 1;
@@ -37,10 +27,10 @@ namespace Sesim.Models
             return employee;
         }
 
+        // TODO: Read this from file
         private static string[] employeeNames = {
             "A people", "B people", "C people", "D people"
         };
-
 
         public String RandomName()
         {
