@@ -8,7 +8,13 @@ using UnityEngine;
 namespace Sesim.Models
 {
     #region Contract Factory
-    public class ContractFactory : IConfDeserializable
+    public interface IContractFactory
+    {
+        float GetWeight(Company c);
+        Contract GenerateContract(Company c);
+    }
+
+    public class ContractFactory : IConfDeserializable, IContractFactory
     {
         public string name;
         public string category;
@@ -119,6 +125,16 @@ namespace Sesim.Models
             if (!(rootNode is HoconObject)) throw new DeformedObjectException();
             throw new NotImplementedException();
         }
+
+        public Contract GenerateContract(Company company)
+        {
+            throw new NotImplementedException();
+        }
+
+        public float GetWeight(Company company)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     #endregion
@@ -205,7 +221,12 @@ namespace Sesim.Models
         public double liveTime;
 
         /// <summary>
-        /// The duration length of this contract's live period
+        /// The time this contract is accepted by the player.
+        /// </summary>
+        public double depositTime;
+
+        /// <summary>
+        /// The duration length of this contract's live period on contract list
         /// </summary>
         /// <value></value>
         [Exclude]
@@ -221,7 +242,12 @@ namespace Sesim.Models
         public double timeLimit;
 
         /// <summary>
-        /// The duration length of this contract's live period
+        /// The time this contract is completed by the player.
+        /// </summary>
+        public double completionTime;
+
+        /// <summary>
+        /// The duration length of this contract's working period
         /// </summary>
         /// <value></value>
         [Exclude]
@@ -237,7 +263,7 @@ namespace Sesim.Models
         public double extendedTimeLimit;
 
         /// <summary>
-        /// The duration length of this contract's live period.
+        /// The duration length of this contract's maintenance period
         /// </summary>
         /// <value></value>
         [Exclude]
