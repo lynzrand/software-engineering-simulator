@@ -25,11 +25,14 @@ jobs:
         - 
             stage: test
             script: "chmod +x ./ci/* && ./ci/docker_test.sh"
-            env: TEST_PLATFORM=editmode
+            env: TEST_PLATFORM=playmode
             addons:
                 artifacts:
                     target_paths:
                         - "$(pwd)/$TEST_PLATFORM-results.xml"
+        # -   
+        #     stage: build
+        #     scr
 
 notifications:
     webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
