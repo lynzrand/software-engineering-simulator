@@ -133,7 +133,7 @@ namespace Sesim.Models
         public double depositTime;
 
         /// <summary>
-        /// The duration length of this contract's live period
+        /// The duration length of this contract's live period on contract list
         /// </summary>
         /// <value></value>
         [Exclude]
@@ -154,7 +154,7 @@ namespace Sesim.Models
         public double completionTime;
 
         /// <summary>
-        /// The duration length of this contract's live period
+        /// The duration length of this contract's working period
         /// </summary>
         /// <value></value>
         [Exclude]
@@ -171,7 +171,7 @@ namespace Sesim.Models
 
 
         /// <summary>
-        /// The duration length of this contract's live period.
+        /// The duration length of this contract's maintenance period
         /// </summary>
         /// <value></value>
         [Exclude]
