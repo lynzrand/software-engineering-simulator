@@ -39,6 +39,7 @@ namespace Tests.Models
                 completedWork = 0.0,
                 techStack = "csharp"
             });
+            mockCompany.contractFactories.Add(new ContractFactory());
         }
 
 
@@ -57,6 +58,7 @@ namespace Tests.Models
             mockCompany.Update(1.0);
             Assert.That(mockCompany.contracts[0].Progress, Is.EqualTo(0.0), "Company should not update when not in work period");
             Assert.That(mockCompany.IsInWorkTime, Is.False, "0:00 is not in default work time");
+            Assert.That(mockCompany.avaliableContracts.Count, Is.EqualTo(mockCompany.avaliableContractLimit));
 
             // 9:00 is in work time. Should start working
             mockCompany.ut = 9 * 300;

@@ -12,7 +12,7 @@ namespace Sesim.Models
 
         public string name;
 
-        public float experience = 0.414f;
+        public float experience = 0f;
 
         public float baseEfficiency = 1f;
 
@@ -89,7 +89,7 @@ namespace Sesim.Models
         {
             if (isWorking && abilities.TryGetValue(techStackName, out float experience))
             {
-                var efficiency = baseEfficiency * EfficiencyExperienceMultiplier(experience);
+                var efficiency = baseEfficiency * EfficiencyExperienceMultiplier(this.experience) * EfficiencyAbilityMultiplier(experience);
 
                 var timeMultiplier = useTime
                     ? efficiencyTimeCurve?.Evaluate((float)(ut - lastWorkTime) / 300) ?? 1f
@@ -133,6 +133,11 @@ namespace Sesim.Models
         public static float EfficiencyExperienceMultiplier(float exp)
         {
             return Mathf.Log(exp + 2, 2);
+        }
+
+        public static float EfficiencyAbilityMultiplier(float exp)
+        {
+            return Mathf.Log(exp + 1, 2);
         }
     }
 }

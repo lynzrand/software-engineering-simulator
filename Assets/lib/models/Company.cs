@@ -63,7 +63,9 @@ namespace Sesim.Models
             this.avaliableContracts = new List<Contract>();
             this.employees = new List<Employee>();
             this.avaliableEmployees = new List<Employee>();
-            contractFactories = new List<ContractFactory>();
+            this.contractFactories = new List<ContractFactory>(){
+                new ContractFactory()
+            };
             this.workTimes = new List<WorkPeriod>
             {
                 new WorkPeriod(2700, 3450),
@@ -102,10 +104,10 @@ namespace Sesim.Models
             {
                 GenerateContract(avaliableContractLimit - avaliableContracts.Count);
             }
-            if (avaliableEmployees.Count < avaliableEmployeeLimit)
-            {
-                GenerateContract(avaliableEmployeeLimit - avaliableEmployees.Count);
-            }
+            // if (avaliableEmployees.Count < avaliableEmployeeLimit)
+            // {
+            //     GenerateContract(avaliableEmployeeLimit - avaliableEmployees.Count);
+            // }
         }
 
         /// <summary>

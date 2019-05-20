@@ -18,6 +18,8 @@ namespace Sesim.Helpers.Gameplay
 
         public WeightedRandomPicker(IList<T> candidates, IList<float> weights)
         {
+            if (candidates.Count != weights.Count)
+                throw new MissingMemberException($"Candidate count {candidates.Count} is not equal to weight count {weights.Count}. Abort.");
             this.candidates = candidates;
             this.weights = weights;
             totalWeight = 0;
@@ -39,9 +41,11 @@ namespace Sesim.Helpers.Gameplay
         {
             if (candidates.Count != weights.Count)
                 throw new MissingMemberException($"Candidate count {candidates.Count} is not equal to weight count {weights.Count}. Abort.");
+            if (candidates.Count == 0)
+                throw new ArgumentException("Candidate count is 0", nameof(candidates.Count));
             var random = new Random();
             var picked = random.NextDouble() * totalWeight;
-            int pickedIndex = -1;
+            int pickedIndex = 0;
             double partial = 0;
             for (int i = 0; i < weights.Count; i++)
             {

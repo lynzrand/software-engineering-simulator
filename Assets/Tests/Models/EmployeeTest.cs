@@ -18,6 +18,7 @@ namespace Tests.Models
             {
                 id = new Ulid(),
                 name = "Test Employee",
+                experience = 0f,
                 baseEfficiency = 1.5f,
                 health = 1.0f,
                 pressure = 0f,
@@ -38,8 +39,8 @@ namespace Tests.Models
 
             // Test with basic multiplier
             Assert.That(e.GetEfficiency("java", 0), Is.EqualTo(3f).Within(0.1f), "Known type");
-            Assert.That(e.GetEfficiency("lua", 0), Is.EqualTo(0f).Within(.01f), "Known type, zero exp");
-            Assert.That(e.GetEfficiency("javascript", 0), Is.EqualTo(0f).Within(.01f), "Unknown type");
+            Assert.That(e.GetEfficiency("lua", 0, useTime: false), Is.EqualTo(0f).Within(.01f), "Known type, zero exp");
+            Assert.That(e.GetEfficiency("javascript", 0, useTime: false), Is.EqualTo(0f).Within(.01f), "Unknown type");
 
             // Test through time
             e.SetEfficiencyTimeCurve();
