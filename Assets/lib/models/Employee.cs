@@ -132,7 +132,7 @@ namespace Sesim.Models
 
         public static float EfficiencyExperienceMultiplier(float exp)
         {
-            return Mathf.Log(exp + 1, 2);
+            return Mathf.Log(exp + 2, 2);
         }
     }
 }
