@@ -28,7 +28,7 @@ cat $(pwd)/$TEST_PLATFORM-results.xml
 
 set +x
 
-exit $UNITY_TEST_EXIT_CODE
+exit $UNITY_EXIT_CODE
 
 # ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} -quit -batchmode -returnlicense -logfile
 
