@@ -32,6 +32,8 @@ namespace Sesim.Game.Controllers.MainGame
             warpDisplayer.text = FormatTimeWarp(src.timeWarpMultiplier);
             fundDisplayer.text = FormatFund(src.company.fund);
             reputationDisplayer.text = FormatReputation(src.company.reputation);
+            contractCountDisplayer.text = src.company.contracts.Count.ToString();
+            employeeCountDisplayer.text = src.company.employees.Count.ToString();
         }
 
         public static string FormatReputation(float reputation)

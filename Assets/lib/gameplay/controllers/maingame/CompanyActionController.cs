@@ -23,7 +23,7 @@ namespace Sesim.Game.Controllers.MainGame
         public float timeWarpMultiplier = 1.0f;
 
         // Start is called before the first frame update
-        public void Start()
+        public void Awake()
         {
             // Mock up a company before generator and savefile completes
             company = new Company();
