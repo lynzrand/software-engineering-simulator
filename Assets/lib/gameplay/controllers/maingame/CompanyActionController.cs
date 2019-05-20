@@ -55,6 +55,8 @@ namespace Sesim.Game.Controllers.MainGame
                 },
                 techStack = "csharp"
             });
+
+            company.contractFactories.Add(new ContractFactory());
         }
 
         // Update is called once per frame
