@@ -46,6 +46,7 @@ Due to certain limitations of the Unity3D framework (only files in `Assets/` wil
 - [Ulid][ulid__] ([MIT License][ulid___lic])
 - [Iosevka][iosvka] ([SIL OFL license][iosvka_lic])
 - [Super Blur][sublur] ([MIT License][sublur_lic])
+- MathNet.Numerics (MIT License)
 
 已不再使用的依赖项：
 

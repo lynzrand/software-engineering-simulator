@@ -113,7 +113,7 @@ namespace Sesim.Models
 
         public void GenerateContract(int num = 1)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
             var picker = new WeightedRandomPicker<ContractFactory>();
 
             foreach (var factory in contractFactories)
