@@ -50,6 +50,76 @@ namespace Sesim.Models
             SetEfficiencyTimeCurve();
         }
 
+        //create the Employee
+        public int GetWeight(Company C)
+        {
+            if (C.reputation < 100)
+            {
+                return 1;
+            }
+            else if (C.reputation >= 100 && C.reputation < 200)
+            {
+
+            }
+            else
+            {
+
+            }
+            return 0;
+        }
+        public employee GenerateEmployee(Company c)
+        {
+            var employee = RandomEmployee();
+            var name = RandomName(employee);
+            var base_efficiency = RandomEfficiency(GetWeight(c));
+            var experience = RandomExperience(GetWeight(c));
+            var salary = RandomSalary(GetWeight(c));
+            var employee = new Employee
+            {
+                id = Ulid.NewUlid(),
+                name = name,
+                baseEfficiency = base_efficiency,
+                experience = experience,
+                salary = salary,
+            };
+            return employee;
+        }
+        private static string[] employeeNames = {
+            "A people", "B people", "C people", "D people"
+        };
+
+        public String RandomName()
+        {
+            return employeeNames[new System.Random().Next(employeeNames.Length)];
+        }
+        public float RandomEfficiency(int op) {
+            if(op == 1) {
+                return Random(1*0.95,1*1.05);
+            }
+            else {
+
+            }
+            return 0;
+        }
+        public float RandomExperience(int op) {//the work time (years)
+            if(op == 1) {
+                return Random(1*0.4,1*0.6);
+            }
+            else {
+
+            }
+            return 0;
+        }
+        public float RandomSalary(int op) {//the work time (years)
+            if(op == 1) {
+                return Random(1*1.90,1*2.10) * 1000;
+            }
+            else {
+
+            }
+            return 0;
+        }
+        //end create
         public void SetEfficiencyTimeCurve(
             float startEfficiency = 0.5f, float startTime = 0.3f,
             float maxTime = 2f, float declineTime = 6f)
