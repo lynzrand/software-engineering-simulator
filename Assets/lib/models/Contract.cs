@@ -27,97 +27,70 @@ namespace Sesim.Models
 
         }
 
-        public float GetWeight(Company C){
-            if(C.reputation<100)
+        public float GetWeight(Company C)
+        {
+            if (C.reputation < 100)
             {
                 return 1;
             }
-            else if(C.reputation>=100&&C.reputation<200)
+            else if (C.reputation >= 100 && C.reputation < 200)
             {
-                
-            }
-            else{
 
             }
+            else
+            {
+
+            }
+            return 0;
         }
 
-        public Contract GenerateContract(Company c){
-            var contract = new Contract{
-                id = Ulid.NewUlid();
-                status = ContractStatus.Open;
-                contractor=RandomContractor();
-                name = RandomName(contractor);
-                name + = contractor;
-                description = RandomDescription(contractor);
-                difficulty = GetWeight(c);
-                depositReward = new ContractReward();
-                startTime = double ut;
-                LiveDuration = 5000;
-                LimitDuration = 3000;
-            }
+        public Contract GenerateContract(Company c)
+        {
+            var contractor = RandomContractor();
+            var nameDescriptionPair = RandomNameDescription(contractor);
+            var contract = new Contract
+            {
+                id = Ulid.NewUlid(),
+                status = ContractStatus.Open,
+                contractor = contractor,
+                name = nameDescriptionPair.name,
+                description = nameDescriptionPair.desc,
+                difficulty = GetWeight(c),
+                depositReward = new ContractReward(),
+                startTime = c.ut,
+                LiveDuration = 5000,
+                LimitDuration = 3000,
+            };
+            return contract;
         }
 
-        public String RandomContractor(){
-            Random rd = new Random();
-            String Contractor;
-            rd.next(1,4);
-            switch(rd){
-                case 1:
-                    Contractor = "A company";
-                    break;
-                case 2:
-                    Contractor = "B company";
-                    break;
-                case 3:
-                    Contractor = "C company";
-                    break;
-                case 4:
-                    Contractor = "D company";
-                    break;
-            }
-            return Contract;
+        private static string[] contractorNames = {
+            "A company", "B company", "C company", "D company"
+        };
+
+        public String RandomContractor()
+        {
+            return contractorNames[new System.Random().Next(contractorNames.Length)];
         }
 
-        public String RandomName(){
-            Random rd = new Random();
-            String Name;
-            rd.next(1,4);
-            switch(rd){
-                case 1:
-                    Name = "Build a store app for ";
-                    break;
-                case 2:
-                    Name = "Build a website for ";
-                    break;
-                case 3:
-                    Name = "Build a service app for ";
-                    break;
-                case 4:
-                    Name = "Fix a store app for ";
-                    break;
-            }
-            return Name;
-        }
 
-        public String RandomDescription(String contractor){
-            Random rd = new Random();
-            String Description = contractor;
-            rd.next(1,4);
-            switch(rd){
-                case 1:
-                    Description + = " want to build a store app ,They hava found you ,Please choose whether to help them complete the task";
-                    break;
-                case 2:
-                    Description + = " want to build a website ,They hava found you ,Please choose whether to help them complete the task";
-                    break;
-                case 3:
-                    Description + = " want to build a service app ,They hava found you ,Please choose whether to help them complete the task";
-                    break;
-                case 4:
-                    Description + = " has a app problem ,They hava found you ,Please choose whether to help them fix this problem";
-                    break;
-            }
-            return Description；
+        private static string[] contractTitles = {
+            "Build a store app for $contractor",
+            "Build a website for $contractor",
+        };
+        private static string[] contractDescriptions = {
+             "$contractor want to build a store app ,They have found you ,Please choose whether to help them complete the task",
+             "$contractor want to build a website ,They have found you ,Please choose whether to help them complete the task"
+        };
+
+
+        public (string name, string desc) RandomNameDescription(string contractorName)
+        {
+            var selected = new System.Random().Next(contractTitles.Length);
+            return (
+                contractTitles[selected].Replace("$contractor", contractorName),
+                contractDescriptions[selected].Replace("$contractor", contractorName)
+            );
         }
 
         public void DeserializeFromHocon(IHoconElement rootNode)
@@ -125,18 +98,7 @@ namespace Sesim.Models
             if (!(rootNode is HoconObject)) throw new DeformedObjectException();
             throw new NotImplementedException();
         }
-
-        public Contract GenerateContract(Company company)
-        {
-            throw new NotImplementedException();
-        }
-
-        public float GetWeight(Company company)
-        {
-            throw new NotImplementedException();
-        }
     }
-
     #endregion
 
 
@@ -204,7 +166,7 @@ namespace Sesim.Models
         /// <summary>
         /// True if maintenance is avaliable for this contract; else once finished it's over
         /// </summary>
-        public bool hasExtendedMaintenancePeriod = false;
+        public bool hasMaintenancePeriod = false;
 
         #endregion
 
@@ -226,7 +188,7 @@ namespace Sesim.Models
         public double depositTime;
 
         /// <summary>
-        /// The duration length of this contract's live period on contract list
+        /// The duration length of this contract's live period
         /// </summary>
         /// <value></value>
         [Exclude]
@@ -247,7 +209,7 @@ namespace Sesim.Models
         public double completionTime;
 
         /// <summary>
-        /// The duration length of this contract's working period
+        /// The duration length of this contract's live period
         /// </summary>
         /// <value></value>
         [Exclude]
@@ -262,8 +224,9 @@ namespace Sesim.Models
         /// </summary>
         public double extendedTimeLimit;
 
+
         /// <summary>
-        /// The duration length of this contract's maintenance period
+        /// The duration length of this contract's live period.
         /// </summary>
         /// <value></value>
         [Exclude]
@@ -327,21 +290,29 @@ namespace Sesim.Models
             }
         }
 
-        public void AutoCheckStatus(double ut)
+        public TransitionResult<ContractStatus> CheckStatus(double ut)
         {
+            ContractStatus oldStatus = status;
+            bool changed = true;
             switch (status)
             {
                 case ContractStatus.Working when completeCondition.CompleteTest(ut, this):
-                    if (hasExtendedMaintenancePeriod) status = ContractStatus.Maintaining;
+                    if (hasMaintenancePeriod) status = ContractStatus.Maintaining;
                     else status = ContractStatus.Finished;
                     break;
                 case ContractStatus.Working when completeCondition.BreakTest(ut, this):
                     status = ContractStatus.Aborted;
                     break;
+                case ContractStatus.Maintaining when completeCondition.ShouldReceiveMaintenanceRewardTest(ut, this):
+                    // leave changed = true
+                    break;
                 case ContractStatus.Maintaining when completeCondition.CompleteMaintenanceTest(ut, this):
                     status = ContractStatus.Finished;
                     break;
+                default:
+                    changed = false; break;
             }
+            return new TransitionResult<ContractStatus>(changed, oldStatus, status);
         }
 
         #endregion
@@ -371,16 +342,57 @@ namespace Sesim.Models
         #endregion
     }
 
+    public struct TransitionResult<T>
+    {
+        public bool changed;
+        public T oldValue;
+        public T newValue;
+
+        public TransitionResult(bool changed, T oldValue, T newValue)
+        {
+            this.changed = changed;
+            this.oldValue = oldValue;
+            this.newValue = newValue;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is TransitionResult<T> result &&
+                   changed == result.changed &&
+                   EqualityComparer<T>.Default.Equals(oldValue, result.oldValue) &&
+                   EqualityComparer<T>.Default.Equals(newValue, result.newValue);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 2013722904;
+            hashCode = hashCode * -1521134295 + changed.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(oldValue);
+            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(newValue);
+            return hashCode;
+        }
+    }
+
     public interface ICompleteCondition
     {
         // Predicate<CompanyTask> ConditionTester { get; }
         bool CompleteTest(double ut, Contract task);
         bool CompleteMaintenanceTest(double ut, Contract task);
+        bool ShouldReceiveMaintenanceRewardTest(double ut, Contract task);
         bool BreakTest(double ut, Contract task);
     }
 
     public class TrivialCompleteCondition : ICompleteCondition
     {
+
+        /// <summary>
+        /// The time period that the user get rewarded for maintaining.
+        /// </summary>
+        public double maintenanceRewardPeriod = 30 * 7200;
+
+        [Include]
+        public double lastCheckTime = -1;
+
         public bool BreakTest(double ut, Contract task)
         {
             return task.timeLimit < ut;
@@ -394,6 +406,14 @@ namespace Sesim.Models
         public bool CompleteTest(double ut, Contract task)
         {
             return task.completedWork >= task.totalWorkload;
+        }
+
+        public bool ShouldReceiveMaintenanceRewardTest(double ut, Contract task)
+        {
+            bool result = false;
+            result = !(Math.Floor((ut - task.completionTime) / maintenanceRewardPeriod) == Math.Floor((lastCheckTime - task.completionTime) / maintenanceRewardPeriod));
+            lastCheckTime = ut;
+            return result;
         }
     }
     #endregion
