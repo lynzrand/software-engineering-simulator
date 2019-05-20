@@ -67,9 +67,9 @@ namespace Sesim.Models
             }
             return 0;
         }
-        public employee GenerateEmployee(Company c)
+        public static Employee GenerateEmployee(Company c)
         {
-            var name = RandomName(employee);
+            var name = RandomName();
             var base_efficiency = RandomEfficiency(GetWeight(c));
             var experience = RandomExperience(GetWeight(c));
             var salary = RandomSalary(GetWeight(c));
