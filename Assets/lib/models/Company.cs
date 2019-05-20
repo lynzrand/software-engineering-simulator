@@ -31,6 +31,11 @@ namespace Sesim.Models
         public List<Employee> avaliableEmployees;
         public List<Employee> employees;
 
+
+        public int avaliableEmployeeLimit = 8;
+
+        public int avaliableContractLimit = 5;
+
         public List<WorkPeriod> workTimes;
 
         [Exclude]
@@ -55,7 +60,10 @@ namespace Sesim.Models
             this.fund = decimal.Zero;
             this.reputation = 0f;
             this.contracts = new List<Contract>();
+            this.avaliableContracts = new List<Contract>();
             this.employees = new List<Employee>();
+            this.avaliableEmployees = new List<Employee>();
+            contractFactories = new List<ContractFactory>();
             this.workTimes = new List<WorkPeriod>
             {
                 new WorkPeriod(2700, 3450),
@@ -73,6 +81,7 @@ namespace Sesim.Models
         /// <param name="deltaT">Delta time</param>
         public void Update(double deltaT)
         {
+            // Update company stats
             if (deltaT <= maxDeltaTPerStep)
             {
                 RawUpdate(deltaT);
@@ -86,6 +95,16 @@ namespace Sesim.Models
                 {
                     RawUpdate(deltaT / iterCount);
                 }
+            }
+
+            // Generate new contracts and employees
+            if (avaliableContracts.Count < avaliableContractLimit)
+            {
+                GenerateContract(avaliableContractLimit - avaliableContracts.Count);
+            }
+            if (avaliableEmployees.Count < avaliableEmployeeLimit)
+            {
+                GenerateContract(avaliableEmployeeLimit - avaliableEmployees.Count);
             }
         }
 
@@ -111,13 +130,33 @@ namespace Sesim.Models
             }
         }
 
-        public void GenerateContract(int num = 1)
+        public void PruneAvaliableEmployees()
         {
             throw new NotImplementedException();
+            // avaliableEmployees.RemoveAll(contract => contract.liveTime < ut);
+        }
+
+        public void GenerateEmployee(int num = 1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PruneAvaliableContracts()
+        {
+            avaliableContracts.RemoveAll(contract => contract.liveTime < ut);
+        }
+
+        public void GenerateContract(int num = 1)
+        {
+            if (num < 0) throw new ArgumentException("Contract number should be positive!");
+            if (num == 0) return;
+
             var picker = new WeightedRandomPicker<ContractFactory>();
 
             foreach (var factory in contractFactories)
+            {
                 picker.AssignCandidate(factory, factory.GetWeight(this));
+            }
 
             for (int i = 0; i < num; i++)
             {

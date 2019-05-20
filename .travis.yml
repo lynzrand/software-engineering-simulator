@@ -31,3 +31,5 @@ jobs:
                     target_paths:
                         - "$(pwd)/$TEST_PLATFORM-results.xml"
 
+notifications:
+    webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
