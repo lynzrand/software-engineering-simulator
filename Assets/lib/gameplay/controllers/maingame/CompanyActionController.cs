@@ -22,6 +22,8 @@ namespace Sesim.Game.Controllers.MainGame
 
         public float timeWarpMultiplier = 1.0f;
 
+        public bool isPaused = false;
+
         // Start is called before the first frame update
         public void Awake()
         {
@@ -62,17 +64,31 @@ namespace Sesim.Game.Controllers.MainGame
         // Update is called once per frame
         void Update()
         {
-            UpdateCompany();
+            if (!isPaused)
+            {
+                UpdateCompany();
+                if (AfterCompanyUpdate != null)
+                    AfterCompanyUpdate.Invoke(this);
+            }
 
-            if (AfterCompanyUpdate != null) AfterCompanyUpdate.Invoke(this);
             var key = Event.current;
 
             if (Input.GetKeyDown(KeyCode.Period))
+            {
                 timeWarpMultiplier *= 2;
+            }
             if (Input.GetKeyDown(KeyCode.Comma))
+            {
                 timeWarpMultiplier /= 2;
+            }
             if (Input.GetKeyDown(KeyCode.X))
+            {
                 timeWarpMultiplier = 1;
+            }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                isPaused = !isPaused;
+            }
 
             timeWarpMultiplier = Mathf.Clamp(timeWarpMultiplier, 1, 128);
 

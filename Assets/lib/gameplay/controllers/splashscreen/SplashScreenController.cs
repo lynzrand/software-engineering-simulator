@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Sesim.Helpers.UI;
 using System.Text;
+using UnityEngine.SceneManagement;
 
 namespace Sesim.Game.Controllers.SplashScreen
 {
@@ -21,10 +22,11 @@ namespace Sesim.Game.Controllers.SplashScreen
         public void Start()
         {
             addLog();
+            Debug.Log("This is a placeholder loading screen.");
         }
 
         int counter = 0;
-        int maxCounter = 1024;
+        int maxCounter = 300;
 
         void addLog()
         {
@@ -69,7 +71,11 @@ namespace Sesim.Game.Controllers.SplashScreen
             uiScale = screenDpi / 96;
 
             counter++;
-            if (counter > maxCounter) counter = 0;
+            if (counter > maxCounter)
+            {
+                MoveOut();
+                return;
+            }
             consoleSize = ConsoleHelper.GetConsoleSize(console);
 
             var sb = new StringBuilder();
@@ -80,6 +86,12 @@ namespace Sesim.Game.Controllers.SplashScreen
             sb.Append(ConsoleHelper.GenerateProgressBar(consoleSize.x, (float)counter / maxCounter,
             filled: '#', empty: '-', filledCap: '#'));
             console.text = sb.ToString();
+        }
+
+        public void MoveOut()
+        {
+            removeLog();
+            SceneManager.LoadScene("MainGameplayScene");
         }
     }
 }
