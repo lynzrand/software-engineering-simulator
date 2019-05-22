@@ -1,24 +1,21 @@
-# License for the SESim Project
+# License for the Software Engineering Simulator Project
 
-Allowed:
+Do:
 
-- View the code and referencing them.
+- View the code and reference the good parts in your own projects.
 - Download builds from the "Releases" page.
 - Download and compile your own build.
 - Test on your own machine, report bugs or feature request via issues or emails.
-- Fork the project.
+- Fork the project. Submit pull requests. Make contributions.
+- Redistribute code and builds on other platforms.
+- Make mods, assets and modification to this game.
 
-Discouraged:
+Don't:
 
-- Redistribute any build or source code on other platforms or websites.
-- Redistribute modified builds.
+- Make money out of any part of this project.
+- Develop closed-source plugins for this game. This is for safety considerations.
+- Claim copyright.
 
-Not allowed (without permission):
+Software Engineering Simulator is a game project by the develop team of this software.
 
-- Make money out of this game.
-- Post original code from this project onto Unity Asset Store.
-- Claim this project or parts that are not contributed by you your own work.
-
-All other rights are reserved by the Software Engineering Simulator development team.
-
-The SESim dev team reserves the right of interpretation of this license.
+Copyright (c) 2019 SESim Project.

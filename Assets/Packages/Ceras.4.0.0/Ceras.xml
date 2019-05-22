@@ -1,0 +1,995 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ceras</name>
+    </assembly>
+    <members>
+        <member name="T:Ceras.ExcludeAttribute">
+            <summary>
+            Add this to a field or property to force Ceras to ignore it.
+            Check out the tutorial to see in what order attributes, the ShouldSerialize callback and other settings are evaluated.
+            </summary>
+        </member>
+        <member name="T:Ceras.IncludeAttribute">
+            <summary>
+            Add this to a field or property to force Ceras to include it.
+            Check out the tutorial to see in what order attributes, the ShouldSerialize callback and other settings are evaluated.
+            </summary>
+        </member>
+        <member name="T:Ceras.SerializationOverride">
+            <summary>
+            Read the descriptions of the individual entries.
+            </summary>
+        </member>
+        <member name="F:Ceras.SerializationOverride.NoOverride">
+            <summary>
+            When you return 'NoOverride' Ceras will continue normally, which is checking the member-attributes, class attributes, etc... check out the tutorial to see how Ceras decides what members are included in detail.
+            </summary>
+        </member>
+        <member name="F:Ceras.SerializationOverride.ForceInclude">
+            <summary>
+            ForceInclude will completely skip all other checks and include the member. Be careful that you don't accidentally include hidden/compiler generated fields if you have turned 'SkipCompilerGeneratedFields' off.
+            </summary>
+        </member>
+        <member name="F:Ceras.SerializationOverride.ForceSkip">
+            <summary>
+            Forces Ceras to ignore the field or property completely.
+            </summary>
+        </member>
+        <member name="T:Ceras.MemberConfigAttribute">
+            <summary>
+            Configure what members to include by default in this type, you can also add [Exclude] and [Include] to individual members as well to override the member config.
+            </summary>
+        </member>
+        <member name="T:Ceras.ReadonlyConfigAttribute">
+            <summary>
+            Use this to override global or class-level settings for a single field or property.
+            </summary>
+        </member>
+        <member name="T:Ceras.TargetMember">
+            <summary>
+            What members should be serialized and deserialized
+            </summary>
+        </member>
+        <member name="F:Ceras.TargetMember.PublicFields">
+            <summary>
+            Include all fields with the "public" keyword, pretty obvious. As with all visibility checks, "public" just means "has the public keyword", and doesn't require complete outside visibility (like, the containing class or struct doesn't have to be public for the field to count as public)
+            </summary>
+        </member>
+        <member name="F:Ceras.TargetMember.PrivateFields">
+            <summary>
+            Include all private fields. Hidden compiler-generated fields (like backing fields for properties, enumerator state-machines, ...) are not included.
+            </summary>
+        </member>
+        <member name="F:Ceras.TargetMember.PublicProperties">
+            <summary>
+            Only properties marked with the "public" keyword. So properties marked as internal/protected/private are not included
+            </summary>
+        </member>
+        <member name="F:Ceras.TargetMember.PrivateProperties">
+            <summary>
+            Properties that are not public (so "internal", "private", or "protected")
+            </summary>
+        </member>
+        <member name="T:Ceras.PreviousNameAttribute">
+            <summary>
+            Add this to a member if you have changed the type and you're using the VersionTolerance feature.
+            Ceras will use this to map old field names to the new one.
+            You can also use this to simply override what name is used to serialize the member, so as long as the attribute is around and does not change you can freely rename the member itself; this can be used to make the resulting serialized data smaller.
+            </summary>
+        </member>
+        <member name="T:Ceras.CerasConstructorAttribute">
+            <summary>
+            Put this on any constructor or static method as a hint of what constructor/factory to use by default. (Can be overriden through <see cref="M:Ceras.SerializerConfig.ConfigType``1"/>)
+            </summary>
+        </member>
+        <member name="T:Ceras.OnAfterDeserializeAttribute">
+            <summary>
+            Add this to a method of a class you serialize/deserialize. Ceras will call it during serialization.
+            </summary>
+        </member>
+        <member name="T:Ceras.Formatters.CerasInjectAttribute">
+            <summary>
+            Add this attribute to your <see cref="T:Ceras.Formatters.IFormatter`1"/> class to configure Ceras' dependency injection system. (Only needed to turn it off, it's enabled, even for private fields, by default)
+            </summary>
+        </member>
+        <member name="P:Ceras.Formatters.CerasInjectAttribute.IncludePrivate">
+            <summary>
+            If true, Ceras will include all private fields when trying to inject dependencies
+            <para>Default: true</para>
+            </summary>
+        </member>
+        <member name="T:Ceras.Formatters.CerasNoInjectAttribute">
+            <summary>
+            Add this to a field inside an <see cref="T:Ceras.Formatters.IFormatter`1"/> to let Ceras ignore it. Only useful on fields that could potentially have anything injected into them in the first place (field types like <see cref="T:Ceras.CerasSerializer"/> or inheriting from <see cref="T:Ceras.Formatters.IFormatter"/>)
+            </summary>
+        </member>
+        <member name="T:Ceras.Formatters.CerasNoReference">
+            <summary>
+            Add this to a field inside an <see cref="T:Ceras.Formatters.IFormatter`1"/> to inject only the direct version of a formatter, instead of a wrapper for reference types. Only use this if you are fully aware of what ReferenceFormatter does and provides
+            </summary>
+        </member>
+        <member name="T:Ceras.Formatters.AotGenerator.CerasAutoGenConfigAttribute">
+            <summary>
+            When using the formatter generator you should have a static method somewhere that returns a SerializerConfig, the tool will find the method using this attribute and then execute it so it can use the same config that you are using when the program runs.
+            That way the generator knows what types to generate formatters for, and what members to include or exclude.
+            The tool inspects 'KnownTypes' as well as all types that you configured using the ConfigType methods. Types that are only handled in "OnConfigNewType" will not be handled in any way because that method is only called when any type is actually encountered (serialized or deserialized).
+            </summary>
+        </member>
+        <member name="T:Ceras.Formatters.AotGenerator.CerasAutoGenFormatterAttribute">
+            <summary>
+            Put this attribute on every class/struct you want to serialize when you are using IL2CPP (or any other AOT scenario).
+            The formatter generator looks for it and generates formatters only for types with the attribute.
+            If a base type (for example 'abstract class NetworkMessage') has this attribute, then all derived types that the tool can find will also have a formatter generated for them.
+            </summary>
+        </member>
+        <member name="T:Ceras.Formatters.ReinterpretFormatter`1">
+            <summary>
+            Extremely fast formatter that can be used with all unmanaged types. For example DateTime, int, Vector3, Point, ...
+            <para>This formatter always uses native endianness!</para>
+            </summary>
+        </member>
+        <member name="T:Ceras.Formatters.ReinterpretArrayFormatter`1">
+            <summary>
+            Extremely fast formatter that can be used with all unmanaged types. For example DateTime, int, Vector3, Point, ...
+            <para>This formatter always uses native endianness!</para>
+            </summary>
+        </member>
+        <member name="T:Ceras.Formatters.ExpressionFormatterResolver">
+            <summary>
+            A special resolver that produces formatters for some special types in the 'System.Linq.Expressions.*' namespace (like <see cref="T:System.Linq.Expressions.LabelTarget"/> or <see cref="T:System.Linq.Expressions.MemberListBinding"/> ...)
+            Ceras contains some TypeConfig defaults specifically for the actual Expressions themselves (<see cref="T:System.Linq.Expressions.MethodCallExpression"/>, <see cref="T:System.Linq.Expressions.LambdaExpression"/>, <see cref="T:System.Linq.Expressions.LoopExpression"/>, ...).
+            That enables <see cref="T:Ceras.Formatters.DynamicFormatter`1"/> to handle them!
+            </summary>
+        </member>
+        <member name="T:Ceras.CerasSerializer">
+            <summary>
+            <para>Ceras serializes any object to a byte-array and back.</para>
+            <para>Want more features? Or something not working right?</para>
+            <para>-> Then go here: https://github.com/rikimaru0345/Ceras </para>
+            <para>For performance reasons <see cref="T:Ceras.CerasSerializer"/>, <see cref="T:Ceras.SerializerConfig"/>, and <see cref="T:Ceras.TypeConfig"/> are not thread-safe! You shouldn't share a single instance of a SerializerConfig either.</para>
+            </summary>
+        </member>
+        <member name="M:Ceras.CerasSerializer.AddFormatterConstructedType(System.Type)">
+            <summary>
+            Use only when you're creating a IFormatter implementation. Otherwise use config.ConfigType()!
+            </summary>
+        </member>
+        <member name="M:Ceras.CerasSerializer.GetConfig">
+            <summary>
+            Get the config instance that was passed to the constructor of the serializer. Don't use this to modify any settings!
+            </summary>
+        </member>
+        <member name="P:Ceras.CerasSerializer.Advanced">
+            <summary>
+            More advanced features...
+            </summary>
+        </member>
+        <member name="P:Ceras.CerasSerializer.ProtocolChecksum">
+            <summary>
+            <para>The state-checksum of the serializer.</para>
+            <para>Many configuration settings and all KnownTypes contribute to the checksum.</para>
+            <para>Useful for networking scenarios, so when connecting you can ensure client and server are using the same settings and KnownTypes.</para>
+            <para>Keep in mind that any dynamically configured types (<see cref="P:Ceras.SerializerConfig.OnConfigNewType"/>) obviously cannot contribute to the checksum, but are still able to influence the serialization (and thus break network interoperability even when the checksum matches)</para>
+            </summary>
+        </member>
+        <member name="M:Ceras.CerasSerializer.#ctor(Ceras.SerializerConfig)">
+            <summary>
+            Creates a new CerasSerializer, be sure to check out the tutorial.
+            </summary>
+        </member>
+        <member name="M:Ceras.CerasSerializer.Serialize``1(``0)">
+            <summary>!! This method is slow, and only intended for testing!!
+            <para>In addition to just serializing the given object, this method also allocates a new buffer to fit the given data perfectly. That way there are no excess bytes at the end of the returned buffer. That obviously has a small performance impact though!</para>
+            <para>When you are done experimenting and want to get an immediate performance improvement, then take a look at the <see cref="M:Ceras.CerasSerializer.Serialize``1(``0,System.Byte[]@,System.Int32)"/> method instead</para>
+            <para>Ceras is not thread-safe</para>
+            </summary>
+        </member>
+        <member name="M:Ceras.CerasSerializer.Serialize``1(``0,System.Byte[]@,System.Int32)">
+            <summary>
+            This is the main method you should use.
+            <para>The intention is that you reuse the serialization buffer instead of creating a new array for every Serialize() call, this lets you avoid GC-pressure.</para>
+            <para>You can pass in <c>null</c> for the buffer to let Ceras allocate a new one.</para>
+            <para>If you have set <see cref="F:Ceras.CerasBufferPool.Pool"/>, it will be used to create/expand the buffer. Since the whole idea is to keep reusing the serialization buffer as much as possible, this method will *only* return the buffer to the pool when expanding it (so when it will rent a new larger buffer anyway).</para>
+            <para>Ceras is fully reentrant to support <see cref="T:Ceras.Resolvers.IExternalRootObject"/>, but it is not thread-safe! </para>
+            </summary>
+        </member>
+        <member name="M:Ceras.CerasSerializer.Deserialize``1(System.Byte[])">
+            <summary>
+            Convenience method that will most likely allocate a T to return (using 'new T()'). Unless the data says the object really is null, in that case no instance of T is allocated.
+            It would be smart to not use this method and instead use another overload. 
+            That way the deserializer will set/populate the object you've provided. Obviously this only works if you can overwrite/reuse objects like this! (which, depending on what you're doing, might not be possible at all)
+            <para>Ceras is not thread-safe</para>
+            </summary>
+        </member>
+        <member name="M:Ceras.CerasSerializer.Deserialize``1(``0@,System.Byte[])">
+            <summary>
+            Deserializes an object from previously serialized data.
+            <para>You can put in anything for the <paramref name="value"/>, and if the object in the data matches, Ceras will populate your existing object (overwrite its fields, clear/refill the collections, ...)</para>
+            <para>Keep in mind that the config settings used for serialization must match exactly (should be obvious tho)</para>
+            <para>Ceras is not thread-safe</para>
+            </summary>
+        </member>
+        <member name="M:Ceras.CerasSerializer.Deserialize``1(``0@,System.Byte[],System.Int32@,System.Int32)">
+            <summary>
+            The most advanced deserialize method.
+            <para>Again, you can put in an existing object to populate (or a variable that's currently null, in which case Ceras creates an object for you)</para>
+            <para>In this version you can put in the offset as well, telling Ceras where to start reading from inside the buffer.</para>
+            <para>After the method is done, the offset will be where Ceras has stopped reading.</para>
+            <para>If you pass in a value >0 for <paramref name="expectedReadLength"/> then Ceras will check how many bytes it has read (only rarely useful)</para>
+            <para>Ceras is fully reentrant to support <see cref="T:Ceras.Resolvers.IExternalRootObject"/>, but it is not thread-safe! </para>
+            </summary>
+        </member>
+        <member name="M:Ceras.CerasSerializer.GetFormatter``1">
+            <summary>
+            This is a shortcut to the <see cref="M:Ceras.CerasSerializer.GetReferenceFormatter(System.Type)"/> method
+            </summary>
+        </member>
+        <member name="M:Ceras.CerasSerializer.GetReferenceFormatter(System.Type)">
+            <summary>
+            Returns one of Ceras' internal formatters for some type.
+            It automatically returns the right one for whatever type is passed in.
+            </summary>
+        </member>
+        <member name="M:Ceras.CerasSerializer.GetSpecificFormatter(System.Type)">
+            <summary>
+            Similar to <see cref="M:Ceras.CerasSerializer.GetReferenceFormatter(System.Type)"/> it returns a formatter, but one that is not wrapped in a <see cref="T:Ceras.Formatters.ReferenceFormatter`1"/>.
+            <para>You probably always want to use <see cref="M:Ceras.CerasSerializer.GetReferenceFormatter(System.Type)"/>, and only use this method instead when you are 100% certain you have emulated everything that <see cref="T:Ceras.Formatters.ReferenceFormatter`1"/> does for you.</para>
+            </summary>
+        </member>
+        <member name="M:Ceras.CerasSerializer.GenerateSerializationDebugReport(System.Type)">
+            <summary>
+            If you're ever not sure why some member gets included (or doesn't) this method will help.
+            The report will explain for every member why exactly Ceras decided that it should get serialized (or why it should be excluded).
+            You can also look into each member individually by checking out <see cref="!:Members"/> if you don't need the full report.
+            </summary>
+        </member>
+        <member name="M:Ceras.ICerasAdvanced.SerializeStatic(System.Type)">
+            <summary>
+            Serialize the values of a static class or the static members of a normal class.
+            </summary>
+        </member>
+        <member name="M:Ceras.ICerasAdvanced.DeserializeStatic(System.Type,System.Byte[])">
+            <summary>
+            Deserialize the values of a static class or the static members of a normal class.
+            </summary>
+        </member>
+        <member name="M:Ceras.ICerasAdvanced.PeekType(System.Byte[])">
+            <summary>
+            Allows you to "peek" the object the data contains without having to fully deserialize the whole object.
+            <para>Only works for data that was saved without version tolerance (maybe that will be supported eventually, if someone requests it)</para>
+            </summary>
+        </member>
+        <member name="M:Ceras.ICerasAdvanced.GetFormatterResolvers">
+            <summary>
+            Get all resolvers that this <see cref="T:Ceras.CerasSerializer"/> has available. Does not include any user-registered callbacks in <see cref="P:Ceras.SerializerConfig.OnResolveFormatter"/>.
+            </summary>
+        </member>
+        <member name="M:Ceras.ICerasAdvanced.GetFormatterResolver``1">
+            <summary>
+            Get an instance of any specific type of resolver (or null if no resolver matching that type can be found)
+            </summary>
+        </member>
+        <member name="T:Ceras.ProtocolChecksum">
+            <summary>
+            A class that the serializer uses to keep track of the "checksum" of its internal state.
+            Why? What for?
+            Since we have absolutely no "backwards compatibility" or "versioning" in the binary data,
+            the serializer/deserializer has to be exactly the same, meaning the same classes with the same type-codes
+            in exactly the same order. Each class must have the same fields in the same order, with the same types and attributes.
+            To make all this easier, the serializer simply puts all the information into this class.
+            - constructs the dynamic serializers directly when the serializer gets created
+            - optionally emits a checksum into the binary (just 1 int)
+            </summary>
+        </member>
+        <member name="T:Ceras.ICerasBufferPool">
+             <summary>
+             A pool that Ceras will to rent buffers from (and return it to), assign it to <see cref="F:Ceras.CerasBufferPool.Pool"/>.
+             
+             <para>If you are looking to get some more performance easily, then take a look at <see cref="T:Ceras.CerasDefaultBufferPool"/> that Ceras comes with (only on platforms *newer* than NET45) for a very good default implementation!</para>
+             
+             <para>Also take a look at the documentation on <see cref="T:Ceras.CerasBufferPool"/> </para>
+            
+             <para>Since <see cref="F:Ceras.CerasBufferPool.Pool"/> is static, it is strongly advised to make the implementation thread-safe in some way.</para>
+             </summary>
+        </member>
+        <member name="T:Ceras.CerasBufferPool">
+            <summary>
+            <para>
+            By default, Ceras does *not* use a buffer pool because the user might not be an experienced programmer and can't be expected to know that buffers from a pool must not be kept/stored.
+            </para>
+            Check out <see cref="T:Ceras.CerasDefaultBufferPool"/> for a really good default implementation.
+            </summary>
+        </member>
+        <member name="T:Ceras.CerasDefaultBufferPool">
+            <summary>
+            A simple implementation for <see cref="T:Ceras.ICerasBufferPool"/> that you can use. This is a wrapper around <see cref="T:System.Buffers.ArrayPool`1"/> which is a great implementation.
+            <para>Ceras comes with this pre-made pool because <see cref="T:System.Buffers.ArrayPool`1"/> is very good pool to use that leaves pretty much nothing to be desired. Consider using this instead of going through the effort of creating your own <see cref="T:Ceras.ICerasBufferPool"/> implementation.</para>
+            <para>Ceras does *not* use any sort of pool by default (<see cref="T:Ceras.CerasBufferPool"/>.Pool is null be default!) since we can't assume that the user will definitely not re-use any buffers returned from Ceras' <c>Serialize</c> methods.</para>
+            </summary>
+        </member>
+        <member name="T:Ceras.SerializerConfig">
+             <summary>
+             Allows detailed configuration of the <see cref="T:Ceras.CerasSerializer"/>. Advanced options can be found inside <see cref="P:Ceras.SerializerConfig.Advanced"/>
+            
+             <para>
+             Keep in mind that changes to the config will make previously serialized data incompatible.
+             Or in other words: when you serialize something with one specific 'SerializerConfig' and you then later change some settings, you won't be able to deserialize the data again.
+             The SerializerConfig must be configured with the exact same settings!
+             There are some exceptions where settings-changes won't cause any issues, but they are not exactly common and you shouldn't rely on them.
+             </para>
+             
+             <para>
+             For performance reasons <see cref="T:Ceras.CerasSerializer"/>, <see cref="T:Ceras.SerializerConfig"/>, and <see cref="T:Ceras.TypeConfig"/> are not thread-safe!
+             You shouldn't share a single instance of a SerializerConfig either
+             </para>
+             </summary>
+        </member>
+        <member name="P:Ceras.SerializerConfig.KnownTypes">
+             <summary>
+             If you want to, you can add all the types you want to serialize to this collection.
+             When you add at least one Type to this list, Ceras will run in "sealed mode", which does 2 different things:
+             
+             <para>
+             1.) It improves performance.
+             Usually Ceras already only writes the type-name of an object when absolutely necessary. But sometimes you might have 'object' or 'interface' fields, in which case there's simply no way but to embed the type information. And this is where KnownTypes helps: Since the the types (and their order) are known, Ceras can write just a "TypeId" instead of the full name. This can save *a lot* of space and also increases performance (since less data has to be written).
+             </para>
+            
+             <para>
+             2.) It protects against bugs and exploits.
+             When a new type (one that is not in the KnownTypes list) is encountered while reading/writing an exception is thrown!
+             You can be sure that you will never accidentally drag some object that you didn't intend to serialize (protecting against bugs).
+             It also prevents exploits when using Ceras to send objects over the network, because an attacker can not inject new object-types into your data (which, depending on what you do, could be *really* bad).
+             </para>
+             
+             By default this prevents new types being added dynamically, but you can change this setting in <see cref="!:Advanced.SealTypesWhenUsingKnownTypes"/>.
+             
+             <para>Ceras refers to the types by their index in this list!</para>
+             So for deserialization the same types must be present in the same order! You can however have new types at the end of the list (so you can still load old data, as long as the types that an object was saved with are still present at the expected indices)
+             
+             See the tutorial for more information.
+             </summary>
+        </member>
+        <member name="P:Ceras.SerializerConfig.ExternalObjectResolver">
+            <summary>
+            If your object implement IExternalRootObject they are written as their external ID, so at deserialization-time you need to provide a resolver for Ceras so it can get back the Objects from their IDs.
+            When would you use this?
+            There's a lot of really interesting use cases for this, be sure to read the tutorial section 'GameDatabase' even if you're not making a game.
+            <para>Default: null</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.SerializerConfig.OnExternalObject">
+            <summary>
+            If one of the objects in the graph implements IExternalRootObject, Ceras will only write its ID and then call this function. 
+            That means this external object for which only the ID was written, was not serialized itself. But often you want to sort of "collect" all the elements
+            that belong into an object-graph and save them at the same time. That's when you'd use this callback. 
+            Make sure to read the 'GameDatabase' example in the tutorial even if you're not making a game.
+            <para>Default: null</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.SerializerConfig.OnResolveFormatter">
+            <summary>
+            A list of callbacks that Ceras calls when it needs a formatter for some type. The given methods in this list will be tried one after another until one of them returns a IFormatter instance. If all of them return null (or the list is empty) then Ceras will continue as usual, trying the built-in formatters.
+            </summary>
+        </member>
+        <member name="P:Ceras.SerializerConfig.PreserveReferences">
+            <summary>
+            Whether or not to handle object references.
+            This feature will correctly handle circular references (which would otherwise just crash with a StackOverflowException), but comes at a (very) small performance cost; so turn it off if you know that you won't need it.
+            <para>Default: true</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.SerializerConfig.DefaultTargets">
+            <summary>
+            If all the other things (ShouldSerializeMember / Attributes) don't produce a decision, then this setting is used to determine if a member should be included.
+            By default only public fields are serialized. ReadonlyHandling is a separate option found inside <see cref="P:Ceras.SerializerConfig.Advanced"/>
+            <para>Default: AllPublic</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.SerializerConfig.VersionTolerance">
+            <summary>
+            Sometimes you want to persist objects even while they evolve (fields being added, removed, renamed).
+            Type changes are not supported (yet, nobody has requested it so far).
+            Check out the tutorial for more information (and a way to deal with changing types)
+            </summary>
+        </member>
+        <member name="M:Ceras.SerializerConfig.ConfigType(System.Type)">
+            <summary>
+            Use the generic version of <see cref="M:Ceras.SerializerConfig.ConfigType``1"/> for a much easier API.
+            <para>
+            This overload should only be used if you actually don't know the type in advance (for example when dealing with a private type in another assembly)
+            </para>
+            </summary>
+        </member>
+        <member name="M:Ceras.SerializerConfig.ConfigStaticType(System.Type)">
+            <summary>
+            Configure a static type (or the static part of a type that is not static but has some static members)
+            </summary>
+        </member>
+        <member name="M:Ceras.SerializerConfig.ConfigType``1">
+            <summary>
+            Use this when you want to configure types directly (instead of through attributes, or <see cref="P:Ceras.SerializerConfig.OnConfigNewType"/>). Any changes you make using this method will override any settings applied through attributes on the type.
+            </summary>
+        </member>
+        <member name="P:Ceras.SerializerConfig.OnConfigNewType">
+            <summary>
+            Usually you would just put attributes (like <see cref="T:Ceras.MemberConfigAttribute"/>) on your types to define how they're serialized. But sometimes you want to configure some types that you don't control (like types from some external library you're using). In that case you'd use <see cref="M:Ceras.SerializerConfig.ConfigType``1"/>. But sometimes even that doesn't work, for example when some types are private, or too numerous, or generic (so they don't even exist as "closed" / specific types yet); so when you're in a situation like that, you'd use this <see cref="P:Ceras.SerializerConfig.OnConfigNewType"/> to configure a type right when it's used.
+            <para>
+            Keep in mind that this callback will only be called when Ceras encounters it for the first time. 
+            That means it will not get called for any type that you have already configured using <see cref="M:Ceras.SerializerConfig.ConfigType``1"/>!
+            </para>
+            </summary>
+        </member>
+        <member name="P:Ceras.SerializerConfig.Advanced">
+            <summary>
+            Advanced options. In here is everything that is very rarely used, dangerous, or otherwise special. 
+            </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.DiscardObjectMethod">
+            <summary>
+            Set this to a function you provide. Ceras will call it when an object instance is no longer needed.
+            For example you want to populate an existing object with data, and one of the fields already has a value (a left-over from the last time it was used),
+            but the current data says that the field should be 'null'. That's when Ceras will call this this method so you can recycle the object (maybe return it to your object-pool)
+            </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.ReadonlyFieldHandling">
+            <summary>
+            Explaining this setting here would take too much space, check out the tutorial section for details.
+            <para>Default: Off</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.EmbedChecksum">
+            <summary>
+            Embed protocol/serializer checksum at the start of any serialized data, and read it back when deserializing to make sure we're not reading incompatible data on accident.
+            Intended to be used when writing to files, for networking this should not be used (since it would prefix every message with the serializer-checksum which makes no sense)
+            <para>Default: false</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.PersistTypeCache">
+            <summary>
+            Determines whether to keep Type-To-Id maps after serialization/deserialization.
+            This is ***ONLY*** intended for networking, where the deserializer keeps the state as well, and all serialized data is ephemeral (not saved to anywhere)
+            This will likely save a huge amount of memory and cpu cycles over the lifespan of a network-session, because it will serialize type-information only once.
+            
+            If the serializer is used as a network protocol serializer, this option should definitely be turned on!
+            Don't use this when serializing to anything persistent (files, database, ...) as you cannot deserialize any data if the deserializer type-cache is not in **EXACTLY**
+            the same configuration as it (unless you really know exactly what you're doing)
+            <para>Default: false</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.SealTypesWhenUsingKnownTypes">
+             <summary>
+             This setting is only used when KnownTypes is used (has >0 entries).
+             When set to true, and a new Type (so a Type that is not contained in KnownTypes) is encountered in either serialization or deserialization, an exception is thrown.
+             
+             <para>!! Defaults to true to protect against exploits and bugs.</para>
+             <para>!! Don't disable this unless you know what you're doing.</para>
+            
+             If you use KnownTypes you're most likely using Ceras in a network-scenario.
+             If you then turn off this setting, you're basically allowing the other side (client or server) to construct whatever object they want on your side (which is known to be a huge attack vector for networked software).
+            
+             It also protects against bugs by ensuring you are 100% aware of all the types that get serialized.
+             You could easily end up including stuff like passwords, usernames, access-keys, ... completely by accident. 
+             
+             The idea is that when someone uses KnownTypes, they have a fixed list of types they want to serialize (to minimize overhead from serializing type names initially),
+             which is usually done in networking scenarios;
+             While working on a project you might add more types or add new fields or things like that, and a common mistake is accidentally adding a new type (or even whole graph!)
+             to the object graph that was not intended; which is obviously extremely problematic (super risky if sensitive stuff gets suddenly dragged into the serialization)
+             <para>Default: true</para>
+             </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.SkipCompilerGeneratedFields">
+            <summary>
+            !! Important:
+            You may believe you know what you're doing when including things compiler-generated fields, but there are tons of other problems you most likely didn't even realize unless you've read the github issue here: https://github.com/rikimaru0345/Ceras/issues/11. 
+            
+            Hint: You may end up including all sorts of stuff like enumerator statemachines, delegates, remanants of 'dynamic' objects, ...
+            So here's your warning: Don't set this to false unless you know what you're doing.
+            
+            This defaults to true, which means that fields marked as [CompilerGenerated] are skipped without asking your 'ShouldSerializeMember' function (if you have set one).
+            For 99% of all use cases this is exactly what you want. For more information read the 'readonly properties' section in the tutorial.
+            <para>Default: true</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.TypeBinder">
+             <summary>
+             A TypeBinder simply converts a 'Type' to a string and back.
+             It's easy and really useful to provide your own type binder in many situations.
+             <para>Examples:</para>
+             <para>- Mapping server objects to client objects</para>
+             <para>- Shortening / abbreviating type-names to save space and performance</para>
+             See the readme on github for more information.
+            
+             <para>Default: new SimpleTypeBinder()</para>
+             </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.SizeLimits">
+            <summary>
+            Protect against malicious input while deserializing by setting size limits for strings, arrays, and collections
+            </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.DelegateSerialization">
+            <summary>
+            This setting allows Ceras to serialize delegates. In order to make it as safe as possible, set it to the lowest setting that works for you.
+            'AllowStatic' will only allow serialization of delegates that point to static methods (so no instances / targets).
+            While 'AllowInstance' will also allow serialization of instance-methods, meaning that the target object will be "pulled into" the serialization as well.
+            <para>Default: Off</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.UseReinterpretFormatter">
+            <summary>
+            Allows Ceras to use an extremely fast formatter for so called "blittable" types. Works for single objects as well as arrays! This formatter always uses the native memory layout, does not respect endianness, and does not support version tolerance.
+            <para>Default: true</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.RespectNonSerializedAttribute">
+            <summary>
+            If true, Ceras will skip fields with the '[System.NonSerialized]' attribute
+            <para>Default: true</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.BitmapMode">
+            <summary>
+            Set this to any mode to enable serialization of 'System.Drawing.Bitmap' (only works on .NET Framework, since other platforms don't have access to System.Drawing)
+            <para>Default: DontSerializeBitmaps</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.IAdvancedConfigOptions.AotMode">
+            <summary>
+            On an AoT platforms (for example Unity IL2CPP) Ceras can not use dynamic code generation. When enabled, Ceras will use reflection for everything where it would otherwise use dynamic code generation. This is slow, but it allows for testing and debugging on those platforms until 
+            </summary>
+        </member>
+        <member name="P:Ceras.ISizeLimitsConfig.MaxStringLength">
+            <summary>
+            Maximum string length
+            </summary>
+        </member>
+        <member name="P:Ceras.ISizeLimitsConfig.MaxArraySize">
+            <summary>
+            Maximum size of any byte[] members
+            </summary>
+        </member>
+        <member name="P:Ceras.ISizeLimitsConfig.MaxByteArraySize">
+            <summary>
+            Maximum size of any array members (except byte arrays)
+            </summary>
+        </member>
+        <member name="P:Ceras.ISizeLimitsConfig.MaxCollectionSize">
+            <summary>
+            Maximum number of elements to read for any collection (everything that implements ICollection, so List, Dictionary, ...)
+            </summary>
+        </member>
+        <member name="P:Ceras.IVersionToleranceConfig.Mode">
+            <summary>
+            Checkout the documentation for <see cref="F:Ceras.VersionToleranceMode.Standard"/>
+            <para>Default: <see cref="F:Ceras.VersionToleranceMode.Disabled"/></para>
+            </summary>
+        </member>
+        <member name="P:Ceras.IVersionToleranceConfig.VerifySizes">
+            <summary>
+            When using VersionTolerance, the size of each member is written/read, but this information can also be used to verify if the data has been read correctly.
+            Turn it on to gain some protection against data-corruption, or leave it off to not pay the performance penalty of doing the check.
+            <para>Default: false</para>
+            </summary>
+        </member>
+        <member name="F:Ceras.DelegateSerializationFlags.Off">
+            <summary>
+            Throw an exception when trying to serialize a delegate type
+            </summary>
+        </member>
+        <member name="F:Ceras.DelegateSerializationFlags.AllowStatic">
+            <summary>
+            Allow delegates as long as they point to static methods
+            </summary>
+        </member>
+        <member name="F:Ceras.DelegateSerializationFlags.AllowInstance">
+            <summary>
+            Allow delegates even when they include an object reference (that will get serialized as well)
+            </summary>
+        </member>
+        <member name="T:Ceras.ReadonlyFieldHandling">
+            <summary>
+            Options how Ceras handles readonly fields. Check the description of each entry.
+            </summary>
+        </member>
+        <member name="F:Ceras.ReadonlyFieldHandling.ExcludeFromSerialization">
+            <summary>
+            This is the default, Ceras will not serialize/deserialize readonly fields.
+            </summary>
+        </member>
+        <member name="F:Ceras.ReadonlyFieldHandling.Members">
+             <summary>
+             Serialize readonly fields normally, but at deserialization time it is expected that an object is already present (so Ceras does not have to change the readonly-field), however Ceras will deserialize the content of the object inside the readonly field.
+             <para>
+             Example: An object that has a 'readonly Settings MySettings;' field. Ceras will not change the field itself, but it will serialize and deserialize all the settings values inside.
+             That's what you often want. But it obviously requires that you either provide an object that already exists (meaning you're using the <see cref="M:Ceras.CerasSerializer.Deserialize``1(``0@,System.Byte[])"/> overload that takes an existing object to overwrite); or that the containing object will put an instance into the readonly field in its constructor.
+            </para>
+             If the object in the readonly field itself does not match the expected value an exception is thrown.
+             Keep in mind that this mode will obviously never work with value-types (int, structs, ...), in that case simply use <see cref="F:Ceras.ReadonlyFieldHandling.ForcedOverwrite"/>.
+             </summary>
+        </member>
+        <member name="F:Ceras.ReadonlyFieldHandling.ForcedOverwrite">
+            <summary>
+            This mode means pretty much "treat readonly fields exactly the same as normal fields". But since readonly fields can't normally be changed outside the constructor of the object Ceras will use reflection to forcefully overwrite the object field.
+            </summary>
+        </member>
+        <member name="F:Ceras.VersionToleranceMode.Disabled">
+            <summary>
+            No version tolerance, any name or type change in any serialized type changes will be a breaking change
+            </summary>
+        </member>
+        <member name="F:Ceras.VersionToleranceMode.Standard">
+             <summary>
+             Embed member names and sizes. The most common way version tolerance is implemented.
+             This mode is equivalent to how version-tolerant most other formats are, for example Json, Xml, and MessagePack all have the same "depth" of version tolerance as this mode.
+             
+             <para>
+             This makes the serialized data robust against: renaming members, removing members, adding new members!
+             </para>
+             <para>
+             This does not help against: renaming types themselves, changing the type of a member while keeping the name (you'd need to rename the member so it won't conflict with any old data).
+             </para>
+            
+             <para>
+             In order to find and map members again after their name has changed, you need to place the [PreviousName].
+             </para>
+            
+             <para>
+             To get resistance against type-name-changes use the Extended mode (not yet implemented, contact me on GitHub or Discord if you have a need for it)
+             </para>
+             </summary>
+        </member>
+        <member name="F:Ceras.VersionToleranceMode.Extended">
+            <summary>
+            In addition to the <see cref="F:Ceras.VersionToleranceMode.Standard"/> mode, this also embeds the type names of serialized objects, as well as the types of the members.
+            <para>
+            As far as tolerance to changes goes, this mode is literally as good as it gets. Every relevant bit of information is encoded, and old data is converted/upgraded by calling your conversion functions.
+            </para>
+            <para>
+            Warning: This mode is not implemented yet as it's still a bit unclear how users would prefer the conversion process to look like. Get in contact on GitHub or Discord if you need this mode.
+            </para>
+            </summary>
+        </member>
+        <member name="F:Ceras.AotMode.None">
+            <summary>
+            The default mode, don't do anything special for compatibility with AoT runtimes
+            </summary>
+        </member>
+        <member name="F:Ceras.AotMode.Enabled">
+            <summary>
+            Enable AoT mode, which disables all dynamic code-gen and instead uses fallback methods.
+            </summary>
+        </member>
+        <member name="T:Ceras.TypeConfig">
+            <summary>
+            <para>For performance reasons <see cref="T:Ceras.CerasSerializer"/>, <see cref="T:Ceras.SerializerConfig"/>, and <see cref="T:Ceras.TypeConfig"/> are not thread-safe! You shouldn't share a single instance of a SerializerConfig either.</para>
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig.UnsafeGetAllMembersIncludingCompilerGenerated">
+            <summary>
+            Don't use this.
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig.TryConfigureLikeDataContractSerializer(System.Boolean)">
+            <summary>
+            This will include/exclude all members according to the same rules 'DataContractSerializer' would use.
+            If the type has the <see cref="T:System.Runtime.Serialization.DataContractAttribute"/>, then the method succeeds and will include all members that have the <see cref="T:System.Runtime.Serialization.DataMemberAttribute"/> (doesn't matter if public or non-public).
+            If the type does not have the DataContractAttribute the method fails and does nothing.
+            If the <paramref name="force"/> parameter is true, the check for <see cref="T:System.Runtime.Serialization.DataContractAttribute"/> is skipped.
+            </summary>
+        </member>
+        <member name="T:Ceras.TypeConfig`1">
+            <inheritdoc/>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.ConstructByFormatter">
+            <summary>
+            Don't construct an instance for this object, let the formatter handle it (must be used together with a custom formatter to work)
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.ConstructBy(System.Reflection.MethodInfo)">
+            <summary>
+            Call a given static method to get an object
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.ConstructBy(System.Object,System.Reflection.MethodInfo)">
+            <summary>
+            Call a given instance-method on the given object instance to create a object
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.ConstructBy(System.Reflection.ConstructorInfo)">
+            <summary>
+            Use the given constructor to create a new object
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.ConstructByDelegate(System.Func{`0})">
+            <summary>
+            Call the given delegate to produce an object (this is the only method that currently does not support arguments, support for that will be added later)
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.ConstructBy(System.Linq.Expressions.Expression{System.Func{`0}})">
+            <summary>
+            Use the given static method (inferred from the given expression). This works exactly the same as <see cref="M:Ceras.TypeConfig`1.ConstructBy(System.Reflection.MethodInfo)"/> but since it takes an Expression selecting a method is much easier (no need to fiddle around with reflection manually). The given expression is not compiled or called in any way.
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.ConstructBy(System.Object,System.Linq.Expressions.Expression{System.Func{`0}})">
+            <summary>
+            Use the given static method (inferred from the given expression). This works exactly the same as <see cref="M:Ceras.TypeConfig`1.ConstructBy(System.Object,System.Reflection.MethodInfo)"/> but since it takes an Expression selecting a method is much easier (no need to fiddle around with reflection manually). The given expression is not compiled or called in any way.
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.ConstructBy(Ceras.TypeConstruction)">
+            <summary>
+            Use this to tell Ceras how it is supposed to construct new objects when deserializing. By default it will use the parameterless constructor (doesn't matter if public or private)
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.ConstructByUninitialized">
+            <summary>
+            Create an object without running any of its constructors
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.MapParameters(System.Collections.Generic.Dictionary{System.Reflection.ParameterInfo,System.Reflection.MemberInfo})">
+            <summary>
+            <para>
+            Ceras can automatically map what members to put into the parameters of the constructor or factory method, but sometimes (when the names don't match up) you have to manually specify it
+            </para>
+            Only use this overload if you really have to (for example a parameter that will go into a private field)
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.SetFormatter(Ceras.Formatters.IFormatter{`0})">
+            <summary>
+            Set a custom formatter that will get used to serialize this type
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.SetReadonlyHandling(Ceras.ReadonlyFieldHandling)">
+            <summary>
+            Configure how readonly fields are handled for this type
+            </summary>
+        </member>
+        <member name="M:Ceras.TypeConfig`1.SetTargetMembers(Ceras.TargetMember)">
+            <summary>
+            Configure what fields and properties are included by default
+            </summary>
+        </member>
+        <member name="P:Ceras.MemberConfig.IsCompilerGenerated">
+            <summary>
+            True for everything the compiler automatically generates: hidden async-state-machines, automatic enumerator implementations, cached dynamic method dispatchers, ...
+            </summary>
+        </member>
+        <member name="P:Ceras.MemberConfig.IsReadonlyField">
+            <summary>
+            True if it's a field and it is declared as 'readonly'
+            </summary>
+        </member>
+        <member name="P:Ceras.MemberConfig.IsComputedProperty">
+            <summary>
+            True only for properties that literally have no setter:
+            <para>Example 1: int Time => Environment.TickCount;</para>
+            <para>Example 2: string Name { get; }</para>
+            <para>
+            Properties with a private setter are not "computed" (even if the setter is private, or hidden in a base-type)
+            </para>
+            </summary>
+        </member>
+        <member name="P:Ceras.MemberConfig.WriteBackOrder">
+            <summary>
+            Controls when Ceras will write this member to the class/struct after deserialization.
+            By default (<see cref="P:Ceras.MemberConfig.WriteBackOrder"/> == 0) writes are optimized for performance.
+            But sometimes you might have a property that needs to be written last (maybe after some fields are written already or something...).
+            
+            Members are set in ascending order.
+            <para>Default: Value from [<see cref="!:System.Runtime.Serialization.DataMember"/>.Order] or 0 if the member has no attribute</para>
+            </summary>
+        </member>
+        <member name="P:Ceras.MemberConfig.IncludeExcludeReason">
+            <summary>
+            Tells you why (or why not!) this member got included in the serialization.
+            </summary>
+        </member>
+        <member name="P:Ceras.MemberConfig.SerializationOverride">
+            <summary>
+            Contains the serialization override for this member. It is initially set from any member attributes (like Include/Exclude) or the [MemberConfig] attribute.
+            If none of those attributes exist the override is unspecified (in which case the DefaultTargets setting in the serializer config is used)
+            </summary>
+        </member>
+        <member name="M:Ceras.MemberConfig.ComputeFinalInclusion">
+            <summary>
+            Determine wether or not this member is included for serialization
+            </summary>
+            <returns>true when the member will be serialized/deserialized</returns>
+        </member>
+        <member name="M:Ceras.Helpers.CerasNetworkingExampleExtensions.WriteToStream(Ceras.CerasSerializer,System.IO.Stream,System.Object)">
+            <summary>
+            Writes an object into a stream. This method prefixes the data with the actual size (in VarInt encoding).
+            <para>This method(-pair) is intended to be an easy to understand example for networking scenarios.</para>
+            <para>The implementation is reasonably efficient, but of course you can do a lot better with a solution specifically tailored to your scenario...</para>
+            </summary>
+        </member>
+        <member name="M:Ceras.Helpers.CerasNetworkingExampleExtensions.ReadFromStream(Ceras.CerasSerializer,System.IO.Stream)">
+            <summary>
+            Reads an object that was written using <see cref="!:WriteToStream(CerasSerializer, object, Stream)"/> by reading the size-prefix and then deserializing the data.
+            <para>This method(-pair) is intended to be an easy to understand example for networking scenarios.</para>
+            </summary>
+        </member>
+        <member name="M:Ceras.Helpers.ReflectionHelper.ResolveMethod(System.Type,System.String,System.Type[])">
+            <summary>
+            Find the MethodInfo that matches the given name and specific parameters on the given type. 
+            All parameter types must be "closed" (not contain any unspecified generic parameters). 
+            </summary>
+            <param name="declaringType">The type in which to look for the method</param>
+            <param name="name">The name of the method (method group) to find</param>
+            <param name="parameters">The specific parameters</param>
+        </member>
+        <member name="T:Ceras.Helpers.TypeDictionary`1">
+             <summary>
+             A lightweight Dictionary with three principal differences compared to <see cref="T:System.Collections.Generic.Dictionary`2"/>
+            
+             1) It is possible to do "get or add" in a single lookup using <see cref="M:Ceras.Helpers.TypeDictionary`1.GetOrAddValueRef(System.Type)"/>. For
+             values that are value types, this also saves a copy of the value.
+             2) It assumes it is cheap to equate values.
+             3) It assumes the keys implement <see cref="T:System.IEquatable`1"/> or else Equals() and they are cheap and sufficient.
+             </summary>
+             <remarks>
+             1) This avoids having to do separate lookups (<see cref="M:System.Collections.Generic.Dictionary`2.TryGetValue(`0,`1@)"/>
+             followed by <see cref="M:System.Collections.Generic.Dictionary`2.Add(`0,`1)"/>.
+             There is not currently an API exposed to get a value by ref without adding if the key is not present.
+             2) This means it can save space by not storing hash codes.
+             3) This means it can avoid storing a comparer, and avoid the likely virtual call to a comparer.
+             </remarks>
+        </member>
+        <member name="M:Ceras.Helpers.TypeDictionary`1.#ctor">
+            <summary>
+            Construct with default capacity.
+            </summary>
+        </member>
+        <member name="M:Ceras.Helpers.TypeDictionary`1.#ctor(System.Int32)">
+            <summary>
+            Construct with at least the specified capacity for
+            entries before resizing must occur.
+            </summary>
+            <param name="capacity">Requested minimum capacity</param>
+        </member>
+        <member name="P:Ceras.Helpers.TypeDictionary`1.Count">
+            <summary>
+            Count of entries in the dictionary.
+            </summary>
+        </member>
+        <member name="M:Ceras.Helpers.TypeDictionary`1.Clear">
+            <summary>
+            Clears the dictionary. Note that this invalidates any active enumerators.
+            </summary>
+        </member>
+        <member name="M:Ceras.Helpers.TypeDictionary`1.ContainsKey(System.Type)">
+            <summary>
+            Looks for the specified key in the dictionary.
+            </summary>
+            <param name="key">Key to look for</param>
+            <returns>true if the key is present, otherwise false</returns>
+        </member>
+        <member name="M:Ceras.Helpers.TypeDictionary`1.TryGetValue(System.Type,`0@)">
+            <summary>
+            Gets the value if present for the specified key.
+            </summary>
+            <param name="key">Key to look for</param>
+            <param name="value">Value found, otherwise default(TValue)</param>
+            <returns>true if the key is present, otherwise false</returns>
+        </member>
+        <member name="M:Ceras.Helpers.TypeDictionary`1.Remove(System.Type)">
+            <summary>
+            Removes the entry if present with the specified key.
+            </summary>
+            <param name="key">Key to look for</param>
+            <returns>true if the key is present, false if it is not</returns>
+        </member>
+        <member name="M:Ceras.Helpers.TypeDictionary`1.GetOrAddValueRef(System.Type)">
+            <summary>
+            Gets the value for the specified key, or, if the key is not present,
+            adds an entry and returns the value by ref. This makes it possible to
+            add or update a value in a single look up operation.
+            </summary>
+            <param name="key">Key to look for</param>
+            <returns>Reference to the new or existing value</returns>
+        </member>
+        <member name="M:Ceras.Helpers.TypeDictionary`1.GetEnumerator">
+            <summary>
+            Gets an enumerator over the dictionary
+            </summary>
+        </member>
+        <member name="M:Ceras.Helpers.TypeDictionary`1.System#Collections#Generic#IEnumerable{System#Collections#Generic#KeyValuePair{System#Type,TValue}}#GetEnumerator">
+            <summary>
+            Gets an enumerator over the dictionary
+            </summary>
+        </member>
+        <member name="M:Ceras.Helpers.TypeDictionary`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Gets an enumerator over the dictionary
+            </summary>
+        </member>
+        <member name="T:Ceras.Helpers.TypeDictionary`1.Enumerator">
+            <summary>
+            Enumerator
+            </summary>
+        </member>
+        <member name="M:Ceras.Helpers.TypeDictionary`1.Enumerator.MoveNext">
+            <summary>
+            Move to next
+            </summary>
+        </member>
+        <member name="P:Ceras.Helpers.TypeDictionary`1.Enumerator.Current">
+            <summary>
+            Get current value
+            </summary>
+        </member>
+        <member name="M:Ceras.Helpers.TypeDictionary`1.Enumerator.Dispose">
+            <summary>
+            Dispose the enumerator
+            </summary>
+        </member>
+        <member name="T:Ceras.Resolvers.EnumFormatter`1">
+            <summary>
+            The default enum formatter writes the underlying binary data, which is fast and robust against renaming!
+            </summary>
+        </member>
+        <member name="T:Ceras.Resolvers.EnumAsStringFormatter`1">
+            <summary>
+            This formatter uses enum.ToString() and Enum.Parse(). It is not used by default, but you can activate through the type config if you want to.
+            </summary>
+        </member>
+        <member name="T:Ceras.Resolvers.CollectionFormatterResolver">
+            <summary>
+            Creates formatters for array-types and all types that implement ICollection&lt;&gt;
+            </summary>
+        </member>
+        <member name="T:Ceras.Resolvers.DynamicObjectFormatterResolver">
+            <summary>
+            This resolver creates instances of <see cref="T:Ceras.Formatters.DynamicFormatter`1"/>, which can handle pretty much every complex object (assuming it has a correct TypeConfig to work with). It is always used last because it *always* returns a result.
+            </summary>
+        </member>
+        <member name="T:Ceras.Resolvers.IFormatterResolver">
+            <summary>
+            A formatter resolver is something that can create instances of <see cref="T:Ceras.Formatters.IFormatter`1"/> for a given <see cref="T:System.Type"/> (or null if the resolver can not handle the given type)
+            </summary>
+        </member>
+        <member name="T:Ceras.Resolvers.PrimitiveResolver">
+            <summary>
+            A really really boring resolver that produces formatters for all the "primitives" like bool, int, float, double, ... 
+            </summary>
+        </member>
+        <member name="T:Ceras.Resolvers.ReflectionFormatterResolver">
+            <summary>
+            This resolver handles some really special types like <see cref="T:System.Reflection.MemberInfo"/> and <see cref="T:System.MulticastDelegate"/>
+            </summary>
+        </member>
+        <member name="T:Ceras.Resolvers.ReinterpretFormatterResolver">
+            <summary>
+            Creates super-fast formatters for so called "blittable" types. Only returns results when <see cref="P:Ceras.IAdvancedConfigOptions.UseReinterpretFormatter"/> is true.
+            </summary>
+        </member>
+        <member name="T:Ceras.Resolvers.StandardFormatterResolver">
+            <summary>
+            Another boring resolver that handles "common" types like <see cref="T:System.DateTime"/>, <see cref="T:System.Guid"/>, <see cref="T:System.Tuple"/>, and many more...
+            </summary>
+        </member>
+        <member name="T:Ceras.ITypeBinder">
+            <summary>
+            A type binder is simple. It is responsible to converts a type to a string and back.
+            For generic types it must do so by deconstructing the type though. So giving <see cref="!:List&lt;int&gt;"/> would return "System.Collections.List".
+            </summary>
+        </member>
+        <member name="T:Ceras.SimpleTypeBinder">
+            <summary>
+            This simple type binder does two things:
+            <para>- does the basic ITypeBinder thing (converting types to names, and back)</para> 
+            <para>- allows the user to add assemblies that will be searched for types</para> 
+            </summary>
+        </member>
+        <member name="P:Ceras.SimpleTypeBinder.CustomSearchAssemblies">
+            <summary>
+            Put your own assemblies in here for Ceras to discover them. If you don't and a type is not found, Ceras will have to look in all loaded assemblies (which is slow)
+            </summary>
+        </member>
+        <member name="M:Ceras.SerializerBinary.FastCopy(System.Byte[],System.Int32,System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Copy up to 512 bytes in a fast path, fallback to BlockCopy/MemoryCopy for larger buffers
+            </summary>
+        </member>
+    </members>
+</doc>

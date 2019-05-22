@@ -4,8 +4,9 @@ using System;
 using System.Collections.Generic;
 using Sesim.Helpers.UI;
 using System.Text;
+using UnityEngine.SceneManagement;
 
-namespace Sesim.Game.Controllers
+namespace Sesim.Game.Controllers.SplashScreen
 {
     public class SplashScreenController : MonoBehaviour
     {
@@ -21,10 +22,11 @@ namespace Sesim.Game.Controllers
         public void Start()
         {
             addLog();
+            Debug.Log("This is a placeholder loading screen.");
         }
 
         int counter = 0;
-        int maxCounter = 1024;
+        int maxCounter = 300;
 
         void addLog()
         {
@@ -43,32 +45,25 @@ namespace Sesim.Game.Controllers
             switch (type)
             {
                 case LogType.Assert:
-                    typeRepr = ApplyColor(typeRepr, scheme.base0F);
+                    typeRepr = ConsoleHelper.ApplyColor(typeRepr, scheme.base0F);
                     break;
                 case LogType.Error:
-                    typeRepr = ApplyColor(typeRepr, scheme.base08);
+                    typeRepr = ConsoleHelper.ApplyColor(typeRepr, scheme.base08);
                     break;
                 case LogType.Exception:
-                    typeRepr = ApplyColor(typeRepr, scheme.base09);
+                    typeRepr = ConsoleHelper.ApplyColor(typeRepr, scheme.base09);
                     break;
                 case LogType.Warning:
-                    typeRepr = ApplyColor(typeRepr, scheme.base0A);
+                    typeRepr = ConsoleHelper.ApplyColor(typeRepr, scheme.base0A);
                     break;
                 case LogType.Log:
-                    typeRepr = ApplyColor(typeRepr, scheme.base0C);
+                    typeRepr = ConsoleHelper.ApplyColor(typeRepr, scheme.base0C);
                     break;
             }
             cache.Add($"<b>[{timeStr}] [{typeRepr}]</b> {message}");
         }
 
-        public static string ColorToString(Color32 color)
-        {
-            return $"#{color.r.ToString("X2")}{color.g.ToString("X2")}{color.b.ToString("X2")}{color.a.ToString("X2")}";
-        }
-        public static string ApplyColor(string str, Color32 color)
-        {
-            return $"<color={ColorToString(color)}>{str}</color>";
-        }
+
 
         public void Update()
         {
@@ -76,7 +71,11 @@ namespace Sesim.Game.Controllers
             uiScale = screenDpi / 96;
 
             counter++;
-            if (counter > maxCounter) counter = 0;
+            if (counter > maxCounter)
+            {
+                MoveOut();
+                return;
+            }
             consoleSize = ConsoleHelper.GetConsoleSize(console);
 
             var sb = new StringBuilder();
@@ -87,6 +86,12 @@ namespace Sesim.Game.Controllers
             sb.Append(ConsoleHelper.GenerateProgressBar(consoleSize.x, (float)counter / maxCounter,
             filled: '#', empty: '-', filledCap: '#'));
             console.text = sb.ToString();
+        }
+
+        public void MoveOut()
+        {
+            removeLog();
+            SceneManager.LoadScene("MainGameplayScene");
         }
     }
 }

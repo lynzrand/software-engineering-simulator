@@ -17,17 +17,17 @@ namespace Tests
             var bar3 = ConsoleHelper.GenerateProgressBar(10, 0f);
             var bar4 = ConsoleHelper.GenerateProgressBar(10, 1f);
             var bar5 = ConsoleHelper.GenerateProgressBar(10, 0.95f);
-            Assert.AreEqual("[===>    ]", bar1);
-            Assert.AreEqual("[>       ]", bar2);
-            Assert.AreEqual("[        ]", bar3);
-            Assert.AreEqual("[========]", bar4);
-            Assert.AreEqual("[=======>]", bar5);
+            Assert.That(bar1, Is.EqualTo("[===>    ]"));
+            Assert.That(bar2, Is.EqualTo("[>       ]"));
+            Assert.That(bar3, Is.EqualTo("[        ]"));
+            Assert.That(bar4, Is.EqualTo("[========]"));
+            Assert.That(bar5, Is.EqualTo("[=======>]"));
             var bar6 = ConsoleHelper.GenerateProgressBar(3, 0f);
-            Assert.AreEqual("[ ]", bar6);
+            Assert.That(bar6, Is.EqualTo("[ ]"));
             var bar7 = ConsoleHelper.GenerateProgressBar(
                 12, 0.6f, '(', ')', '|', '-', '|'
             );
-            Assert.AreEqual("(||||||----)", bar7);
+            Assert.That(bar7, Is.EqualTo("(||||||----)"));
         }
     }
 }

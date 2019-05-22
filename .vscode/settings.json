@@ -40,8 +40,8 @@
     //     "**/*.flare":true,
     //     "**/*.mat":true,
     "**/*.meta": true,
-    "**/*.prefab": true,
-    "**/*.unity": true
+    "**/*.prefab": true
+    // "**/*.unity": true
     //     "build/":true,
     //     "Build/":true,
     //     "Library/":true,
@@ -63,11 +63,5 @@
       "--csharp_out=${workspaceRoot}/lib/generated"
     ]
   },
-  "cSpell.words": [
-    "conf",
-    "deserializable",
-    "hocon",
-    "i",
-    "object"
-  ]
+  "cSpell.words": ["conf", "deserializable", "hocon", "i", "object"]
 }
