@@ -15,6 +15,8 @@ namespace Sesim.Game.Controllers.MainGame
         public delegate void AfterCompanyUpdateCallback(CompanyActionController companyController);
         public event AfterCompanyUpdateCallback AfterCompanyUpdate;
 
+        public PauseMenuController pauseMenuController;
+
         public Company company;
         public Camera cam;
 
@@ -71,26 +73,33 @@ namespace Sesim.Game.Controllers.MainGame
                     AfterCompanyUpdate.Invoke(this);
             }
 
-            var key = Event.current;
+            var evSys = EventSystem.current;
+            if (evSys.currentSelectedGameObject == null)
+                evSys.SetSelectedGameObject(this.gameObject);
+            var isActive = evSys.currentSelectedGameObject == this.gameObject;
+            Debug.Log(evSys.currentSelectedGameObject?.name);
+            if (isActive)
+            {
+                if (Input.GetKeyDown(KeyCode.Period))
+                {
+                    timeWarpMultiplier *= 2;
+                }
+                if (Input.GetKeyDown(KeyCode.Comma))
+                {
+                    timeWarpMultiplier /= 2;
+                }
+                if (Input.GetKeyDown(KeyCode.X))
+                {
+                    timeWarpMultiplier = 1;
+                }
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    isPaused = !isPaused;
+                }
 
-            if (Input.GetKeyDown(KeyCode.Period))
-            {
-                timeWarpMultiplier *= 2;
+                timeWarpMultiplier = Mathf.Clamp(timeWarpMultiplier, 1, 128);
             }
-            if (Input.GetKeyDown(KeyCode.Comma))
-            {
-                timeWarpMultiplier /= 2;
-            }
-            if (Input.GetKeyDown(KeyCode.X))
-            {
-                timeWarpMultiplier = 1;
-            }
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                isPaused = !isPaused;
-            }
-
-            timeWarpMultiplier = Mathf.Clamp(timeWarpMultiplier, 1, 128);
+            pauseMenuController.ShouldShow = isPaused;
 
             // if (Input.GetKey(KeyCode.A))
             //     cam.transform.Translate(new Vector3(-30f, 0f, 0f) * Time.deltaTime);
@@ -108,7 +117,7 @@ namespace Sesim.Game.Controllers.MainGame
             company.Update(deltaT);
 
             // Log the update before our company is finished
-            Debug.Log($"time: {Company.UtToTimeString(company.ut)}@{timeWarpMultiplier}x, fps: {(1 / Time.unscaledDeltaTime).ToString("000.000")}, delta-t: {deltaT.ToString("#.0000")}T, progress: {company.contracts[0].Progress}, status: {company.contracts[0].status}");
+            // Debug.Log($"time: {Company.UtToTimeString(company.ut)}@{timeWarpMultiplier}x, fps: {(1 / Time.unscaledDeltaTime).ToString("000.000")}, delta-t: {deltaT.ToString("#.0000")}T, progress: {company.contracts[0].Progress}, status: {company.contracts[0].status}");
         }
 
 
