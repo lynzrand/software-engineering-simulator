@@ -25,6 +25,15 @@ namespace Sesim.Models
     {
         public decimal fund;
         public float reputation;
+
+        public ContractReward Copy()
+        {
+            return new ContractReward()
+            {
+                fund = fund,
+                reputation = reputation
+            };
+        }
     }
 
     /// <summary>
