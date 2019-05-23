@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Sesim.Models
 {
-    public class ContractFactory : IConfDeserializable, IPickedGenerator<Contract, Company>
+    public class ContractFactory : IHoconDeserializable, IPickedGenerator<Contract, Company>
     {
         public string name;
         public string category;
@@ -87,9 +87,9 @@ namespace Sesim.Models
             );
         }
 
-        public void DeserializeFromHocon(IHoconElement rootNode)
+        public void ReadFromHocon(HoconValue e)
         {
-            if (!(rootNode is HoconObject)) throw new DeformedObjectException();
+            if (!(e.Type == HoconType.Object)) throw new DeformedObjectException();
             throw new NotImplementedException();
         }
     }
