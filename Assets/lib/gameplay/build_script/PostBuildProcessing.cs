@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Callbacks;
+using System;
 
 namespace Sesim.BuildScript
 {
@@ -58,6 +59,11 @@ namespace Sesim.BuildScript
                 .Parent
                 .CreateSubdirectory("GameData");
 
+            try
+            {
+                Directory.Delete(outputGameData.FullName, true);
+            }
+            catch (Exception e) { }
             Debug.Log($"Copying GameData files from {gameData} to {outputGameData}");
 
             CopyFilesRecursively(gameData, outputGameData);
