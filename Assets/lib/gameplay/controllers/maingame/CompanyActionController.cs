@@ -60,7 +60,7 @@ namespace Sesim.Game.Controllers.MainGame
                 techStack = "csharp"
             });
 
-            company.contractFactories.Add(new ContractFactory());
+            company.contractFactories.Add(new ContractFactory().SetDebugDefault());
         }
 
         // Update is called once per frame
@@ -77,7 +77,7 @@ namespace Sesim.Game.Controllers.MainGame
             if (evSys.currentSelectedGameObject == null)
                 evSys.SetSelectedGameObject(this.gameObject);
             var isActive = evSys.currentSelectedGameObject == this.gameObject;
-            Debug.Log(evSys.currentSelectedGameObject?.name);
+            // Debug.Log(evSys.currentSelectedGameObject?.name);
             if (isActive)
             {
                 if (Input.GetKeyDown(KeyCode.Period))
