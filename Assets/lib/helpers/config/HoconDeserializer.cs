@@ -99,7 +99,7 @@ namespace Sesim.Helpers.Config
             if (cache.ContainsKey(attr.typeIdentifier)) return configCache;
 
             cache.Add(attr.typeIdentifier, configCache);
-            deserializeFuncs.Add(T, GetDeserializeFunc(T));
+            deserializeFuncs.Add(T, GetTrivialDeserializeFunc(T));
 
             unresolvedTypes.Remove(T);
 
@@ -135,30 +135,125 @@ namespace Sesim.Helpers.Config
         }
 
         private static void resolveType(
-            Type type,
+            Type T,
             HoconNodeAttribute a,
             HashSet<HoconNodeAttribute> unresolvedNodes,
             HashSet<Type> unresolvedTypes)
         {
-            if (a.converter == null)
+
+            if (unresolvedTypes.Contains(T))
+                unresolvedNodes.Add(a);
+            else
             {
-                if (typeof(IHoconDeserializable).IsAssignableFrom(type))
+                var conf = _CacheType(T, unresolvedNodes, unresolvedTypes);
+                a.converter = deserializeFuncs[a.Type];
+            }
+
+        }
+
+        /// <summary>
+        /// Gets the converter to convert <c>HoconValue</c> to <c>T</c>
+        /// </summary>
+        /// <param name="T">The type to get</param>
+        /// <param name="unresolvedTypes">What types are not yet resolved (but will later)</param>
+        /// <returns></returns>
+        private static Converter<HoconValue, object> GetConverter(
+            Type T,
+            HashSet<Type> unresolvedTypes = null)
+        {
+            if (deserializeFuncs.ContainsKey(T))
+            {
+                // The simplest case: we already have this class's deserialize function
+                return deserializeFuncs[T];
+            }
+            else if (isArray(T, out var rank, out var arrayInnerType))
+            {
+                // This class is an Array
+                if (rank > 1)
+                    throw new ArgumentException("Deserializing arrays with rank more than 1 is not supported");
+
+                var innerConv = GetConverter(arrayInnerType);
+                Converter<HoconValue, object> conv =
+                    (HoconValue v) => v.GetArray().ConvertAll(innerConv).ToArray();
+
+                AssignTypeConverter(T, conv);
+                return conv;
+            }
+            else if (isICollection(T, out var collectionInnerType))
+            {
+                // This class is a collection (List, Set, etc.)
+                var innerConv = GetConverter(collectionInnerType);
+
+                Converter<HoconValue, object> conv =
+                    (HoconValue v) =>
+                    {
+                        var arr = v.GetArray();
+                        var t = T.GetConstructor(new Type[0]).Invoke(new object[0]);
+                        foreach (var i in arr)
+                            T.InvokeMember("Add", BindingFlags.Public | BindingFlags.InvokeMethod, null, t, new object[] { innerConv(i) });
+                        return t;
+                    };
+
+                AssignTypeConverter(T, conv);
+                return conv;
+            }
+            else if (isIDictionary(T, out var keyType, out var valueType))
+            {
+                // This class is a dictionary (Dictionary, etc.)
+                if (keyType == typeof(string))
                 {
-                    var methodInfo = type.GetRuntimeMethod(
-                            "ReadFromHocon", new Type[] { typeof(HoconValue) });
-                    a.converter = (HoconValue v) => methodInfo.Invoke(
-                        type.TypeInitializer.Invoke(new object[0]),
-                        new object[] { v });
+                    var valueConv = GetConverter(valueType);
+                    Converter<HoconValue, object> conv = (HoconValue v) =>
+                    {
+                        var dict = v.GetObject();
+                        var t = T.GetConstructor(new Type[0]).Invoke(new object[0]);
+                        foreach (var kvp in dict)
+                        {
+                            T.InvokeMember("Add", BindingFlags.Public | BindingFlags.InvokeMethod, null, t, new object[] { kvp.Key, valueConv(kvp.Value.Value) });
+                        }
+                        return t;
+                    };
+                    return conv;
+                }
+                else
+                    throw new ArgumentException("Hocon Deserializer does not support converting dictionaries with non-string keys");
+            }
+            else if (typeof(IHoconDeserializable).IsAssignableFrom(T))
+            {
+                // This class has a custom deserialize method
+                var methodInfo = T.GetRuntimeMethod(
+                        "ReadFromHocon", new Type[] { typeof(HoconValue) });
+                return (HoconValue v) => methodInfo.Invoke(
+                    T.TypeInitializer.Invoke(new object[0]),
+                    new object[] { v });
+            }
+            else
+            {
+                // This class is none of all above
+                // Try all T's base types
+                var baseType = T.BaseType;
+                var baseTypeConverter = GetConverter(baseType);
+                if (baseTypeConverter != null) return baseTypeConverter;
+
+                // Try all T's implemented interfaces
+                var interfaces = T.GetInterfaces();
+                foreach (var i in interfaces)
+                {
+                    var interfaceConverter = GetConverter(i);
+                    if (i != null) return interfaceConverter;
+                }
+
+                // Nothing works. Cache this type.
+                if (unresolvedTypes?.Contains(T) ?? false)
+                {
+                    // This type is already to be cached
+                    return GetTrivialDeserializeFunc(T);
                 }
                 else
                 {
-                    if (unresolvedTypes.Contains(type))
-                        unresolvedNodes.Add(a);
-                    else
-                    {
-                        var conf = _CacheType(type, unresolvedNodes, unresolvedTypes);
-                        a.converter = deserializeFuncs[a.Type];
-                    }
+                    // This type is not cached but also not to be resolved
+                    CacheType(T);
+                    return GetTrivialDeserializeFunc(T);
                 }
             }
         }
@@ -170,7 +265,7 @@ namespace Sesim.Helpers.Config
             cacheLock.ExitWriteLock();
         }
 
-        public static void AssignTypeConverters(IDictionary<Type, Converter<HoconValue, object>> converters)
+        public static void AssignAllTypeConverters(IDictionary<Type, Converter<HoconValue, object>> converters)
         {
             cacheLock.EnterWriteLock();
             foreach (var kvp in converters) deserializeFuncs.Add(kvp.Key, kvp.Value);
@@ -203,7 +298,7 @@ namespace Sesim.Helpers.Config
         5. 每次碰到需要反序列化这个类型的场合，从 cache 找到这个类型的信息，对每个键执行反序列化函数，并把结果赋值给对象。
          */
 
-        private static Converter<HoconValue, object> GetDeserializeFunc(Type T, bool checkType = false)
+        private static Converter<HoconValue, object> GetTrivialDeserializeFunc(Type T, bool checkType = false)
             => (HoconValue val) => DeserializeTrivial(val.GetObject(), T, checkType: checkType);
 
         public static T Deserialize<T>(HoconValue v, bool checkType = false)
@@ -254,6 +349,78 @@ namespace Sesim.Helpers.Config
             return result;
         }
 
+        // Code shamelessly copied from this StackOverflow question:
+        // https://stackoverflow.com/questions/951536/
+        private static bool isArray(Type T, out int rank, out Type innerType)
+        {
+            if (T.IsArray)
+            {
+                rank = T.GetArrayRank();
+                innerType = T.GetGenericArguments()[0];
+                return true;
+            }
+            else
+            {
+                // Who cares
+                rank = 0;
+                innerType = null;
+                return false;
+            }
+        }
+
+        private static bool isICollection(Type T, out Type innerType)
+        {
+            var listTest =
+                new Predicate<Type>(
+                    i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
+
+            if (listTest(T))
+            {
+                innerType = T.GenericTypeArguments[0];
+                return true;
+            }
+
+            foreach (Type i in T.GetInterfaces())
+            {
+                if (listTest(i))
+                {
+                    innerType = i.GenericTypeArguments[0];
+                    return true;
+                }
+            }
+            // no one cares about innertype
+            innerType = null;
+            return false;
+        }
+
+        private static bool isIDictionary(Type T, out Type keyType, out Type valueType)
+        {
+            var dictionaryTest =
+                new Predicate<Type>(
+                    i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+
+            if (dictionaryTest(T))
+            {
+                keyType = T.GenericTypeArguments[0];
+                valueType = T.GenericTypeArguments[1];
+                return true;
+            }
+
+            foreach (Type i in T.GetInterfaces())
+            {
+                if (dictionaryTest(i))
+                {
+                    keyType = i.GenericTypeArguments[0];
+                    valueType = i.GenericTypeArguments[1];
+                    return true;
+                }
+            }
+            // no one cares about innertype
+            keyType = null;
+            valueType = null;
+            return false;
+        }
+
         public static IList<T> ParseList<T>(HoconValue e, Converter<HoconValue, T> conv)
         {
             return e.GetArray().ConvertAll(conv);
@@ -297,7 +464,13 @@ namespace Sesim.Helpers.Config
         {
             this.msg = msg;
         }
+    }
 
+    class RequireTypeToBeResolvedLaterException : Exception
+    {
+        Type T;
+        public override string Message { get => $"The converter function of {T} is requested to be resolved later"; }
+        public RequireTypeToBeResolvedLaterException(Type T) { this.T = T; }
     }
 
     [System.AttributeUsage(
@@ -342,6 +515,11 @@ namespace Sesim.Helpers.Config
 
         public bool isProperty;
         public bool isField { get => !isProperty; set => isProperty = !value; }
+        public bool isArray;
+        public bool isList;
+        public bool isDictionary;
+        public Type elementType;
+        public Type keyType;
         public FieldInfo fieldInfo;
         public PropertyInfo propertyInfo;
 

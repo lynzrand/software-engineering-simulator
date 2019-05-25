@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Sesim.Helpers.UI;
 using System.Text;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 namespace Sesim.Game.Controllers.SplashScreen
 {
@@ -19,10 +20,16 @@ namespace Sesim.Game.Controllers.SplashScreen
         // 500 lines should be more than enough
         private List<string> cache = new List<string>(500);
 
+        Helpers.Config.ConfigReader reader = null;
+
         public void Start()
         {
             addLog();
             Debug.Log("This is a placeholder loading screen.");
+            var gameData = new DirectoryInfo(Application.dataPath).Parent.CreateSubdirectory("GameData");
+            reader = Helpers.Config.ConfigReader.Instance;
+            reader.AssignType("ContractFactory", typeof(Models.ContractFactory));
+            reader.BackgroundReadConfigsAsync(gameData.FullName);
         }
 
         int counter = 0;
@@ -70,7 +77,8 @@ namespace Sesim.Game.Controllers.SplashScreen
             var screenDpi = Screen.dpi;
             uiScale = screenDpi / 96;
 
-            counter++;
+            if (reader.ReadingCompleted)
+                counter++;
             if (counter > maxCounter)
             {
                 MoveOut();

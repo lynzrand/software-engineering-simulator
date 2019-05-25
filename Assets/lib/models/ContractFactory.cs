@@ -7,53 +7,50 @@ using UnityEngine;
 
 namespace Sesim.Models
 {
-    public class ContractFactory : IConfDeserializable, IPickedGenerator<Contract, Company>
+    public class ContractFactory : IHoconDeserializable, IPickedGenerator<Contract, Company>
     {
         public string name;
         public string category;
         public string title;
         public string description;
         public AnimationCurve abundanceCurve;
+        public AnimationCurve durationCurve;
+        public AnimationCurve workloadCurve;
+
+        public ContractReward baseDepositReward;
+        public ContractReward baseAbortPunishment;
+        public ContractReward baseFinishReward;
 
         public ContractFactory()
         {
 
         }
 
-        public float GetWeight(Company C)
+        public float GetWeight(Company c)
         {
-            if (C.reputation < 100)
-            {
-                return 1;
-            }
-            else if (C.reputation >= 100 && C.reputation < 200)
-            {
-
-            }
-            else
-            {
-
-            }
-            return 0;
+            return abundanceCurve.Evaluate(c.reputation);
         }
 
         public Contract Generate(Company c)
         {
             var contractor = RandomContractor();
-            var nameDescriptionPair = RandomNameDescription(contractor);
+            // var nameDescriptionPair = RandomNameDescription(contractor);
             var contract = new Contract
             {
                 id = Ulid.NewUlid(),
                 status = ContractStatus.Open,
                 contractor = contractor,
-                name = nameDescriptionPair.name,
-                description = nameDescriptionPair.desc,
-                difficulty = GetWeight(c),
-                depositReward = new ContractReward(),
+                name = name.Replace("$contractor", contractor),
+                description = description.Replace("$contractor", contractor),
                 startTime = c.ut,
-                LiveDuration = 5000,
-                LimitDuration = 3000,
+                LiveDuration = 15 * 300,
+                LimitDuration = durationCurve.Evaluate(c.reputation),
+                totalWorkload = workloadCurve.Evaluate(c.reputation),
+                depositReward = baseDepositReward.Copy(),
+                breakContractPunishment = baseAbortPunishment.Copy(),
+                completeReward = baseFinishReward.Copy()
             };
+            // MultiplyPow(ref contract.depositReward.reputation, );
             return contract;
         }
 
@@ -67,30 +64,42 @@ namespace Sesim.Models
             return contractorNames[new System.Random().Next(contractorNames.Length)];
         }
 
-
-        private static string[] contractTitles = {
-            "Build a store app for $contractor",
-            "Build a website for $contractor",
-        };
-        private static string[] contractDescriptions = {
-             "$contractor want to build a store app ,They have found you ,Please choose whether to help them complete the task",
-             "$contractor want to build a website ,They have found you ,Please choose whether to help them complete the task"
-        };
-
-
-        public (string name, string desc) RandomNameDescription(string contractorName)
+        ContractReward parseReward(HoconValue val)
         {
-            var selected = new System.Random().Next(contractTitles.Length);
-            return (
-                contractTitles[selected].Replace("$contractor", contractorName),
-                contractDescriptions[selected].Replace("$contractor", contractorName)
-            );
+            var result = new ContractReward();
+            var valObject = val.GetObject();
+            result.fund = valObject["fund"].Value.GetDecimal();
+            result.reputation = valObject["fund"].Value.GetFloat();
+            return result;
         }
 
-        public void DeserializeFromHocon(IHoconElement rootNode)
+        static void MultiplyPow(ref decimal value, float x, float y)
         {
-            if (!(rootNode is HoconObject)) throw new DeformedObjectException();
-            throw new NotImplementedException();
+            value = value * (decimal)Math.Round(Math.Pow(x, y), -3);
+        }
+        static void MultiplyPow(ref float value, float x, float y)
+        {
+            value = value * (float)Math.Pow(x, y);
+        }
+        static void MultiplyPow(ref double value, float x, float y)
+        {
+            value = value * Math.Pow(x, y);
+        }
+
+        public void ReadFromHocon(HoconValue e)
+        {
+            if (!(e.Type == HoconType.Object)) throw new DeformedObjectException();
+            var obj = e.GetObject();
+            name = obj["name"].GetString();
+            title = obj["title"].GetString();
+            description = obj["description"].GetString();
+            abundanceCurve = Helpers.Config.Deserializer.AnimationCurveParser.ParseHocon(obj["abundance"].Value);
+            durationCurve = Helpers.Config.Deserializer.AnimationCurveParser.ParseHocon(obj["duration"].Value);
+            workloadCurve = Helpers.Config.Deserializer.AnimationCurveParser.ParseHocon(obj["workload"].Value);
+            baseDepositReward = parseReward(obj["reward"].GetObject()["deposit"].Value);
+            baseFinishReward = parseReward(obj["reward"].GetObject()["finish"].Value);
+            baseAbortPunishment = parseReward(obj["reward"].GetObject()["abort"].Value);
+            // throw new NotImplementedException();
         }
     }
 }

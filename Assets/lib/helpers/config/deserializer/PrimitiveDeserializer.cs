@@ -12,8 +12,21 @@ namespace Sesim.Helpers.Config.Deserializer
             var dict = new Dictionary<Type, Converter<HoconValue, object>>()
             {
                 [typeof(bool)] = ParseBool,
-
+                [typeof(byte)] = ParseByte,
+                [typeof(short)] = ParseShort,
+                [typeof(int)] = ParseInt,
+                [typeof(long)] = ParseLong,
+                [typeof(float)] = ParseFloat,
+                [typeof(double)] = ParseDouble,
+                [typeof(IList<bool>)] = ParseBoolList,
+                [typeof(IList<byte>)] = ParseByteList,
+                [typeof(IList<short>)] = ParseShortList,
+                [typeof(IList<int>)] = ParseIntList,
+                [typeof(IList<long>)] = ParseLongList,
+                [typeof(IList<float>)] = ParseFloatList,
+                [typeof(IList<double>)] = ParseDoubleList,
             };
+            HoconConfigDeserializer.AssignAllTypeConverters(dict);
         }
 
         public static object ParseBool(HoconValue e)
