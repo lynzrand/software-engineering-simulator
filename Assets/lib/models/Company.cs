@@ -159,6 +159,8 @@ namespace Sesim.Models
             if (num < 0) throw new ArgumentException("Contract number should be positive!");
             if (num == 0) return;
 
+            if (contractFactories == null) return;
+
             var picker = new WeightedRandomPicker<IPickedGenerator<Contract, Company>>();
 
             foreach (var factory in contractFactories)
