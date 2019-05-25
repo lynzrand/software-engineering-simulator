@@ -35,4 +35,7 @@ jobs:
         #     scr
 
 notifications:
-    webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
+    webhooks: 
+        urls:
+            - https://fathomless-fjord-24024.herokuapp.com/notify
+        on-start: always
