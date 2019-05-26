@@ -13,6 +13,12 @@ namespace Sesim.Game.Controllers
 
         RectTransform sizeConstraints;
 
+        public Font font;
+
+        public int fontSize;
+        public Color labelColor;
+        public Color contentColor;
+
         public void Start()
         {
             sizeConstraints = this.GetComponent<RectTransform>();
@@ -21,37 +27,73 @@ namespace Sesim.Game.Controllers
         public void Construct(IList<KeyValueDisplayElement> dataSource)
         {
             // Skip when lists are equal; this is most cases
-            if (dataSource == elements) return;
+            // if (dataSource == elements) return;
+
+            DestroyAllChildren(this.GetComponent<RectTransform>());
+
+            var titleObject = BuildTitleObject();
+            titleObject
+                .GetComponent<RectTransform>()
+                .SetParent(this.GetComponent<RectTransform>());
 
             // Else we construct a new gameobject tree
             elements = dataSource;
             var len = elements.Count;
             for (int i = 0; i < len; i++)
             {
-                var gameObj = Instantiate(elements[i].GenerateGameObject(sizeConstraints));
+                elements[i].contentColor = elements[i].contentColor ?? contentColor;
+                elements[i].labelColor = elements[i].labelColor ?? labelColor;
+                elements[i].font = elements[i].font ?? font;
+                if (elements[i].fontSize <= 0) elements[i].fontSize = fontSize;
+
+                var gameObj = elements[i].ConstructGameobject(sizeConstraints);
                 // if this component doesnt have layout element
                 var transform = gameObj.GetComponent<RectTransform>();
                 if (transform == null)
                     throw new Exception("The gameobject is not a UI element");
 
-                if (gameObj.GetComponent<LayoutElement>() == null)
-                {
-                    var layout = gameObj.AddComponent<LayoutElement>();
-                    // layout.
-                }
-                gameObj.name = "Test GameObj";
+                gameObj.name = $"{title}_Obj";
                 transform.SetParent(this.gameObject.GetComponent<RectTransform>(), false);
-
                 elements[i].ApplyOtherConstraints(gameObj);
             }
         }
+
+        GameObject BuildTitleObject()
+        {
+            var titleObject = new GameObject($"{this.title}_Key", typeof(LayoutElement), typeof(CanvasRenderer), typeof(Text));
+            var text = titleObject.GetComponent<Text>();
+            text.text = this.title;
+            text.font = font;
+            text.fontSize = fontSize;
+            text.color = labelColor;
+            text.fontStyle = FontStyle.Bold;
+            return titleObject;
+        }
+
         public void Update()
         {
+        }
+
+        static void DestroyAllChildren(Transform src)
+        {
+            var childCount = src.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                var childZero = src.GetChild(i);
+                childZero.SetParent(null);
+                Destroy(childZero.gameObject);
+            }
         }
     }
 
     public class KeyValueDisplayElement
     {
+        public KeyValueDisplayElement(string title, string content)
+        {
+            this.title = title;
+            this.content = content;
+        }
+
         public bool dirty = false;
 
         protected string title;
@@ -68,18 +110,47 @@ namespace Sesim.Game.Controllers
             set { content = value; dirty = true; }
         }
 
-        public Font font;
+        public Font font = null;
 
-        public virtual GameObject GenerateGameObject(RectTransform sizeConstraints)
+        public int fontSize = -1;
+        public Color? labelColor = null;
+        public Color? contentColor = null;
+
+        public virtual GameObject ConstructGameobject(RectTransform sizeConstraints)
         {
-            var rootObject = new GameObject("Test object", typeof(CanvasRenderer), typeof(RectTransform), typeof(Text), typeof(LayoutElement));
-            var layouter = rootObject.GetComponent<LayoutElement>();
-            layouter.preferredHeight = 32;
-            var text = rootObject.GetComponent<Text>();
-            text.text = "Test component";
-            text.font = font;
-            text.fontSize = 8;
-            text.color = new Color(1, 1, 1, 1);
+            var rootObject = new GameObject($"{title}_Displayer", typeof(RectTransform), typeof(LayoutElement));
+            var rootLayout = rootObject.GetComponent<LayoutElement>();
+            rootLayout.preferredHeight = 12;
+            var rootTransform = rootObject.GetComponent<RectTransform>();
+
+            var label = new GameObject($"{title}_Key", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
+            var labelText = label.GetComponent<Text>();
+            labelText.text = title;
+            labelText.font = font;
+            labelText.fontSize = fontSize;
+            labelText.color = labelColor.Value;
+
+            var labelTransform = label.GetComponent<RectTransform>();
+            labelTransform.anchorMin = new Vector2(0f, 0f);
+            labelTransform.anchorMax = new Vector2(0.333f, 1f);
+            labelTransform.offsetMax = new Vector2();
+            labelTransform.offsetMin = new Vector2();
+            labelTransform.SetParent(rootTransform, false);
+
+            var value = new GameObject($"{title}_Val", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
+            var valueText = value.GetComponent<Text>();
+            valueText.text = content;
+            valueText.font = font;
+            valueText.fontSize = fontSize;
+            valueText.color = contentColor.Value;
+
+            var valueTransform = value.GetComponent<RectTransform>();
+            valueTransform.anchorMin = new Vector2(0.333f, 0f);
+            valueTransform.anchorMax = new Vector2(1f, 1f);
+            // valueTransform.
+            valueTransform.offsetMax = new Vector2();
+            valueTransform.offsetMin = new Vector2();
+            valueTransform.SetParent(rootTransform, false);
 
             dirty = false;
             return rootObject;
