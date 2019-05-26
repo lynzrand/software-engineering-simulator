@@ -67,7 +67,7 @@ namespace Sesim.Models
             this.employees = new List<Employee>();
             this.avaliableEmployees = new List<Employee>();
             this.contractFactories = new List<IPickedGenerator<Contract, Company>>{
-                new ContractFactory()
+                new ContractFactory().SetDebugDefault()
             };
             this.employeeGenerators = new List<IPickedGenerator<Employee, Company>>{
                 new EmployeeGenerator()
@@ -159,7 +159,7 @@ namespace Sesim.Models
             if (num < 0) throw new ArgumentException("Contract number should be positive!");
             if (num == 0) return;
 
-            if (contractFactories == null) return;
+            if (contractFactories == null || contractFactories.Count == 0) return;
 
             var picker = new WeightedRandomPicker<IPickedGenerator<Contract, Company>>();
 

@@ -101,5 +101,31 @@ namespace Sesim.Models
             baseAbortPunishment = parseReward(obj["reward"].GetObject()["abort"].Value);
             // throw new NotImplementedException();
         }
+
+        public ContractFactory SetDebugDefault()
+        {
+            name = "Test Factory";
+            title = "Debug Test Contract";
+            description = "This is a debug test contract";
+            abundanceCurve = AnimationCurve.Constant(0, 100, 1);
+            durationCurve = AnimationCurve.Constant(0, 100, 1);
+            workloadCurve = AnimationCurve.Constant(0, 100, 1);
+            baseDepositReward = new ContractReward()
+            {
+                fund = 1,
+                reputation = 1
+            };
+            baseFinishReward = new ContractReward()
+            {
+                fund = 1,
+                reputation = 1
+            };
+            baseAbortPunishment = new ContractReward()
+            {
+                fund = -1,
+                reputation = -1
+            };
+            return this;
+        }
     }
 }
