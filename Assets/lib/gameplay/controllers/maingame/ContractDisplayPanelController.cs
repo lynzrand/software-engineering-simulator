@@ -15,7 +15,7 @@ namespace Sesim.Game.Controllers.MainGame
         void Start()
         {
             var display = this.GetComponentInChildren<KeyValueDisplayer>();
-            Debug.Log(display.name);
+            // Debug.Log(display.name);
             display.Construct(new List<KeyValueDisplayElement>()
             {
                 new KeyValueDisplayElement(){
