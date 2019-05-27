@@ -6,13 +6,26 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Callbacks;
 using System;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 namespace Sesim.BuildScript
 {
     class CustomBuildScripts
     {
+        [MenuItem("Build/Build Windows and Pack")]
+        public static void BuildWindowsPack()
+        {
+            BuildWindows(true);
+        }
+
         [MenuItem("Build/Build Windows")]
-        public static void BuildWindows()
+        public static void BuildWindowsNoPack()
+        {
+            BuildWindows(false);
+        }
+
+        public static void BuildWindows(bool pack)
         {
             var options = new BuildPlayerOptions()
             {
@@ -28,7 +41,6 @@ namespace Sesim.BuildScript
 
             var report = BuildPipeline.BuildPlayer(options);
 
-            // new PostBuildGameDataCopier().OnPostprocessBuild(report);
             var summary = report.summary;
 
             if (summary.result == BuildResult.Succeeded)
@@ -38,6 +50,81 @@ namespace Sesim.BuildScript
             else if (summary.result == BuildResult.Failed)
             {
                 Debug.Log("Build failed");
+                return;
+            }
+
+            try
+            {
+                ZipBuildArtifacts(summary.outputPath);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
+        public static void ZipBuildArtifacts(string outputExecutable)
+        {
+            var outputFolder = new DirectoryInfo(outputExecutable).Parent;
+            var buildFolder = outputFolder.Parent;
+
+            // Read git commit count
+            int gitCommitCount = -1;
+            try
+            {
+                var gitCountCommitInfo = new ProcessStartInfo("git", "rev-list --count HEAD")
+                {
+                    WorkingDirectory = outputFolder.FullName,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                };
+                var gitProcess = Process.Start(gitCountCommitInfo);
+                gitCommitCount = int.Parse(gitProcess.StandardOutput.ReadToEnd());
+                gitProcess.WaitForExit();
+                Debug.Assert(gitProcess.ExitCode == 0);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Failed to start git.");
+            }
+
+            // Read git commit sha1
+            String commitId = "";
+            {
+                var gitCommitIdInfo = new ProcessStartInfo("git", "rev-parse HEAD")
+                {
+                    WorkingDirectory = outputFolder.FullName,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                };
+                gitCommitIdInfo.WorkingDirectory = outputFolder.FullName;
+                var gitProcess = Process.Start(gitCommitIdInfo);
+                commitId = gitProcess.StandardOutput.ReadToEnd();
+                gitProcess.WaitForExit();
+                Debug.Assert(gitProcess.ExitCode == 0);
+            }
+
+            var zipName = $"build_windows_x64_{Application.version}b{gitCommitCount}_{commitId.Substring(0, 8)}.zip";
+
+            try
+            {
+                var _7zInfo = new ProcessStartInfo("7z", $"a ../{zipName} ./*")
+                {
+                    WorkingDirectory = outputFolder.FullName,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                };
+                var _7zip = Process.Start(_7zInfo);
+                _7zip.WaitForExit();
+                Debug.Assert(_7zip.ExitCode == 0);
+                _7zip.Dispose();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Failed to start 7zip.");
             }
         }
     }
@@ -63,7 +150,7 @@ namespace Sesim.BuildScript
             {
                 Directory.Delete(outputGameData.FullName, true);
             }
-            catch (Exception e) { }
+            catch (Exception e) { Debug.Log(e); }
             Debug.Log($"Copying GameData files from {gameData} to {outputGameData}");
 
             CopyFilesRecursively(gameData, outputGameData);
