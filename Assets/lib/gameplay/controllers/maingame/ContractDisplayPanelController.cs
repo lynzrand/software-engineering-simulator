@@ -76,7 +76,7 @@ namespace Sesim.Game.Controllers.MainGame
             var childCount = src.childCount;
             for (int i = 0; i < childCount; i++)
             {
-                var childZero = src.GetChild(i);
+                var childZero = src.GetChild(0);
                 childZero.SetParent(null);
                 Destroy(childZero.gameObject);
             }

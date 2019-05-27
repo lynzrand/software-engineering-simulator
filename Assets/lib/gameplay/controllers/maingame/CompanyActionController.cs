@@ -59,6 +59,22 @@ namespace Sesim.Game.Controllers.MainGame
                 },
                 techStack = "csharp"
             });
+            company.contracts.Add(new Contract()
+            {
+                id = Ulid.NewUlid(),
+                name = "Blah blah contract 2",
+                status = ContractStatus.Working,
+                members = new List<Employee>() { company.employees[0] },
+                timeLimit = 7200 * 16,
+                totalWorkload = 30.0,
+                completedWork = 0.0,
+                completeReward = new ContractReward()
+                {
+                    fund = 10000,
+                    reputation = 10
+                },
+                techStack = "csharp"
+            });
 
             company.contractFactories.Add(new ContractFactory().SetDebugDefault());
         }
