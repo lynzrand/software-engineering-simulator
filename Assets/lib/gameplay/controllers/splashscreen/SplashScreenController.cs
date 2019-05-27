@@ -29,6 +29,7 @@ namespace Sesim.Game.Controllers.SplashScreen
             var gameData = new DirectoryInfo(Application.dataPath).Parent.CreateSubdirectory("GameData");
             reader = Helpers.Config.ConfigReader.Instance;
             reader.AssignType("ContractFactory", typeof(Models.ContractFactory));
+
             reader.BackgroundReadConfigsAsync(gameData.FullName);
         }
 

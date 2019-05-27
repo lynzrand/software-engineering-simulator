@@ -7,6 +7,7 @@ using Hocon;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
+using System.Text;
 
 namespace Sesim.Helpers.Config
 {
@@ -56,10 +57,22 @@ namespace Sesim.Helpers.Config
 
         async public void BackgroundReadConfigsAsync(string path)
         {
+            LogAllConfigTypes();
             readingCompleted = false;
             readingTask = TraverseDirectoriesAsync(path);
             await readingTask;
             readingCompleted = true;
+        }
+
+        void LogAllConfigTypes()
+        {
+            var sb = new StringBuilder("Known types:\n");
+            foreach (var kvp in typeDefinitions)
+            {
+                sb.AppendFormat("{0}: {1}", kvp.Key, kvp.Value.FullName);
+            }
+
+            Debug.Log(sb.ToString());
         }
 
         async public Task TraverseDirectoriesAsync(string dir)
@@ -80,10 +93,10 @@ namespace Sesim.Helpers.Config
                     var str = await f.ReadToEndAsync();
                     var config = Parser.Parse(str);
                     HoconValue value = config.Value;
-                    var deserializeType = typeDefinitions[value.GetObject()["_type"].GetString()];
+                    string _type = value.GetObject()["type"].GetString();
 
-                    if (deserializeType == null)
-                        throw new Exception($"Type not found when deserializing type \"{value.GetObject()["_type"].GetString()}\"");
+                    if (!typeDefinitions.TryGetValue(_type, out var deserializeType))
+                        throw new Exception($"Type not found when deserializing type \"{_type}\"");
 
                     var ctor = deserializeType.GetConstructor(new Type[0]);
                     var deserializeObject = (IHoconDeserializable)ctor.Invoke(new object[0]);
@@ -94,7 +107,7 @@ namespace Sesim.Helpers.Config
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"Error when reading file \"{path}\"\r\n" + e.ToString());
+                Debug.LogError($"Error when reading file \"{path}\"\r\n{e.Message}\r\n{e.StackTrace}");
             }
         }
     }
