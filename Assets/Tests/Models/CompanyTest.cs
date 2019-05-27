@@ -39,7 +39,7 @@ namespace Tests.Models
                 completedWork = 0.0,
                 techStack = "csharp"
             });
-            mockCompany.contractFactories.Add(new ContractFactory());
+            mockCompany.contractFactories.Add(new ContractFactory().SetDebugDefault());
         }
 
 
