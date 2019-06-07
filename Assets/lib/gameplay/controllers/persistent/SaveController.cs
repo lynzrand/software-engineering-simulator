@@ -16,6 +16,15 @@ namespace Sesim.Game.Controllers.Persistent
     {
         static readonly string SAVEFILE_DIR = "Saves/%ID%";
 
+        public static SaveController instance;
+        public static SaveController Instance
+        {
+            get
+            {
+                if (instance == null) instance = new SaveController();
+                return instance;
+            }
+        }
 
         public SaveFile saveData;
         byte[] saveBuffer = null;
@@ -28,7 +37,6 @@ namespace Sesim.Game.Controllers.Persistent
         // Start is called before the first frame update
         void Start()
         {
-
             config.OnResolveFormatter.Add((s, t) =>
             {
                 if (t == typeof(Ulid))

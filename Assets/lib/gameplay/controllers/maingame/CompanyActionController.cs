@@ -117,14 +117,58 @@ namespace Sesim.Game.Controllers.MainGame
             }
             pauseMenuController.ShouldShow = isPaused;
 
-            // if (Input.GetKey(KeyCode.A))
-            //     cam.transform.Translate(new Vector3(-30f, 0f, 0f) * Time.deltaTime);
-            // if (Input.GetKey(KeyCode.W))
-            //     cam.transform.Translate(new Vector3(0f, 30f, 0f) * Time.deltaTime);
-            // if (Input.GetKey(KeyCode.S))
-            //     cam.transform.Translate(new Vector3(0f, -30f, 0f) * Time.deltaTime);
-            // if (Input.GetKey(KeyCode.D))
-            //     cam.transform.Translate(new Vector3(30f, 0f, 0f) * Time.deltaTime);
+            CheckKeys();
+            // if (Input.GetAxis(""))
+        }
+
+        private Vector3 lastMousePos;
+
+        private void CheckKeys()
+        {
+            // pan on wasd
+            if (Input.GetKey(KeyCode.A))
+                cam.transform.Translate(new Vector3(-30f, 0f, 0f) * Time.deltaTime);
+            if (Input.GetKey(KeyCode.W))
+                cam.transform.Translate(new Vector3(0f, 30f, 0f) * Time.deltaTime);
+            if (Input.GetKey(KeyCode.S))
+                cam.transform.Translate(new Vector3(0f, -30f, 0f) * Time.deltaTime);
+            if (Input.GetKey(KeyCode.D))
+                cam.transform.Translate(new Vector3(30f, 0f, 0f) * Time.deltaTime);
+
+            // Pan on right or middle drag
+
+            if (Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
+            {
+                lastMousePos = Input.mousePosition;
+            }
+
+            if (Input.GetMouseButton(1) || Input.GetMouseButton(2))
+            {
+                var mouseMove = lastMousePos - Input.mousePosition;
+
+                var cameraForward = cam.transform.TransformDirection(Vector3.forward);
+                cameraForward.y = 0;
+                // cameraForward = cameraForward.normalized;
+
+                var cameraRight = cam.transform.TransformDirection(Vector3.right);
+                cameraRight.y = 0;
+                // cameraRight = cameraRight.normalized;
+
+                var multiplier = 0.003f * cam.orthographicSize;
+
+                var moveDelta =
+                    mouseMove.y * cameraForward * multiplier
+                    + mouseMove.x * cameraRight * multiplier;
+
+                cam.transform.Translate(moveDelta, Space.World);
+                lastMousePos = Input.mousePosition;
+            }
+
+            {
+                // zoom on scroll
+                const float sizeDeltaMult = 0.1f;
+                cam.orthographicSize *= Mathf.Exp(-Input.mouseScrollDelta.y * sizeDeltaMult);
+            }
         }
 
         private void UpdateCompany()
