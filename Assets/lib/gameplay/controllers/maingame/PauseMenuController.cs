@@ -88,14 +88,15 @@ namespace Sesim.Game.Controllers.MainGame
             }
         }
 
-        public void Save()
+        public async void Save()
         {
-            SaveController.Instance.SaveAsync();
+            await SaveController.Instance.SaveAsync();
         }
 
-        public void Exit()
+        public async void Exit()
         {
-            SaveController.Instance.loadSaveMetas();
+            await SaveController.Instance.SaveAsync();
+            UnityEngine.Application.Quit();
         }
     }
 }

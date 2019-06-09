@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using System.Threading.Tasks;
 
 namespace Sesim.Game.Controllers.Persistent
 {
@@ -64,14 +65,14 @@ namespace Sesim.Game.Controllers.Persistent
             Saves/
                 <Ulid of this save>/
                     meta.bin                    - savefile metadata
-                    save.bin                    - actrual savefile
+                    save.bin                    - actual savefile
                 .../
          */
 
-        void resolveSavePos(Ulid saveId)
+        string resolveSavePos(Ulid saveId)
         {
             var dataPos = Application.dataPath;
-            savePosition = Directory
+            return Directory
                 .GetParent(dataPos)
                 .CreateSubdirectory("Saves")
                 .CreateSubdirectory(saveId.ToString())
@@ -114,10 +115,10 @@ namespace Sesim.Game.Controllers.Persistent
             return saveMetas;
         }
 
-        public async void SaveAsync()
+        public async Task SaveAsync()
         {
             working = true;
-            resolveSavePos(this.saveFile.id);
+            this.savePosition = resolveSavePos(this.saveFile.id);
             var saveSize = ceras.Serialize<SaveFile>(this.saveFile, ref saveBuffer);
             var saveFile = File.OpenWrite(Path.Combine(savePosition, SavefileFilename));
             await saveFile.WriteAsync(saveBuffer, 0, saveSize);
@@ -127,15 +128,23 @@ namespace Sesim.Game.Controllers.Persistent
             var metaFile = File.OpenWrite(Path.Combine(savePosition, MetadataFilename));
             await metaFile.WriteAsync(saveBuffer, 0, metaSize);
             metaFile.Close();
+
+            Debug.Log($"Successfully saved SaveFile#{this.saveFile.id}. Save file size {saveSize}, metadata file size {metaSize}.");
+
             working = false;
         }
-        public async void LoadAsync()
+        public async Task LoadAsync(Ulid id)
         {
             working = true;
-            resolveSavePos(this.saveFile.id);
-            var saveBuffer = File.ReadAllBytes(Path.Combine(savePosition, SavefileFilename));
+            resolveSavePos(id);
+            var saveBuffer = File.ReadAllBytes(
+                Path.Combine(resolveSavePos(id), SavefileFilename)
+            );
             var saveFile = ceras.Deserialize<SaveFile>(saveBuffer);
             this.saveFile = saveFile;
+
+            Debug.Log($"Successfully loaded SaveFile#{this.saveFile.id}.");
+
             working = false;
         }
     }

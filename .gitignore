@@ -42,5 +42,7 @@ sysinfo.txt
 paket.local
 paket.lock
 
+[sS]aves/
+
 bin/
 /*.ulf
