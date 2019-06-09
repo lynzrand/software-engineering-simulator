@@ -63,5 +63,13 @@
       "--csharp_out=${workspaceRoot}/lib/generated"
     ]
   },
-  "cSpell.words": ["conf", "deserializable", "hocon", "i", "object"]
+  "cSpell.words": [
+    "Mathf",
+    "Metas",
+    "conf",
+    "deserializable",
+    "hocon",
+    "i",
+    "object"
+  ]
 }
