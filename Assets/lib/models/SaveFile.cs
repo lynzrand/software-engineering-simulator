@@ -90,7 +90,7 @@ namespace Sesim.Models
 
         public override string ToString()
         {
-            return $"Savefile(version: {version}, id: {id}, name: \"{name}\", ut: {ut}, fund: {fund}, reputation: {reputation}, employeeCount: {employeeCount}, contractCount: {contractCount})";
+            return $"Savefile(version: {version}, id: {id}, name: \"{name}\", ut: {ut.ToString("#.0")}, fund: {fund}, reputation: {reputation}, employeeCount: {employeeCount}, contractCount: {contractCount})";
         }
     }
 }

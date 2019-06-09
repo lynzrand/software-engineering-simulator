@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sesim.Models;
+using Sesim.Game.Controllers.Persistent;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
@@ -85,6 +86,16 @@ namespace Sesim.Game.Controllers.MainGame
                 }
                 canvasGroup.alpha = Lerp(0, 1, timeCounter / animationTime);
             }
+        }
+
+        public void Save()
+        {
+            SaveController.Instance.SaveAsync();
+        }
+
+        public void Exit()
+        {
+            SaveController.Instance.loadSaveMetas();
         }
     }
 }

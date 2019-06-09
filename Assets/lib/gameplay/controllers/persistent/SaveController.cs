@@ -12,11 +12,13 @@ using UnityEngine;
 
 namespace Sesim.Game.Controllers.Persistent
 {
-    public class SaveController
+    public sealed class SaveController
     {
+        private const string MetadataFilename = "meta.bin";
+        private const string SavefileFilename = "save.bin";
         static readonly string SAVEFILE_DIR = "Saves/%ID%";
 
-        public static SaveController instance;
+        private static SaveController instance;
         public static SaveController Instance
         {
             get
@@ -26,7 +28,14 @@ namespace Sesim.Game.Controllers.Persistent
             }
         }
 
-        public SaveFile saveData;
+        public static SaveController __DebugNewInstance() => new SaveController();
+
+        public List<SaveMetadata> saveMetas = new List<SaveMetadata>();
+
+        public SaveFile saveFile;
+
+        public bool shouldCompanyLoadSavefile = false;
+        public bool working = false;
         byte[] saveBuffer = null;
 
         public CerasSerializer ceras = new CerasSerializer();
@@ -35,7 +44,7 @@ namespace Sesim.Game.Controllers.Persistent
         public string savePosition;
 
         // Start is called before the first frame update
-        void Start()
+        private SaveController()
         {
             config.OnResolveFormatter.Add((s, t) =>
             {
@@ -68,19 +77,66 @@ namespace Sesim.Game.Controllers.Persistent
                 .CreateSubdirectory(saveId.ToString())
                 .FullName;
         }
-
-        async void SaveAsync()
+        string SaveFolderPos
         {
-            resolveSavePos(saveData.id);
-            var saveSize = ceras.Serialize<SaveFile>(saveData, ref saveBuffer);
-            var saveFile = File.OpenWrite(savePosition + "/save.bin");
+            get
+            {
+                var dataPos = Application.dataPath;
+                return Directory
+                    .GetParent(dataPos)
+                    .CreateSubdirectory("Saves")
+                    .FullName;
+            }
+        }
+
+        public List<SaveMetadata> loadSaveMetas()
+        {
+            var saveFolderPos = SaveFolderPos;
+            var saveFolders = Directory.EnumerateDirectories(saveFolderPos);
+            this.saveMetas.Clear();
+            foreach (var folder in saveFolders)
+            {
+                try
+                {
+                    var metaFile = File.ReadAllBytes(Path.Combine(folder, MetadataFilename));
+                    var metadata = ceras.Deserialize<SaveMetadata>(metaFile);
+                    saveMetas.Add(metadata);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"Metadata file \"meta.bin\" cannot be read in {folder}. Is this save folder corrupted?");
+                    Debug.LogWarning(e);
+                }
+            }
+
+            Debug.Log(String.Join("\n", this.saveMetas.ConvertAll<String>(m => m.ToString())));
+
+            return saveMetas;
+        }
+
+        public async void SaveAsync()
+        {
+            working = true;
+            resolveSavePos(this.saveFile.id);
+            var saveSize = ceras.Serialize<SaveFile>(this.saveFile, ref saveBuffer);
+            var saveFile = File.OpenWrite(Path.Combine(savePosition, SavefileFilename));
             await saveFile.WriteAsync(saveBuffer, 0, saveSize);
             saveFile.Close();
 
-            var metaSize = ceras.Serialize<SaveMetadata>(saveData.Metadata, ref saveBuffer);
-            var metaFile = File.OpenWrite(savePosition + "/meta.bin");
+            var metaSize = ceras.Serialize<SaveMetadata>(this.saveFile.Metadata, ref saveBuffer);
+            var metaFile = File.OpenWrite(Path.Combine(savePosition, MetadataFilename));
             await metaFile.WriteAsync(saveBuffer, 0, metaSize);
             metaFile.Close();
+            working = false;
+        }
+        public async void LoadAsync()
+        {
+            working = true;
+            resolveSavePos(this.saveFile.id);
+            var saveBuffer = File.ReadAllBytes(Path.Combine(savePosition, SavefileFilename));
+            var saveFile = ceras.Deserialize<SaveFile>(saveBuffer);
+            this.saveFile = saveFile;
+            working = false;
         }
     }
 }

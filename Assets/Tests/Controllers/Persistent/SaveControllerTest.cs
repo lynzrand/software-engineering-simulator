@@ -14,9 +14,13 @@ namespace Sesim.Tests.Controllers
 {
     public class SaveControllerTest
     {
-        SaveController controller = new SaveController()
+        SaveController controller;
+
+        [SetUp]
+        public void initSaveController()
         {
-            saveData = new Models.SaveFile()
+            controller = SaveController.__DebugNewInstance();
+            controller.saveFile = new Models.SaveFile()
             {
                 id = System.Ulid.NewUlid(),
                 name = "New Save",
@@ -42,13 +46,7 @@ namespace Sesim.Tests.Controllers
                         },
                     }
                 }
-            }
-        };
-
-        [SetUp]
-        public void initSaveController()
-        {
-
+            };
         }
 
         [Test]
@@ -56,7 +54,7 @@ namespace Sesim.Tests.Controllers
         {
             // Proving that Ceras is consistent with this serializing method
             // and Ulid serializes perfectly
-            var result = controller.ceras.Serialize<SaveFile>(controller.saveData);
+            var result = controller.ceras.Serialize<SaveFile>(controller.saveFile);
             var restored = controller.ceras.Deserialize<SaveFile>(result);
             var reserialized = controller.ceras.Serialize<SaveFile>(restored);
             Assert.That(reserialized, Is.EqualTo(result));
@@ -64,7 +62,7 @@ namespace Sesim.Tests.Controllers
         [Test]
         public void MetadataSerializationTest()
         {
-            var meta = controller.saveData.Metadata;
+            var meta = controller.saveFile.Metadata;
             var serialized = controller.ceras.Serialize<SaveMetadata>(meta);
             var restored = controller.ceras.Deserialize<SaveMetadata>(serialized);
             Debug.Log(meta.ToString() + "; " + restored.ToString());

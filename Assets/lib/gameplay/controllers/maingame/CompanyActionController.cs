@@ -5,6 +5,7 @@ using Sesim.Models;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
+using Sesim.Game.Controllers.Persistent;
 
 namespace Sesim.Game.Controllers.MainGame
 {
@@ -18,6 +19,8 @@ namespace Sesim.Game.Controllers.MainGame
         public PauseMenuController pauseMenuController;
 
         public Company company;
+
+        public SaveFile saveFile;
         public Camera cam;
 
         public bool isFocused;
@@ -30,52 +33,68 @@ namespace Sesim.Game.Controllers.MainGame
         public void Awake()
         {
             // Mock up a company before generator and savefile completes
-            company = new Company();
-            company.Init();
-            company.employees.Add(new Employee()
+            SaveController saveController = SaveController.Instance;
+            if (saveController.shouldCompanyLoadSavefile)
             {
-                id = Ulid.NewUlid(),
-                name = "Someone",
-                baseEfficiency = 1,
-                abilities = new Dictionary<string, float>()
-                {
-                    ["csharp"] = 1.0f
-                },
-                isWorking = false
-            });
-            company.contracts.Add(new Contract()
+                this.saveFile = saveController.saveFile;
+                this.company = saveController.saveFile.company;
+                saveController.shouldCompanyLoadSavefile = false;
+            }
+            else
             {
-                id = Ulid.NewUlid(),
-                name = "Blah blah contract",
-                status = ContractStatus.Working,
-                members = new List<Employee>() { company.employees[0] },
-                timeLimit = 7200 * 16,
-                totalWorkload = 30.0,
-                completedWork = 0.0,
-                completeReward = new ContractReward()
+                saveFile = new SaveFile()
                 {
-                    fund = 10000,
-                    reputation = 10
-                },
-                techStack = "csharp"
-            });
-            company.contracts.Add(new Contract()
-            {
-                id = Ulid.NewUlid(),
-                name = "Blah blah contract 2",
-                status = ContractStatus.Working,
-                members = new List<Employee>() { company.employees[0] },
-                timeLimit = 7200 * 16,
-                totalWorkload = 30.0,
-                completedWork = 0.0,
-                completeReward = new ContractReward()
+                    id = Ulid.NewUlid(),
+                    name = "new save",
+                };
+                company = new Company();
+                company.Init();
+                company.employees.Add(new Employee()
                 {
-                    fund = 10000,
-                    reputation = 10
-                },
-                techStack = "csharp"
-            });
-
+                    id = Ulid.NewUlid(),
+                    name = "Someone",
+                    baseEfficiency = 1,
+                    abilities = new Dictionary<string, float>()
+                    {
+                        ["csharp"] = 1.0f
+                    },
+                    isWorking = false
+                });
+                company.contracts.Add(new Contract()
+                {
+                    id = Ulid.NewUlid(),
+                    name = "Blah blah contract",
+                    status = ContractStatus.Working,
+                    members = new List<Employee>() { company.employees[0] },
+                    timeLimit = 7200 * 16,
+                    totalWorkload = 30.0,
+                    completedWork = 0.0,
+                    completeReward = new ContractReward()
+                    {
+                        fund = 10000,
+                        reputation = 10
+                    },
+                    techStack = "csharp"
+                });
+                company.contracts.Add(new Contract()
+                {
+                    id = Ulid.NewUlid(),
+                    name = "Blah blah contract 2",
+                    status = ContractStatus.Working,
+                    members = new List<Employee>() { company.employees[0] },
+                    timeLimit = 7200 * 16,
+                    totalWorkload = 30.0,
+                    completedWork = 0.0,
+                    completeReward = new ContractReward()
+                    {
+                        fund = 10000,
+                        reputation = 10
+                    },
+                    techStack = "csharp"
+                });
+                saveFile.company = company;
+                saveController.saveFile = saveFile;
+            }
             company.contractFactories.Add(new ContractFactory().SetDebugDefault());
         }
 
@@ -135,39 +154,41 @@ namespace Sesim.Game.Controllers.MainGame
             if (Input.GetKey(KeyCode.D))
                 cam.transform.Translate(new Vector3(30f, 0f, 0f) * Time.deltaTime);
 
-            // Pan on right or middle drag
-
-            if (Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
+            if (EventSystem.current.IsPointerOverGameObject())
             {
-                lastMousePos = Input.mousePosition;
-            }
+                // Pan on right or middle drag
+                if (Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
+                {
+                    lastMousePos = Input.mousePosition;
+                }
 
-            if (Input.GetMouseButton(1) || Input.GetMouseButton(2))
-            {
-                var mouseMove = lastMousePos - Input.mousePosition;
+                if (Input.GetMouseButton(1) || Input.GetMouseButton(2))
+                {
+                    var mouseMove = lastMousePos - Input.mousePosition;
 
-                var cameraForward = cam.transform.TransformDirection(Vector3.forward);
-                cameraForward.y = 0;
-                // cameraForward = cameraForward.normalized;
+                    var cameraForward = cam.transform.TransformDirection(Vector3.forward);
+                    cameraForward.y = 0;
+                    cameraForward = cameraForward.normalized;
 
-                var cameraRight = cam.transform.TransformDirection(Vector3.right);
-                cameraRight.y = 0;
-                // cameraRight = cameraRight.normalized;
+                    var cameraRight = cam.transform.TransformDirection(Vector3.right);
+                    cameraRight.y = 0;
+                    cameraRight = cameraRight.normalized;
 
-                var multiplier = 0.003f * cam.orthographicSize;
+                    var multiplier = 0.003f * cam.orthographicSize;
 
-                var moveDelta =
-                    mouseMove.y * cameraForward * multiplier
-                    + mouseMove.x * cameraRight * multiplier;
+                    var moveDelta =
+                        mouseMove.y * cameraForward * multiplier
+                        + mouseMove.x * cameraRight * multiplier;
 
-                cam.transform.Translate(moveDelta, Space.World);
-                lastMousePos = Input.mousePosition;
-            }
+                    cam.transform.Translate(moveDelta, Space.World);
+                    lastMousePos = Input.mousePosition;
+                }
 
-            {
-                // zoom on scroll
-                const float sizeDeltaMult = 0.1f;
-                cam.orthographicSize *= Mathf.Exp(-Input.mouseScrollDelta.y * sizeDeltaMult);
+                {
+                    // zoom on scroll
+                    const float sizeDeltaMult = 0.1f;
+                    cam.orthographicSize *= Mathf.Exp(-Input.mouseScrollDelta.y * sizeDeltaMult);
+                }
             }
         }
 
