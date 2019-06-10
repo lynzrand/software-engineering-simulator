@@ -11,6 +11,15 @@ namespace Sesim.Game.Controllers.SplashScreen
 {
     public class SplashScreenController : MonoBehaviour
     {
+        const string KareniaLogoAsciiArt = @"
+       _
+ __--▔▔ ▔▔--__             _  __    _    ____  _____ _   _ ___    _    
+|         __--▔▔          | |/ /   / \  |  _ \| ____| \ | |_ _|  / \   
+|      |▔▔                | ' /   / _ \ | |_) |  _| |  \| || |  / _ \  
+|      |                  | . \  / ___ \|  _ <| |___| |\  || | / ___ \ 
+ ▔▔--__|                  |_|\_\/_/   \_\_| \_\_____|_| \_|___/_/   \_\
+";
+
         private Vector2Int consoleSize;
         public Text console;
         float uiScale = 1;
@@ -25,7 +34,7 @@ namespace Sesim.Game.Controllers.SplashScreen
         public void Start()
         {
             addLog();
-            Debug.Log("This is a placeholder loading screen.");
+            Debug.Log($"{KareniaLogoAsciiArt}\nSESim {Application.version}");
             var gameData = new DirectoryInfo(Application.dataPath).Parent.CreateSubdirectory("GameData");
             reader = Helpers.Config.ConfigReader.Instance;
             reader.AssignType("ContractFactory", typeof(Models.ContractFactory));
@@ -34,7 +43,7 @@ namespace Sesim.Game.Controllers.SplashScreen
         }
 
         int counter = 0;
-        int maxCounter = 300;
+        int maxCounter = 100;
 
         void addLog()
         {
@@ -100,7 +109,7 @@ namespace Sesim.Game.Controllers.SplashScreen
         public void MoveOut()
         {
             removeLog();
-            SceneManager.LoadScene("MainGameplayScene");
+            SceneManager.LoadScene("MainMenuScene");
         }
     }
 }
