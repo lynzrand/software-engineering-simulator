@@ -425,7 +425,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.000030517578}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &369355809
@@ -546,9 +546,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenuController: {fileID: 1411057019}
   cam: {fileID: 464171393}
+  bgm: {fileID: 144518400}
   isFocused: 0
   timeWarpMultiplier: 1
   isPaused: 0
+  isPauseStatusChanged: 0
 --- !u!1 &464171391
 GameObject:
   m_ObjectHideFlags: 0
@@ -2261,7 +2263,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1343177664}
   m_HandleRect: {fileID: 1343177663}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
