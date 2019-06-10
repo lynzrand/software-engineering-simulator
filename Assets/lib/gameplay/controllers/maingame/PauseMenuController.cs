@@ -98,5 +98,11 @@ namespace Sesim.Game.Controllers.MainGame
             await SaveController.Instance.SaveAsync();
             UnityEngine.Application.Quit();
         }
+
+        public async void ReturnToTitleAsync()
+        {
+            await SaveController.Instance.SaveAsync();
+            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenuScene");
+        }
     }
 }

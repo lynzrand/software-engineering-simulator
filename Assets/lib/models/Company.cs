@@ -62,17 +62,22 @@ namespace Sesim.Models
             this.ut = 0;
             this.fund = decimal.Zero;
             this.reputation = 0f;
-            this.contracts = new List<Contract>();
-            this.avaliableContracts = new List<Contract>();
-            this.employees = new List<Employee>();
-            this.avaliableEmployees = new List<Employee>();
-            this.contractFactories = new List<IPickedGenerator<Contract, Company>>{
+            InitMissingItems();
+        }
+
+        public void InitMissingItems()
+        {
+            this.contracts = this.contracts ?? new List<Contract>();
+            this.avaliableContracts = this.avaliableContracts ?? new List<Contract>();
+            this.employees = this.employees ?? new List<Employee>();
+            this.avaliableEmployees = this.avaliableEmployees ?? new List<Employee>();
+            this.contractFactories = this.contractFactories ?? new List<IPickedGenerator<Contract, Company>>{
                 new ContractFactory().SetDebugDefault()
             };
-            this.employeeGenerators = new List<IPickedGenerator<Employee, Company>>{
+            this.employeeGenerators = this.employeeGenerators ?? new List<IPickedGenerator<Employee, Company>>{
                 new EmployeeGenerator()
             };
-            this.workTimes = new List<WorkPeriod>
+            this.workTimes = this.workTimes ?? new List<WorkPeriod>
             {
                 new WorkPeriod(2700, 3450),
                 new WorkPeriod(3750, 5100)

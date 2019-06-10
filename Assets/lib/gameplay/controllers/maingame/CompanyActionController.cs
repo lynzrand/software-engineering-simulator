@@ -30,14 +30,15 @@ namespace Sesim.Game.Controllers.MainGame
         public bool isPaused = false;
 
         // Start is called before the first frame update
-        public void Awake()
+        public void Start()
         {
             // Mock up a company before generator and savefile completes
             SaveController saveController = SaveController.Instance;
             if (saveController.shouldCompanyLoadSavefile)
             {
-                this.saveFile = saveController.saveFile;
-                this.company = saveController.saveFile.company;
+                saveFile = saveController.saveFile;
+                company = saveController.saveFile.company;
+                company.InitMissingItems();
                 saveController.shouldCompanyLoadSavefile = false;
             }
             else

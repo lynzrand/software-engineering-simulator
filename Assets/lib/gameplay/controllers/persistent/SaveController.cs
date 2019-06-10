@@ -124,7 +124,9 @@ namespace Sesim.Game.Controllers.Persistent
             await saveFile.WriteAsync(saveBuffer, 0, saveSize);
             saveFile.Close();
 
-            var metaSize = ceras.Serialize<SaveMetadata>(this.saveFile.Metadata, ref saveBuffer);
+            SaveMetadata metadata = this.saveFile.Metadata;
+            metadata.saveTime = DateTime.Now;
+            var metaSize = ceras.Serialize<SaveMetadata>(metadata, ref saveBuffer);
             var metaFile = File.OpenWrite(Path.Combine(savePosition, MetadataFilename));
             await metaFile.WriteAsync(saveBuffer, 0, metaSize);
             metaFile.Close();
@@ -133,7 +135,8 @@ namespace Sesim.Game.Controllers.Persistent
 
             working = false;
         }
-        public async Task LoadAsync(Ulid id)
+
+        public void Load(Ulid id)
         {
             working = true;
             resolveSavePos(id);
@@ -142,6 +145,7 @@ namespace Sesim.Game.Controllers.Persistent
             );
             var saveFile = ceras.Deserialize<SaveFile>(saveBuffer);
             this.saveFile = saveFile;
+            this.shouldCompanyLoadSavefile = true;
 
             Debug.Log($"Successfully loaded SaveFile#{this.saveFile.id}.");
 

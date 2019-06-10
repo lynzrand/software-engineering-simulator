@@ -46,6 +46,7 @@ namespace Sesim.Models
         public float reputation;
         public int employeeCount;
         public int contractCount;
+        public DateTime saveTime;
 
         public SaveMetadata() { }
 
@@ -59,6 +60,7 @@ namespace Sesim.Models
             this.reputation = reputation;
             this.employeeCount = employeeCount;
             this.contractCount = contractCount;
+            this.saveTime = DateTime.Now;
         }
 
         public override bool Equals(object obj)
@@ -85,12 +87,13 @@ namespace Sesim.Models
             hashCode = hashCode * -1521134295 + reputation.GetHashCode();
             hashCode = hashCode * -1521134295 + employeeCount.GetHashCode();
             hashCode = hashCode * -1521134295 + contractCount.GetHashCode();
+            hashCode = hashCode * -1521134295 + saveTime.GetHashCode();
             return hashCode;
         }
 
         public override string ToString()
         {
-            return $"Savefile(version: {version}, id: {id}, name: \"{name}\", ut: {ut.ToString("#.0")}, fund: {fund}, reputation: {reputation}, employeeCount: {employeeCount}, contractCount: {contractCount})";
+            return $"Savefile(version: {version}, id: {id}, name: \"{name}\", ut: {ut.ToString("#.0")}, fund: {fund}, reputation: {reputation}, employeeCount: {employeeCount}, contractCount: {contractCount}, saveTime = {saveTime})";
         }
     }
 }
