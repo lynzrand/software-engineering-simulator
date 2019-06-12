@@ -110,7 +110,7 @@ namespace Sesim.Game.Controllers.Persistent
                 }
             }
 
-            Debug.Log(String.Join("\n", this.saveMetas.ConvertAll<String>(m => m.ToString())));
+            Debug.Log("Successfully loaded metadata:\n" + String.Join("\n", this.saveMetas.ConvertAll<String>(m => m.ToString())));
 
             return saveMetas;
         }
@@ -150,6 +150,21 @@ namespace Sesim.Game.Controllers.Persistent
             Debug.Log($"Successfully loaded SaveFile#{this.saveFile.id}.");
 
             working = false;
+        }
+
+        public void Delete(Ulid id)
+        {
+            try
+            {
+                saveMetas.RemoveAll((meta) => meta.id == id);
+                string path = resolveSavePos(id);
+                Directory.Delete(path, true);
+                Debug.Log($"Deleted savefile: {path}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
     }
 }

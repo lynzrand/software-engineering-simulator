@@ -13,6 +13,7 @@ namespace Sesim.Game.Controllers.SplashScreen
         public Text nameText;
         public Text idText;
         public Text timeText;
+        public Text utText;
         public Text employeeCountText;
         public Text contractCountText;
 
@@ -27,6 +28,7 @@ namespace Sesim.Game.Controllers.SplashScreen
             this.nameText.text = metadata.name;
             this.idText.text = metadata.id.ToString();
             this.timeText.text = metadata.saveTime.ToLocalTime().ToString();
+            this.utText.text = Company.UtToTimeString(metadata.ut);
             this.employeeCountText.text = $"{metadata.employeeCount} EMPLOYEES";
             this.contractCountText.text = $"{metadata.contractCount} CONTRACTS";
             this.GetComponent<Toggle>().onValueChanged.AddListener((bool selected) =>

@@ -93,22 +93,55 @@ namespace Sesim.Helpers.Config
                     var str = await f.ReadToEndAsync();
                     var config = Parser.Parse(str);
                     HoconValue value = config.Value;
-                    string _type = value.GetObject()["type"].GetString();
+                    if (value.Type == HoconType.Object)
+                    {
+                        HoconObject obj = value.GetObject();
+                        if (obj.ContainsKey("_type"))
+                        {
+                            // parse as regular object
+                            AddConfigObject(value);
+                        }
+                        else if (obj.ContainsKey("_find"))
+                        {
+                            // noop: for module manager use
+                        }
+                        else if (obj.ContainsKey("_conf"))
+                        {
+                            // parse as global config
 
-                    if (!typeDefinitions.TryGetValue(_type, out var deserializeType))
-                        throw new Exception($"Type not found when deserializing type \"{_type}\"");
-
-                    var ctor = deserializeType.GetConstructor(new Type[0]);
-                    var deserializeObject = (IHoconDeserializable)ctor.Invoke(new object[0]);
-                    deserializeObject.ReadFromHocon(value);
-                    var bag = objects.GetOrAdd(deserializeType, new ConcurrentBag<dynamic>());
-                    bag.Add(deserializeObject);
+                            Debug.Log($"Global configuration added: {obj.ToString()}");
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"{path} is not a valid SESim config file.");
+                        }
+                    }
+                    else if (value.Type == HoconType.Array)
+                    {
+                        foreach (var obj in value.ToArray())
+                            AddConfigObject(obj as HoconValue);
+                    }
                 }
+                Debug.Log($"Reading and parsing of {path} completed");
             }
             catch (Exception e)
             {
                 Debug.LogError($"Error when reading file \"{path}\"\r\n{e.Message}\r\n{e.StackTrace}");
             }
+        }
+
+        private void AddConfigObject(HoconValue value)
+        {
+            string _type = value.GetObject()["_type"].GetString();
+
+            if (!typeDefinitions.TryGetValue(_type, out var deserializeType))
+                throw new Exception($"Type not found when deserializing type \"{_type}\"");
+
+            var ctor = deserializeType.GetConstructor(new Type[0]);
+            var deserializeObject = (IHoconDeserializable)ctor.Invoke(new object[0]);
+            deserializeObject.ReadFromHocon(value);
+            var bag = objects.GetOrAdd(deserializeType, new ConcurrentBag<dynamic>());
+            bag.Add(deserializeObject);
         }
     }
     #endregion

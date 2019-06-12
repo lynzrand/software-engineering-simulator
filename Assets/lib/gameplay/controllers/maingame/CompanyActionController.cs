@@ -11,6 +11,8 @@ namespace Sesim.Game.Controllers.MainGame
 {
     public class CompanyActionController : MonoBehaviour
     {
+        private static CompanyActionController instance;
+        public static CompanyActionController Instance { get => instance; }
         public static readonly double tickPerSecondAt1x = 60d;
 
         public delegate void CompanyActionCallback(CompanyActionController companyController);
@@ -44,6 +46,11 @@ namespace Sesim.Game.Controllers.MainGame
         public bool isPauseStatusChanged = false;
 
         private Vector3 lastMousePos;
+
+        void Awake()
+        {
+            instance = this;
+        }
 
         // Start is called before the first frame update
         public void Start()
@@ -242,6 +249,11 @@ namespace Sesim.Game.Controllers.MainGame
         private void ResumeBgm(CompanyActionController _)
         {
             bgm.UnPause();
+        }
+
+        public void OnDestroy()
+        {
+            instance = null;
         }
     }
 }

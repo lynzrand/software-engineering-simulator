@@ -99,6 +99,17 @@ namespace Sesim.Game.Controllers.SplashScreen
             return (any, id);
         }
 
+        public void DeleteSelectedGameHandler()
+        {
+            (bool any, Ulid id) = EvaluateSaveSelection();
+            if (any)
+            {
+                var saveController = SaveController.Instance;
+
+                saveController.Delete(id);
+                InitializeLoadGamePanel();
+            }
+        }
         public void LoadSelectedGameHandler()
         {
             (bool any, Ulid id) = EvaluateSaveSelection();

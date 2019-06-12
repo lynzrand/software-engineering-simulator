@@ -27,7 +27,6 @@ namespace Sesim.Game.Controllers.MainGame
         Dictionary<(int x, int z), GameObject> floorLayout
                 = new Dictionary<(int x, int z), GameObject>();
 
-        List<GameObject> previouslyHitObjects = new List<GameObject>();
 
         void Awake()
         {
@@ -38,7 +37,6 @@ namespace Sesim.Game.Controllers.MainGame
                     floorPlan[i, j] = true;
                 }
             }
-            src.AfterCompanyUpdate += this.PassiveUpdate;
         }
 
         void Start()
@@ -50,33 +48,10 @@ namespace Sesim.Game.Controllers.MainGame
                     if (floorPlan[i, j])
                     {
                         var floor = Instantiate(floorPrefab, new Vector3(i * 10, 0, j * 10), new Quaternion());
+                        floor.AddComponent<ObjectSelectionController>();
                         floor.transform.SetParent(rootObject.transform);
                         floorLayout.Add((i, j), floor);
                     }
-                }
-            }
-        }
-
-        void PassiveUpdate(CompanyActionController src)
-        {
-            var ray = cam.ScreenPointToRay(Input.mousePosition);
-            var raycasted = Physics.Raycast(ray, out var hitInfo);
-
-            foreach (var obj in previouslyHitObjects)
-            {
-                var meshRenderer = obj.GetComponent<MeshRenderer>();
-                meshRenderer.material = defaultMaterial;
-            }
-            previouslyHitObjects.Clear();
-
-            if (raycasted)
-            {
-                var hitObject = hitInfo.transform.gameObject;
-                if (floorLayout.ContainsValue(hitObject))
-                {
-                    var meshRenderer = hitObject.GetComponent<MeshRenderer>();
-                    meshRenderer.material = highlightMaterial;
-                    previouslyHitObjects.Add(hitObject);
                 }
             }
         }
