@@ -4,7 +4,7 @@ using NUnit.Framework;
 using Sesim.Models;
 using UnityEngine;
 
-namespace Sesim.Tests.Models
+namespace Tests.Models
 {
     public class ContractFactoryTest
     {

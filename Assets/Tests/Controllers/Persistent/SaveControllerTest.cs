@@ -9,9 +9,8 @@ using Ceras;
 using Ceras.Helpers;
 using Ceras.Resolvers;
 using Sesim.Models;
-using Sesim.Tests.Models;
 
-namespace Sesim.Tests.Controllers
+namespace Tests.Controllers
 {
     public class SaveControllerTest
     {
@@ -21,27 +20,27 @@ namespace Sesim.Tests.Controllers
         public void initSaveController()
         {
             controller = SaveController.__DebugNewInstance();
-            controller.saveFile = new Models.SaveFile()
+            controller.saveFile = new SaveFile()
             {
                 id = System.Ulid.NewUlid(),
                 name = "New Save",
-                company = new Models.Company()
+                company = new Company()
                 {
                     ut = 114514,
                     fund = 1_300_000m,
                     reputation = 3.4f,
-                    contracts = new List<Models.Contract>(){
-                        new Models.Contract(){
+                    contracts = new List<Contract>(){
+                        new Contract(){
                             id = System.Ulid.NewUlid(),
                             name = "Mock-up Contract",
                         },
-                        new Models.Contract(){
+                        new Contract(){
                             id = System.Ulid.NewUlid(),
                             name = "Mock-up Contract 2",
                         },
                     },
-                    employees = new List<Models.Employee>(){
-                        new Models.Employee(){
+                    employees = new List<Employee>(){
+                        new Employee(){
                             id = System.Ulid.NewUlid(),
                             name = "Mock-up employee",
                         },
