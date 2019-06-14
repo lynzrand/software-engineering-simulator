@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.43632972, g: 0.47471184, b: 0.5147129, a: 1}
+  m_IndirectSpecularColor: {r: 0.43632898, g: 0.47471112, b: 0.514712, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -425,7 +425,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 50.49997}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &369355809
@@ -1344,7 +1344,7 @@ MonoBehaviour:
   chairPrefab: {fileID: 100026, guid: ce463cb3360d72c4287460fdb4d63682, type: 3}
   wallPrefab: {fileID: 100000, guid: b02f6f648a4ac3a49ba1b93b3ac7612a, type: 3}
   rootObject: {fileID: 626050102}
-  defaultMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  defaultMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 3}
   highlightMaterial: {fileID: 2100000, guid: 2a705bb43a21a1c4c96a04b7dd1de95d, type: 2}
   cam: {fileID: 464171393}
 --- !u!1 &632451296
@@ -2112,7 +2112,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.000012315947}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &819585162
@@ -2263,8 +2263,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1343177664}
   m_HandleRect: {fileID: 1343177663}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 0.9999999
+  m_Value: 0.00000090646273
+  m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3914,7 +3914,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 483679135}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

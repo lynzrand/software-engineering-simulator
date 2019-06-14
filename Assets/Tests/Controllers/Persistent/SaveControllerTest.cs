@@ -9,6 +9,7 @@ using Ceras;
 using Ceras.Helpers;
 using Ceras.Resolvers;
 using Sesim.Models;
+using Sesim.Tests.Models;
 
 namespace Sesim.Tests.Controllers
 {

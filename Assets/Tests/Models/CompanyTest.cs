@@ -122,5 +122,12 @@ namespace Tests.Models
             Assert.That(!mockCompany.employees.Contains(newEmployee), "The employee should be removed");
             Assert.That(mockCompany.RemoveEmployee(newEmployee.id), Is.False, "The employee should not be avaliable");
         }
+
+        [Test]
+        public void ContractGenerationTest()
+        {
+            mockCompany.GenerateContract(5);
+
+        }
     }
 }
