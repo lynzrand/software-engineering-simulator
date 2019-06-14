@@ -141,6 +141,7 @@ namespace Sesim.Models
                 contract.UpdateProgress(ut, deltaT);
                 CheckContractStatus(contract);
             }
+            avaliableContracts.RemoveAll(contract=>contract.liveTime < ut);
         }
 
         public void PruneAvaliableEmployees()
@@ -194,6 +195,8 @@ namespace Sesim.Models
         public void AddContract(Contract x)
         {
             avaliableContracts.Remove(x);
+            x.members = new List<Employee>() { this.employees[0] };
+            x.completedWork = 0.0;
             contracts.Add(x);
         }
 

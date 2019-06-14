@@ -21,6 +21,8 @@ namespace Sesim.Models
         public ContractReward baseAbortPunishment;
         public ContractReward baseFinishReward;
 
+        // public 
+
         public ContractFactory()
         {
 
