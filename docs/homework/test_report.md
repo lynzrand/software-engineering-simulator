@@ -4,7 +4,7 @@ title: 测试报告
 
 > Talk is cheap, Just read the code.
 > 
-> 空谈误国，代码兴邦。如果您对 C# 和 NUnit 框架有所了解，建议您直接查看 `Assets/Test` 中的测试代码来了解本文中多数测试的内容和方式，而不是在文档中浪费您宝贵的时间。
+> 空谈误国，代码兴邦。如果您对 C# 和 NUnit 框架有所了解，建议您将 `Assets/Test` 中的测试代码和本文对照查看。
 
 # 测试平台
 
@@ -12,9 +12,9 @@ title: 测试报告
 
 验收测试：Surface Pro 4 (Intel i5-6300U, Intel HD Graphics 620)。
 
-# 单元测试
+# 自动化测试
 
-所有单元测试均已通过。具体的测试结果可以在 <https://travis-ci.com/01010101lzy/software-engineering-simulator/> 查看。
+所有自动化测试均已通过。具体的测试结果可以在 <https://travis-ci.com/01010101lzy/software-engineering-simulator/> 查看。
 
 下面列出了所有的单元测试内容。
 
@@ -87,16 +87,74 @@ title: 测试报告
 
 ## `SESim.Models.ContractFactory`
 
+测试对象代码：`Assets/lib/models/ContractFactory.cs`。
 
+测试代码： `Assets/Tests/Models/ContractFactoryTest.cs`。
 
-# 集成测试
+### `ReadFactoryTest`
 
+测试订单生成器可以正确地解析一个配置文件，给自己赋值。
 
+输入和预期输出：
 
-# 系统测试
+1. 输入一份正确的配置文件；生成的订单生成器各属性值如配置所述。
+2. 输入一份错误的配置文件；订单生成器报错并取消生成。
 
+### `ContractGenerationTest`
 
-# 手动测试
+测试订单生成器可以正确地按照其配置生成一个订单。
+
+输入和预期输出：
+
+1. 让前文所述的正确配置文件生成一份订单；订单的配置与配置相符。
+
+## `SESim.Controllers.Persistent.SaveController`
+
+测试对象代码：`Assets/lib/gameplay/controllers/persistent/SaveController.cs`
+
+测试代码：`Assets/Tests/Controllers/Persistent/SaveControllerTest.cs`
+
+### `SerializationTest`
+
+测试存档可以被使用的 Ceras 序列化器成功转换成二进制格式，并转换回来。
+
+输入和期望输出：
+
+1. 用 Ceras 序列化一个存档。
+2. 将被序列化的存档用 Ceras 反序列化回来；两个存档应该相等。
+
+### `MetadataSerializationTest`
+
+测试元数据可以被使用的 Ceras 序列化器成功转换成二进制格式，并转换回来。
+
+输入和期望输出：
+
+1. 用 Ceras 序列化一个元数据。
+2. 将被序列化的元数据用 Ceras 反序列化回来；两个元数据应该相等。
+
+## `Sesim.Helpers.Ceras.UlidFormatter`
+
+测试对象代码：`Assets/lib/helpers/ceras/Deserialzers.cs`
+
+测试代码：`Assets/Tests/Helpers/Ceras/UlidFormatterTest.vs`
+
+### `TestSerializer`
+
+测试自定义的序列化器可以成功将 Ulid 序列化为指定的形式。
+
+输入与预期输出：
+
+1. 序列化一个随机的 Ulid；序列化结果应当与该 ID 的二进制表示完全一致。
+
+### `TestDeserializer`
+
+测试自定义的序列化器可以成功将二进制形式的数据反序列化为 Ulid。
+
+输入与预期输出：
+
+1. 序列化一个随机的 Ulid，再反序列化它；反序列化结果应当与原始 ID 完全一致。
+
+# 验收测试
 
 ## 基本测试
 

@@ -42,10 +42,10 @@ namespace Sesim.Models
                 id = Ulid.NewUlid(),
                 status = ContractStatus.Open,
                 contractor = contractor,
-                name = name.Replace("$contractor", contractor),
+                name = title.Replace("$contractor", contractor),
                 description = description.Replace("$contractor", contractor),
                 startTime = c.ut,
-                LiveDuration = 15 * 300,
+                LiveDuration = 15 * 300 * 24,
                 LimitDuration = durationCurve.Evaluate(c.reputation),
                 totalWorkload = workloadCurve.Evaluate(c.reputation),
                 depositReward = baseDepositReward.Copy(),
@@ -71,7 +71,7 @@ namespace Sesim.Models
             var result = new ContractReward();
             var valObject = val.GetObject();
             result.fund = valObject["fund"].Value.GetDecimal();
-            result.reputation = valObject["fund"].Value.GetFloat();
+            result.reputation = valObject["reputation"].Value.GetFloat();
             return result;
         }
 

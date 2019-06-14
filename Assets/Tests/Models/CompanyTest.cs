@@ -10,7 +10,7 @@ namespace Tests.Models
 {
     public class CompanyTest
     {
-        Company mockCompany;
+        public Company mockCompany;
 
         [SetUp]
         public void SetUp()

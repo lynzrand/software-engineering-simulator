@@ -34,6 +34,21 @@ namespace Sesim.Models
                 reputation = reputation
             };
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ContractReward reward &&
+                   fund == reward.fund &&
+                   reputation == reward.reputation;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1730874152;
+            hashCode = hashCode * -1521134295 + fund.GetHashCode();
+            hashCode = hashCode * -1521134295 + reputation.GetHashCode();
+            return hashCode;
+        }
     }
 
     /// <summary>
