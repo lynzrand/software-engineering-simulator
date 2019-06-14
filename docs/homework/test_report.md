@@ -12,9 +12,9 @@ title: 测试报告
 
 验收测试：Surface Pro 4 (Intel i5-6300U, Intel HD Graphics 620)。
 
-# 单元测试
+# 自动化测试
 
-所有单元测试均已通过。具体的测试结果可以在 <https://travis-ci.com/01010101lzy/software-engineering-simulator/> 查看。
+所有自动化测试均已通过。具体的测试结果可以在 <https://travis-ci.com/01010101lzy/software-engineering-simulator/> 查看。
 
 下面列出了所有的单元测试内容。
 
@@ -154,14 +154,7 @@ title: 测试报告
 
 1. 序列化一个随机的 Ulid，再反序列化它；反序列化结果应当与原始 ID 完全一致。
 
-# 集成测试
-
-
-
-# 系统测试
-
-
-# 手动测试
+# 验收测试
 
 ## 基本测试
 
