@@ -126,6 +126,56 @@ difficulty-multiplier: {
             )));
             // The ContractFactory#ReadFromHocon method actually does not need testing. It's extremely simple and if anything goes wrong it's the Hocon package's fault.
         }
+        [Test]
+        public void ReadFactoryTestFailing()
+        {
+            var factoryDefinition = @"
+_type: ContractFactory
+name: androidMarketApplication
+category: applicationContract
+title: ""Make a market app in Android for $contractor""
+description: ""The mobile world is growing, and $contractor has decided they should sell things in the Internet. They want someone to build an Android application for them.""
+abundance: [
+    [0, 40]
+    [30, 25]
+    [100, 12]
+]
+workload: [
+    [0, 200]
+    [50, 500],
+    [100, 1250]
+]
+requirements: {
+    programming-language: {
+        _in: [java, kotlin, csharp, dart]
+    }
+}
+reward: {
+    deposit: {
+        fund: 12000
+        reputation: 1
+    }
+    finish: {
+        fund: 100000
+        reputation: 15
+    }
+    abort: {
+        fund: -12000
+        reputation: -3
+    }
+}
+difficulty-multiplier: {
+    method: exponential
+    workload: 1.06
+    fund: 1.08
+    reputation: 1.21
+}";
+            var factory = new ContractFactory();
+            Assert.Throws<KeyNotFoundException>(() =>
+            factory.ReadFromHocon(Hocon.Parser.Parse(factoryDefinition).Value)
+            );
+            // The ContractFactory#ReadFromHocon method actually does not need testing. It's extremely simple and if anything goes wrong it's the Hocon package's fault.
+        }
 
         [Test]
         public void ContractGenerationTest()
@@ -147,7 +197,7 @@ difficulty-multiplier: {
                 fund = 12000,
                 reputation = 1
             }));
-            // This part in code is a simple assignment, so nothing could go wrong.
+            // This part in code is a simple assignment, so in theory nothing could go wrong. These lines are here to ensure there really isn't.
         }
     }
 }
