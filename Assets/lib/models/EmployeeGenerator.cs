@@ -58,7 +58,7 @@ namespace Sesim.Models
 
         public double RandomLiveDuration()
         {
-            return LogNormal.Sample(8.9226, 0.5);
+            return LogNormal.Sample(10.3028, 0.5);
         }
 
     }
