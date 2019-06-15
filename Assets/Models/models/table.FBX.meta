@@ -1,34 +1,69 @@
 fileFormatVersion: 2
-guid: 2734ca21933832c47a581f794efd648b
+guid: 55ce8684e1640c8438125bb04b69e60e
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: Box001
-    100002: Box002
-    100004: Box003
-    100006: //RootNode
-    100008: Cylinder001
-    400000: Box001
-    400002: Box002
-    400004: Box003
-    400006: //RootNode
-    400008: Cylinder001
-    2100000: 01 - Default
-    2100002: 03 - Default
-    2100004: 02 - Default
-    2300000: Box001
-    2300002: Box002
-    2300004: Box003
-    2300006: Cylinder001
-    3300000: Box001
-    3300002: Box002
-    3300004: Box003
-    3300006: Cylinder001
-    4300000: Cylinder001
-    4300002: Box001
-    4300004: Box002
-    4300006: Box003
-    9500000: //RootNode
+    100000: ChamferBox001
+    100002: ChamferBox005
+    100004: ChamferBox006
+    100006: ChamferBox007
+    100008: ChamferBox008
+    100010: ChamferBox009
+    100012: ChamferBox010
+    100014: ChamferBox011
+    100016: ChamferBox012
+    100018: ChamferBox013
+    100020: ChamferBox014
+    100022: //RootNode
+    100024: "\u7EC4001"
+    400000: ChamferBox001
+    400002: ChamferBox005
+    400004: ChamferBox006
+    400006: ChamferBox007
+    400008: ChamferBox008
+    400010: ChamferBox009
+    400012: ChamferBox010
+    400014: ChamferBox011
+    400016: ChamferBox012
+    400018: ChamferBox013
+    400020: ChamferBox014
+    400022: //RootNode
+    400024: "\u7EC4001"
+    2100000: 02 - Default
+    2100002: 01 - Default
+    2300000: ChamferBox001
+    2300002: ChamferBox005
+    2300004: ChamferBox006
+    2300006: ChamferBox007
+    2300008: ChamferBox008
+    2300010: ChamferBox009
+    2300012: ChamferBox010
+    2300014: ChamferBox011
+    2300016: ChamferBox012
+    2300018: ChamferBox013
+    2300020: ChamferBox014
+    3300000: ChamferBox001
+    3300002: ChamferBox005
+    3300004: ChamferBox006
+    3300006: ChamferBox007
+    3300008: ChamferBox008
+    3300010: ChamferBox009
+    3300012: ChamferBox010
+    3300014: ChamferBox011
+    3300016: ChamferBox012
+    3300018: ChamferBox013
+    3300020: ChamferBox014
+    4300000: ChamferBox014
+    4300002: ChamferBox001
+    4300004: ChamferBox005
+    4300006: ChamferBox006
+    4300008: ChamferBox007
+    4300010: ChamferBox008
+    4300012: ChamferBox009
+    4300014: ChamferBox010
+    4300016: ChamferBox011
+    4300018: ChamferBox012
+    4300020: ChamferBox013
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -49,7 +84,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 3
+    animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -81,8 +116,8 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.01
-    hasPreviousCalculatedGlobalScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -106,10 +141,10 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 1
+    hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
