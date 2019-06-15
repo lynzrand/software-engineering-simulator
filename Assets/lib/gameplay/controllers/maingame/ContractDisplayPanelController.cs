@@ -15,39 +15,87 @@ namespace Sesim.Game.Controllers.MainGame
 
         public GameObject avaliableContractContent;
         public GameObject contractContent;
-
+        
+        public Button _btn;
         public int fontSize;
         public Color labelColor;
         public Color contentColor;
 
+        List<Contract> lastContract = new List<Contract>();
+        List<Contract> lastAvaliableContract = new List<Contract>();
+
         // Start is called before the first frame update
         void Start()
         {
-            // content = this.FindAnchorInChildren().gameObject;
+            
         }
 
         // Update is called once per frame
         void Update()
         {
-            var tgtTransform = contractContent.GetComponent<RectTransform>();
-            var tgtTransform2 = avaliableContractContent.GetComponent<RectTransform>();
-            DestroyAllChildren(tgtTransform);
-            DestroyAllChildren(tgtTransform2);
-            // var transform = gameobject.GetComponent<RectTransform>();
-            foreach (var contract in src.company.contracts)
+            if (Time.frameCount % 48 == 0)
             {
-                var gameobject = ConstructGameObj(contract);
-                var transform = gameobject.GetComponent<RectTransform>();
-                transform.SetParent(tgtTransform);
-                transform.localScale = Vector3.one;
+                    if(src.company.contracts != lastContract){
+                    lastContract.Clear();
+                    lastContract.AddRange(src.company.contracts);
+
+                    var tgtTransform = contractContent.GetComponent<RectTransform>();
+                    DestroyAllChildren(tgtTransform) ;
+
+                    foreach (var contract in src.company.contracts)
+                    {
+                        var gameobject = ConstructGameObj(contract);
+                        var transform = gameobject.GetComponent<RectTransform>();
+                        transform.SetParent(tgtTransform);
+                        transform.localScale = Vector3.one;
+                    }
+                }
+
+                if(src.company.avaliableContracts != lastAvaliableContract){
+                    lastAvaliableContract.Clear();
+                    lastAvaliableContract.AddRange(src.company.avaliableContracts);
+
+                    var tgtTransform2 = avaliableContractContent.GetComponent<RectTransform>();
+                    DestroyAllChildren(tgtTransform2);
+                    // var transform = gameobject.GetComponent<RectTransform>();
+                    foreach (var contract in src.company.avaliableContracts)
+                    {
+                        var gameobject = ConstructGameObj2(contract);
+                        var transform = gameobject.GetComponent<RectTransform>();
+                        
+                        var btn = new GameObject("_btn",    typeof(Button), typeof(Text));
+
+                        _btn =  btn.GetComponent<Button>();
+                        // _btn.onClick.AddListener(Show);
+                        _btn.onClick.AddListener(delegate(){
+                            this.Accept(contract);
+                        });
+                        // _btn.onClick.RemoveListener(Show);
+                        
+                        var btnText = btn.GetComponent<Text>();
+                        btnText.text = "[ Accept ]";
+                        btnText.font = font;
+                        btnText.fontSize = fontSize;
+                        btnText.color = contentColor;
+
+                        btn.transform.SetParent(tgtTransform2, false);
+                        transform.SetParent(tgtTransform2);
+                        transform.localScale = Vector3.one;
+                    }
+                }        
             }
-            foreach (var contract in src.company.avaliableContracts)
-            {
-                var gameobject = ConstructGameObj2(contract);
-                var transform = gameobject.GetComponent<RectTransform>();
-                transform.SetParent(tgtTransform2);
-                transform.localScale = Vector3.one;
-            }
+
+            
+        }
+
+        // void Show()
+        // {
+        //     print("hello");
+        // }
+
+        void Accept(Contract c)
+        {
+            src.company.AddContract(c);
         }
 
         GameObject ConstructGameObj(Contract c)
