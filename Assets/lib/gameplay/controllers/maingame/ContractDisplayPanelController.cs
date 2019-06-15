@@ -15,8 +15,13 @@ namespace Sesim.Game.Controllers.MainGame
 
         public GameObject avaliableContractContent;
         public GameObject contractContent;
+
+        public GameObject employeeContent;
+
+        public GameObject statusPanel;
         
         public Button _btn;
+        public Button button;
         public int fontSize;
         public Color labelColor;
         public Color contentColor;
@@ -27,7 +32,7 @@ namespace Sesim.Game.Controllers.MainGame
         // Start is called before the first frame update
         void Start()
         {
-            
+            statusPanel.SetActive(false);
         }
 
         // Update is called once per frame
@@ -35,12 +40,12 @@ namespace Sesim.Game.Controllers.MainGame
         {
             if (Time.frameCount % 48 == 0)
             {
-                    if(src.company.contracts != lastContract){
+                if(src.company.contracts != lastContract){
                     lastContract.Clear();
                     lastContract.AddRange(src.company.contracts);
 
-                    var tgtTransform = contractContent.GetComponent<RectTransform>();
-                    DestroyAllChildren(tgtTransform) ;
+                    var panelContent = contractContent.GetComponent<RectTransform>();
+                    DestroyAllChildren(panelContent) ;
 
                     foreach (var contract in src.company.contracts)
                     {
@@ -48,6 +53,7 @@ namespace Sesim.Game.Controllers.MainGame
                         var transform = gameobject.GetComponent<RectTransform>();
 
                         var btn = new GameObject("_btn",    typeof(Button), typeof(Text));
+                        var Ebtn = new GameObject("_btn",    typeof(Button), typeof(Text));
 
                         _btn =  btn.GetComponent<Button>();
                         // _btn.onClick.AddListener(Show);
@@ -55,16 +61,27 @@ namespace Sesim.Game.Controllers.MainGame
                             this.Abandon(contract);
                         });
                         // _btn.onClick.RemoveListener(Show);
+                        button =  Ebtn.GetComponent<Button>();
+                        button.onClick.AddListener(delegate(){
+                            this.assign(contract);
+                        });
                         
                         var btnText = btn.GetComponent<Text>();
                         btnText.text = "[ Abandon ]";
                         btnText.font = font;
                         btnText.fontSize = fontSize;
-                        btnText.color = contentColor;
+                        btnText.color = contentColor;      
 
-                        btn.transform.SetParent(tgtTransform, false);
+                        var EbtnText = Ebtn.GetComponent<Text>();
+                        EbtnText.text = "[ Assign ]";
+                        EbtnText.font = font;
+                        EbtnText.fontSize = fontSize;
+                        EbtnText.color = contentColor;
 
-                        transform.SetParent(tgtTransform);
+                        btn.transform.SetParent(panelContent, false);
+                        Ebtn.transform.SetParent(panelContent, false);
+
+                        transform.SetParent(panelContent);
                         transform.localScale = Vector3.one;
                     }
                 }
@@ -102,7 +119,6 @@ namespace Sesim.Game.Controllers.MainGame
                     }
                 }        
             }
-
             
         }
 
@@ -114,11 +130,73 @@ namespace Sesim.Game.Controllers.MainGame
         void Accept(Contract c)
         {
             src.company.AddContract(c);
+            // statusPanel.SetActive(true);
         }
 
         void Abandon(Contract c)
         {
             src.company.RemoveContract(c.id);
+        }
+
+        void assign(Contract c)
+        {
+            statusPanel.SetActive(true);
+            InitializeStatusPanel(c);
+        }
+        public void InitializeStatusPanel(Contract c)
+        {
+            var panelContent = statusPanel.GetComponentInChildren<TargetAnchor>().gameObject;
+            DestroyAllChildren(panelContent.transform);
+
+            var btn = new GameObject("_btn",    typeof(Button), typeof(Text));
+            _btn =  btn.GetComponent<Button>();
+            _btn.onClick.AddListener(CloseStatusPanelHandler);
+            var btnText = btn.GetComponent<Text>();
+            btnText.text = "[ Close ]";
+            btnText.font = font;
+            btnText.fontSize = fontSize;
+            btnText.color = contentColor;
+
+            btn.transform.SetParent(panelContent.transform, false);
+
+            foreach (var Employee in src.company.employees)
+            {
+                if(Employee.isWorking == false)
+                {
+                    var gameobject = EmployeeConstructGameObj(Employee);
+                    var transform = gameobject.GetComponent<RectTransform>();
+
+                    var Ebtn = new GameObject("_btn",    typeof(Button), typeof(Text));
+                    button =  Ebtn.GetComponent<Button>();
+                    button.onClick.AddListener(delegate(){
+                        this.assignEmployee(Employee,c);
+                    });
+
+                    var EbtnText = Ebtn.GetComponent<Text>();
+                    EbtnText.text = "[ Assign ]";
+                    EbtnText.font = font;
+                    EbtnText.fontSize = fontSize;
+                    EbtnText.color = contentColor;
+
+                    btn.transform.SetParent(panelContent.transform, false);
+                    Ebtn.transform.SetParent(panelContent.transform, false);
+
+                    transform.SetParent(panelContent.transform);
+                    transform.localScale = Vector3.one;
+                }   
+            }
+        }
+        public void CloseStatusPanelHandler()
+        {
+            statusPanel.SetActive(false);
+        }
+
+        public void assignEmployee(Employee e,Contract c)
+        {     
+            c.members.Add(e);
+            e.isWorking = true;
+            CloseStatusPanelHandler();
+            InitializeStatusPanel(c);
         }
 
         GameObject ConstructGameObj(Contract c)
@@ -163,6 +241,37 @@ namespace Sesim.Game.Controllers.MainGame
             kvdr.Construct(ContractToKvde2(c)); 
 
             return rootGameobject;
+        }
+
+        GameObject EmployeeConstructGameObj(Employee e)
+        {
+            var rootGameobject = new GameObject($"{e.name}_Obj", typeof(RectTransform), typeof(KeyValueDisplayer), typeof(VerticalLayoutGroup), typeof(LayoutElement));
+
+            var vlg = rootGameobject.GetComponent<VerticalLayoutGroup>();
+            vlg.childForceExpandWidth = true;
+            vlg.childControlHeight = true;
+            vlg.childControlWidth = true;
+            vlg.spacing = 2f;
+
+            var kvdr = rootGameobject.GetComponent<KeyValueDisplayer>();
+            kvdr.title = e.name;
+            kvdr.font = this.font;
+            kvdr.fontSize = this.fontSize;
+            kvdr.labelColor = this.labelColor;
+            kvdr.contentColor = this.contentColor;
+            kvdr.Construct(EmployeeToKvde(e));
+
+            return rootGameobject;
+        }
+        IList<KeyValueDisplayElement> EmployeeToKvde(Employee e)
+        {
+            return new List<KeyValueDisplayElement>()
+            {
+                new KeyValueDisplayElement("salary", e.salary.ToString()),
+                new KeyValueDisplayElement("experience", e.experience.ToString()),
+                new KeyValueDisplayElement("health", e.health.ToString()),
+                new KeyValueDisplayElement("pressure", e.pressure.ToString()),
+            };
         }
 
         IList<KeyValueDisplayElement> ContractToKvde(Contract c)

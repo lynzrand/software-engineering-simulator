@@ -55,6 +55,5 @@ namespace Sesim.Game.Controllers.MainGame
                 }
             }
         }
-
     }
 }
