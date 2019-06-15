@@ -49,9 +49,19 @@ header-includes:
 
 \pagebreak
 
-> Talk is cheap, Just read the code.
-> 
-> 空谈误国，代码兴邦。如果您对 C# 和 NUnit 框架有所了解，建议您将 `Assets/Test` 中的测试代码和本文对照查看。
+# 概述
+
+项目简介、术语定义、参考资料见相关文档，此处不再赘述。
+
+## 相关文档
+
+1. 开发需求说明书 (<https://github.com/01010101lzy/software-engineering-simulator/blob/master/docs/homework/spec.md>)
+2. 软件开发计划书 (<https://github.com/01010101lzy/software-engineering-simulator/blob/master/docs/homework/dev_plan.md>)
+3. 软件设计说明书 (<https://github.com/01010101lzy/software-engineering-simulator/blob/master/docs/homework/design_manual.md>)
+
+# 需求
+
+关于功能、性能的需求，见《软件设计说明书》。
 
 # 测试平台
 
@@ -507,11 +517,13 @@ N/A
 
 游戏中的各项界面元素排列正常、内容清晰，符合游戏的需求，便于用户使用。
 
-游戏生成的可执行文件在支持的系统中均运行良好。
+游戏生成的可执行文件在其支持的系统中均运行良好。
 
 # 不符合项列表
 
-- 部分低优先级的功能截至开发周期结束时尚未实装进游戏，故未能测试。这些功能将在以后的开发中补完。包括：
+无。
+
+部分低优先级的功能截至开发周期结束时尚未实装进游戏，故未能测试。这些功能将在以后的开发中补完。包括：
   - 设置界面（如果需要）
   - 随机事件的生成
   - 公司贷款功能
@@ -520,4 +532,23 @@ N/A
 
 # 测试结论
 
-测试完成于 2019.06.15。游戏中所有已经存在的功能均正常。
+测试完成于 2019.06.15。
+
+游戏中所有已经存在的功能均符合测试结果预期。
+
+测试组组长签字：
+```
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+测试结果符合系统要求和预期。
+
+Rynco Maekawa <lynzrand@outlook.com> @ 2019.06.15
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYIAB0WIQQsiA9Dum8YGRE7gopqPm2OT1rWfQUCXQTYcwAKCRBqPm2OT1rW
+fSPWAQCzRj77bvmBwTQbu3239WBgeCKoSx/TM/yF21EAsSmGmwEA4fPLnApWxS6T
+cu+puGVdbaabHKzjceMyw+Y0F/RDcAc=
+=jTqq
+-----END PGP SIGNATURE-----
+```
