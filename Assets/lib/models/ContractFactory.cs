@@ -52,7 +52,8 @@ namespace Sesim.Models
                 totalWorkload = workloadCurve.Evaluate(c.reputation),
                 depositReward = baseDepositReward.Copy(),
                 breakContractPunishment = baseAbortPunishment.Copy(),
-                completeReward = baseFinishReward.Copy()
+                completeReward = baseFinishReward.Copy(),
+                techStack = "java",
             };
             // MultiplyPow(ref contract.depositReward.reputation, );
             return contract;
@@ -114,8 +115,8 @@ namespace Sesim.Models
             title = "Debug Test Contract";
             description = "This is a debug test contract";
             abundanceCurve = AnimationCurve.Constant(0, 100, 1);
-            durationCurve = AnimationCurve.Constant(0, 100, 1);
-            workloadCurve = AnimationCurve.Constant(0, 100, 1);
+            durationCurve = AnimationCurve.Constant(0, 100, 100000);
+            workloadCurve = AnimationCurve.Constant(0, 100, 10);
             baseDepositReward = new ContractReward()
             {
                 fund = 1,

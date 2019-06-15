@@ -62,7 +62,7 @@ namespace Sesim.Game.Controllers.MainGame
                         btnText.fontSize = fontSize;
                         btnText.color = contentColor;
 
-                        btn.transform.SetParent(panelContent, false);
+                        btn.transform.SetParent(transform, false);
 
                         transform.SetParent(panelContent);
                         transform.localScale = Vector3.one;
@@ -98,7 +98,7 @@ namespace Sesim.Game.Controllers.MainGame
                         btnText.fontSize = fontSize;
                         btnText.color = contentColor;
 
-                        btn.transform.SetParent(tgtTransform2, false);
+                        btn.transform.SetParent(transform, false);
                         transform.SetParent(tgtTransform2);
                         transform.localScale = Vector3.one;
                     }

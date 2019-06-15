@@ -40,89 +40,89 @@ namespace Sesim.Game.Controllers.MainGame
         {
             if (Time.frameCount % 24 == 0)
             {
-                if (src.company.contracts != lastContract)
+                // if (src.company.contracts != lastContract)
+                // {
+                //     lastContract.Clear();
+                //     lastContract.AddRange(src.company.contracts);
+
+                var panelContent = contractContent.GetComponent<RectTransform>();
+                DestroyAllChildren(panelContent);
+
+                foreach (var contract in src.company.contracts)
                 {
-                    lastContract.Clear();
-                    lastContract.AddRange(src.company.contracts);
+                    var gameobject = ConstructGameObj(contract);
+                    var transform = gameobject.GetComponent<RectTransform>();
 
-                    var panelContent = contractContent.GetComponent<RectTransform>();
-                    DestroyAllChildren(panelContent);
+                    var btn = new GameObject("_btn", typeof(Button), typeof(Text));
+                    var Ebtn = new GameObject("_btn", typeof(Button), typeof(Text));
 
-                    foreach (var contract in src.company.contracts)
+                    _btn = btn.GetComponent<Button>();
+                    // _btn.onClick.AddListener(Show);
+                    _btn.onClick.AddListener(delegate ()
                     {
-                        var gameobject = ConstructGameObj(contract);
-                        var transform = gameobject.GetComponent<RectTransform>();
+                        this.Abandon(contract);
+                    });
+                    // _btn.onClick.RemoveListener(Show);
+                    button = Ebtn.GetComponent<Button>();
+                    button.onClick.AddListener(delegate ()
+                    {
+                        this.assign(contract);
+                    });
 
-                        var btn = new GameObject("_btn", typeof(Button), typeof(Text));
-                        var Ebtn = new GameObject("_btn", typeof(Button), typeof(Text));
+                    var btnText = btn.GetComponent<Text>();
+                    btnText.text = "[ Abandon ]";
+                    btnText.font = font;
+                    btnText.fontSize = fontSize;
+                    btnText.color = contentColor;
 
-                        _btn = btn.GetComponent<Button>();
-                        // _btn.onClick.AddListener(Show);
-                        _btn.onClick.AddListener(delegate ()
-                        {
-                            this.Abandon(contract);
-                        });
-                        // _btn.onClick.RemoveListener(Show);
-                        button = Ebtn.GetComponent<Button>();
-                        button.onClick.AddListener(delegate ()
-                        {
-                            this.assign(contract);
-                        });
+                    var EbtnText = Ebtn.GetComponent<Text>();
+                    EbtnText.text = "[ Assign ]";
+                    EbtnText.font = font;
+                    EbtnText.fontSize = fontSize;
+                    EbtnText.color = contentColor;
 
-                        var btnText = btn.GetComponent<Text>();
-                        btnText.text = "[ Abandon ]";
-                        btnText.font = font;
-                        btnText.fontSize = fontSize;
-                        btnText.color = contentColor;
+                    btn.transform.SetParent(transform, false);
+                    Ebtn.transform.SetParent(transform, false);
 
-                        var EbtnText = Ebtn.GetComponent<Text>();
-                        EbtnText.text = "[ Assign ]";
-                        EbtnText.font = font;
-                        EbtnText.fontSize = fontSize;
-                        EbtnText.color = contentColor;
-
-                        btn.transform.SetParent(panelContent, false);
-                        Ebtn.transform.SetParent(panelContent, false);
-
-                        transform.SetParent(panelContent);
-                        transform.localScale = Vector3.one;
-                    }
+                    transform.SetParent(panelContent);
+                    transform.localScale = Vector3.one;
                 }
+                // }
 
-                if (src.company.avaliableContracts != lastAvaliableContract)
+                // if (src.company.avaliableContracts != lastAvaliableContract)
+                // {
+                //     lastAvaliableContract.Clear();
+                //     lastAvaliableContract.AddRange(src.company.avaliableContracts);
+
+                var tgtTransform2 = avaliableContractContent.GetComponent<RectTransform>();
+                DestroyAllChildren(tgtTransform2);
+                // var transform = gameobject.GetComponent<RectTransform>();
+                foreach (var contract in src.company.avaliableContracts)
                 {
-                    lastAvaliableContract.Clear();
-                    lastAvaliableContract.AddRange(src.company.avaliableContracts);
+                    var gameobject = ConstructGameObj2(contract);
+                    var transform = gameobject.GetComponent<RectTransform>();
 
-                    var tgtTransform2 = avaliableContractContent.GetComponent<RectTransform>();
-                    DestroyAllChildren(tgtTransform2);
-                    // var transform = gameobject.GetComponent<RectTransform>();
-                    foreach (var contract in src.company.avaliableContracts)
+                    var btn = new GameObject("_btn", typeof(Button), typeof(Text));
+
+                    _btn = btn.GetComponent<Button>();
+                    // _btn.onClick.AddListener(Show);
+                    _btn.onClick.AddListener(delegate ()
                     {
-                        var gameobject = ConstructGameObj2(contract);
-                        var transform = gameobject.GetComponent<RectTransform>();
+                        this.Accept(contract);
+                    });
+                    // _btn.onClick.RemoveListener(Show);
 
-                        var btn = new GameObject("_btn", typeof(Button), typeof(Text));
+                    var btnText = btn.GetComponent<Text>();
+                    btnText.text = "[ Accept ]";
+                    btnText.font = font;
+                    btnText.fontSize = fontSize;
+                    btnText.color = contentColor;
 
-                        _btn = btn.GetComponent<Button>();
-                        // _btn.onClick.AddListener(Show);
-                        _btn.onClick.AddListener(delegate ()
-                        {
-                            this.Accept(contract);
-                        });
-                        // _btn.onClick.RemoveListener(Show);
-
-                        var btnText = btn.GetComponent<Text>();
-                        btnText.text = "[ Accept ]";
-                        btnText.font = font;
-                        btnText.fontSize = fontSize;
-                        btnText.color = contentColor;
-
-                        btn.transform.SetParent(tgtTransform2, false);
-                        transform.SetParent(tgtTransform2);
-                        transform.localScale = Vector3.one;
-                    }
+                    btn.transform.SetParent(transform, false);
+                    transform.SetParent(tgtTransform2);
+                    transform.localScale = Vector3.one;
                 }
+                // }
             }
 
         }
@@ -153,16 +153,6 @@ namespace Sesim.Game.Controllers.MainGame
             var panelContent = statusPanel.GetComponentInChildren<TargetAnchor>().gameObject;
             DestroyAllChildren(panelContent.transform);
 
-            var btn = new GameObject("_btn", typeof(Button), typeof(Text));
-            _btn = btn.GetComponent<Button>();
-            _btn.onClick.AddListener(CloseStatusPanelHandler);
-            var btnText = btn.GetComponent<Text>();
-            btnText.text = "[ Close ]";
-            btnText.font = font;
-            btnText.fontSize = fontSize;
-            btnText.color = contentColor;
-
-            btn.transform.SetParent(panelContent.transform, false);
 
             foreach (var Employee in src.company.employees)
             {
@@ -184,8 +174,7 @@ namespace Sesim.Game.Controllers.MainGame
                     EbtnText.fontSize = fontSize;
                     EbtnText.color = contentColor;
 
-                    btn.transform.SetParent(panelContent.transform, false);
-                    Ebtn.transform.SetParent(panelContent.transform, false);
+                    Ebtn.transform.SetParent(transform, false);
 
                     transform.SetParent(panelContent.transform);
                     transform.localScale = Vector3.one;

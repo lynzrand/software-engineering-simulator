@@ -92,10 +92,12 @@ namespace Sesim.Models
         }
 
         public float GetEfficiency(string techStackName, double ut,
-            bool useTime = true, bool useHealth = true, bool usePressure = true)
+            bool useTime = true, bool useHealth = true, bool usePressure = true, bool useTechStack = true)
         {
-            if (isWorking && abilities.TryGetValue(techStackName, out float experience))
+            float experience = 1;
+            if (isWorking && (!useTechStack || abilities.TryGetValue(techStackName, out experience)))
             {
+                if (!useTechStack) experience = 1;
                 var efficiency = baseEfficiency * EfficiencyExperienceMultiplier(this.experience) * EfficiencyAbilityMultiplier(experience);
 
                 var timeMultiplier = useTime

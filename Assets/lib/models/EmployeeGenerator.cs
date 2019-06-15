@@ -26,6 +26,10 @@ namespace Sesim.Models
                 experience = experience,
                 salary = salary,
                 liveTime = liveDuration + c.ut,
+                abilities = new Dictionary<string, float>
+                {
+                    ["java"] = 1.0f
+                }
             };
             return employee;
         }
@@ -33,9 +37,9 @@ namespace Sesim.Models
         IList<String> employeeFirstNames { get => GlobalSettings.Instance.employeeFirstNames; }
         IList<String> employeeLastNames { get => GlobalSettings.Instance.employeeLastNames; }
 
+        System.Random random = new System.Random();
         public String RandomName()
         {
-            System.Random random = new System.Random();
             var firstName = employeeFirstNames[random.Next(employeeFirstNames.Count)];
             var lastName = employeeLastNames[random.Next(employeeLastNames.Count)];
             return $"{firstName} {lastName}";
