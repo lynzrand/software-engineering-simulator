@@ -21,7 +21,7 @@ namespace Sesim.Models
 
         public List<String> employeeLastNames = new List<string>();
 
-        public List<String> companyNames = new List<string>();
+        public List<String> contractorNames = new List<string>();
 
         public List<ContractFactory> contractFactories = new List<ContractFactory>() {
             new ContractFactory().SetDebugDefault()
@@ -38,13 +38,13 @@ namespace Sesim.Models
             if (obj.TryGetField("employee-last-names", out var lastNames))
             {
                 var lastNamesArr = lastNames.Value.GetStringList();
-                employeeFirstNames.AddRange(lastNamesArr);
+                employeeLastNames.AddRange(lastNamesArr);
             }
 
             if (obj.TryGetField("company-names", out var companyNames))
             {
                 var companyNamesArr = companyNames.Value.GetStringList();
-                employeeFirstNames.AddRange(companyNamesArr);
+                contractorNames.AddRange(companyNamesArr);
             }
         }
 

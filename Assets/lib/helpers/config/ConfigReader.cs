@@ -62,6 +62,7 @@ namespace Sesim.Helpers.Config
             readingCompleted = false;
             readingTask = TraverseDirectoriesAsync(path);
             await readingTask;
+            GlobalSettings.Instance.SetContractFactories();
             readingCompleted = true;
         }
 

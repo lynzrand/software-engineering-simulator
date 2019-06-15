@@ -21,6 +21,8 @@ namespace Sesim.Models
         public ContractReward baseAbortPunishment;
         public ContractReward baseFinishReward;
 
+        System.Random random = new System.Random();
+
         // public 
 
         public ContractFactory()
@@ -56,14 +58,11 @@ namespace Sesim.Models
             return contract;
         }
 
-        // TODO: read the followings from file
-        private static string[] contractorNames = {
-            "A company", "B company", "C company", "D company"
-        };
+        IList<String> contractorNames { get => GlobalSettings.Instance.contractorNames; }
 
         public String RandomContractor()
         {
-            return contractorNames[new System.Random().Next(contractorNames.Length)];
+            return contractorNames[random.Next(contractorNames.Count)];
         }
 
         ContractReward parseReward(HoconValue val)
