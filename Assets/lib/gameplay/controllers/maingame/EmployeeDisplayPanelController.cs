@@ -15,7 +15,7 @@ namespace Sesim.Game.Controllers.MainGame
 
         public GameObject avaliableEmployeeContent;
         public GameObject employeeContent;
-        
+
         public int fontSize;
         public Color labelColor;
         public Color contentColor;
@@ -23,46 +23,36 @@ namespace Sesim.Game.Controllers.MainGame
         // Start is called before the first frame update
         void Start()
         {
-            
+
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (Time.frameCount % 48 == 0)
+            if (Time.frameCount % 24 == 0)
             {
-                var tgtTransform = employeeContent.GetComponent<RectTransform>();
+                var tgtTransform = employeeContent.transform;
+                var tgtTransform2 = avaliableEmployeeContent.transform;
+                DestroyAllChildren(tgtTransform);
+                DestroyAllChildren(tgtTransform2);
                 foreach (var employee in src.company.employees)
                 {
                     var gameobject = ConstructGameObj(employee);
-                    var transform = gameobject.GetComponent<RectTransform>();
-                    transform.SetParent(tgtTransform);
-                    transform.localScale = Vector3.one;
+                    gameobject.transform.SetParent(tgtTransform, false);
                 }
 
-                var tgtTransform2 = avaliableEmployeeContent.GetComponent<RectTransform>();
                 // var transform = gameobject.GetComponent<RectTransform>();
                 foreach (var employee in src.company.avaliableEmployees)
                 {
                     var gameobject = ConstructGameObj2(employee);
-                    var transform = gameobject.GetComponent<RectTransform>();
-                    transform.SetParent(tgtTransform2);
-                    transform.localScale = Vector3.one;        
+                    gameobject.transform.SetParent(tgtTransform2, false);
                 }
-                DestroyAllChildren(tgtTransform) ;
-                DestroyAllChildren(tgtTransform2);
-            }    
+            }
         }
-
-        // void Show()
-        // {
-        //     print("hello");
-        // }
 
         GameObject ConstructGameObj(Employee e)
         {
             var rootGameobject = new GameObject($"{e.name}_Obj", typeof(RectTransform), typeof(KeyValueDisplayer), typeof(VerticalLayoutGroup), typeof(LayoutElement));
-
 
             var vlg = rootGameobject.GetComponent<VerticalLayoutGroup>();
             vlg.childForceExpandWidth = true;
