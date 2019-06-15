@@ -21,6 +21,8 @@ namespace Sesim.Models
         public ContractReward baseAbortPunishment;
         public ContractReward baseFinishReward;
 
+        System.Random random = new System.Random();
+
         // public 
 
         public ContractFactory()
@@ -45,7 +47,7 @@ namespace Sesim.Models
                 name = title.Replace("$contractor", contractor),
                 description = description.Replace("$contractor", contractor),
                 startTime = c.ut,
-                LiveDuration = 15 * 300 * 24,
+                LiveDuration = RandomLiveDuration(),
                 LimitDuration = durationCurve.Evaluate(c.reputation),
                 totalWorkload = workloadCurve.Evaluate(c.reputation),
                 depositReward = baseDepositReward.Copy(),
@@ -56,14 +58,11 @@ namespace Sesim.Models
             return contract;
         }
 
-        // TODO: read the followings from file
-        private static string[] contractorNames = {
-            "A company", "B company", "C company", "D company"
-        };
+        IList<String> contractorNames { get => GlobalSettings.Instance.contractorNames; }
 
         public String RandomContractor()
         {
-            return contractorNames[new System.Random().Next(contractorNames.Length)];
+            return contractorNames[random.Next(contractorNames.Count)];
         }
 
         ContractReward parseReward(HoconValue val)
@@ -86,6 +85,11 @@ namespace Sesim.Models
         static void MultiplyPow(ref double value, float x, float y)
         {
             value = value * Math.Pow(x, y);
+        }
+
+        public double RandomLiveDuration()
+        {
+            return MathNet.Numerics.Distributions.LogNormal.Sample(9.73, 0.5);
         }
 
         public void ReadFromHocon(HoconValue e)

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
 using System.Text;
+using Sesim.Models;
 
 namespace Sesim.Helpers.Config
 {
@@ -61,6 +62,7 @@ namespace Sesim.Helpers.Config
             readingCompleted = false;
             readingTask = TraverseDirectoriesAsync(path);
             await readingTask;
+            GlobalSettings.Instance.SetContractFactories();
             readingCompleted = true;
         }
 
@@ -104,16 +106,17 @@ namespace Sesim.Helpers.Config
                         else if (obj.ContainsKey("_find"))
                         {
                             // noop: for module manager use
+                            Debug.LogWarning($"ModuleManager is not supported for now. Occurred at {path}");
                         }
                         else if (obj.ContainsKey("_conf"))
                         {
                             // parse as global config
-
-                            Debug.Log($"Global configuration added: {obj.ToString()}");
+                            lock (GlobalSettings.Instance)
+                                GlobalSettings.Instance.ApplyHocon(obj.GetField("_conf").GetObject());
                         }
                         else
                         {
-                            Debug.LogWarning($"{path} is not a valid SESim config file.");
+                            Debug.LogWarning($"File is not a valid SESim config file. Occurred at {path}");
                         }
                     }
                     else if (value.Type == HoconType.Array)

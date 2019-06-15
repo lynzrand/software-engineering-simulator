@@ -183,15 +183,16 @@ difficulty-multiplier: {
             var companyTest = new CompanyTest();
             companyTest.SetUp();
             var mockCompany = companyTest.mockCompany;
-            var satisfyingTitle = new Regex("Make a market app in Android for [ABCD] company");
-            var satisfyingDesc = new Regex("The mobile world is growing, and [ABCD] company has decided they should sell things in the Internet. They want someone to build an Android application for them.");
+            var satisfyingTitle = new Regex("Make a market app in Android for (AkkaSoft|BraunShell|Catty|Dynamo)");
+            var satisfyingDesc = new Regex("The mobile world is growing, and (AkkaSoft|BraunShell|Catty|Dynamo) has decided they should sell things in the Internet. They want someone to build an Android application for them.");
 
             var contract = factory.Generate(mockCompany);
 
             Assert.That(satisfyingTitle.IsMatch(contract.name));
             Assert.That(satisfyingDesc.IsMatch(contract.description));
             Assert.That(contract.status, Is.EqualTo(ContractStatus.Open));
-            Assert.That(contract.LiveDuration, Is.EqualTo(15 * 24 * 300));
+            // Now that contract periods are randomly generated, we could only say that it's above zero.
+            Assert.That(contract.LiveDuration, Is.GreaterThan(0));
             Assert.That(contract.depositReward, Is.EqualTo(new ContractReward()
             {
                 fund = 12000,

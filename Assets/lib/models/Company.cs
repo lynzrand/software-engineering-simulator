@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Ceras;
 using Sesim.Helpers.Gameplay;
 namespace Sesim.Models
@@ -71,9 +72,7 @@ namespace Sesim.Models
             this.avaliableContracts = this.avaliableContracts ?? new List<Contract>();
             this.employees = this.employees ?? new List<Employee>();
             this.avaliableEmployees = this.avaliableEmployees ?? new List<Employee>();
-            this.contractFactories = this.contractFactories ?? new List<IPickedGenerator<Contract, Company>>{
-                new ContractFactory().SetDebugDefault()
-            };
+            this.contractFactories = GlobalSettings.Instance.contractFactories.Cast<IPickedGenerator<Contract, Company>>().ToList();
             this.employeeGenerators = this.employeeGenerators ?? new List<IPickedGenerator<Employee, Company>>{
                 new EmployeeGenerator()
             };
@@ -115,10 +114,11 @@ namespace Sesim.Models
             {
                 GenerateContract(avaliableContractLimit - avaliableContracts.Count);
             }
-            // if (avaliableEmployees.Count < avaliableEmployeeLimit)
-            // {
-            //     GenerateContract(avaliableEmployeeLimit - avaliableEmployees.Count);
-            // }
+
+            if (avaliableEmployees.Count < avaliableEmployeeLimit)
+            {
+                GenerateEmployee(avaliableEmployeeLimit - avaliableEmployees.Count);
+            }
         }
 
         /// <summary>
@@ -141,18 +141,34 @@ namespace Sesim.Models
                 contract.UpdateProgress(ut, deltaT);
                 CheckContractStatus(contract);
             }
-            avaliableContracts.RemoveAll(contract=>contract.liveTime < ut);
+            avaliableContracts.RemoveAll(contract => contract.liveTime < ut);
         }
 
         public void PruneAvaliableEmployees()
         {
-            throw new NotImplementedException();
-            // avaliableEmployees.RemoveAll(contract => contract.liveTime < ut);
+            // throw new NotImplementedException();
+            avaliableEmployees.RemoveAll(employee => employee.liveTime < ut);
         }
 
         public void GenerateEmployee(int num = 1)
         {
-            throw new NotImplementedException();
+            if (num < 0) throw new ArgumentException("Employee number should be positive!");
+            if (num == 0) return;
+
+            if (contractFactories == null || contractFactories.Count == 0) return;
+
+            var picker = new WeightedRandomPicker<IPickedGenerator<Employee, Company>>();
+
+            foreach (var factory in employeeGenerators)
+            {
+                picker.AssignCandidate(factory, factory.GetWeight(this));
+            }
+
+            for (int i = 0; i < num; i++)
+            {
+                var factory = picker.Pick();
+                avaliableEmployees.Add(factory.Generate(this));
+            }
         }
 
         public void PruneAvaliableContracts()
