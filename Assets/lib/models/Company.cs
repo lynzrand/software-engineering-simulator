@@ -196,6 +196,7 @@ namespace Sesim.Models
         {
             avaliableContracts.Remove(x);
             x.members = new List<Employee>() { this.employees[0] };
+            x.status = ContractStatus.Working;
             x.completedWork = 0.0;
             contracts.Add(x);
         }

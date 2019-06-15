@@ -46,6 +46,24 @@ namespace Sesim.Game.Controllers.MainGame
                     {
                         var gameobject = ConstructGameObj(contract);
                         var transform = gameobject.GetComponent<RectTransform>();
+
+                        var btn = new GameObject("_btn",    typeof(Button), typeof(Text));
+
+                        _btn =  btn.GetComponent<Button>();
+                        // _btn.onClick.AddListener(Show);
+                        _btn.onClick.AddListener(delegate(){
+                            this.Abandon(contract);
+                        });
+                        // _btn.onClick.RemoveListener(Show);
+                        
+                        var btnText = btn.GetComponent<Text>();
+                        btnText.text = "[ Abandon ]";
+                        btnText.font = font;
+                        btnText.fontSize = fontSize;
+                        btnText.color = contentColor;
+
+                        btn.transform.SetParent(tgtTransform, false);
+
                         transform.SetParent(tgtTransform);
                         transform.localScale = Vector3.one;
                     }
@@ -96,6 +114,11 @@ namespace Sesim.Game.Controllers.MainGame
         void Accept(Contract c)
         {
             src.company.AddContract(c);
+        }
+
+        void Abandon(Contract c)
+        {
+            src.company.RemoveContract(c.id);
         }
 
         GameObject ConstructGameObj(Contract c)
