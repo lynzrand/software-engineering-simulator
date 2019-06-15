@@ -17,11 +17,20 @@ namespace Sesim.Models
             }
         }
 
-        public List<String> employeeFirstNames = new List<string>();
+        bool firstNamesInitialized = false;
+        public List<String> employeeFirstNames = new List<string>(){
+            "Employee"
+        };
 
-        public List<String> employeeLastNames = new List<string>();
+        bool lastNamesInitialized = false;
+        public List<String> employeeLastNames = new List<string>(){
+            "A", "B", "C", "D"
+        };
 
-        public List<String> contractorNames = new List<string>();
+        bool contractorNamesInitialized = false;
+        public List<String> contractorNames = new List<string>(){
+            "AkkaSoft", "BraunShell", "Catty", "Dynamo"
+        };
 
         public List<ContractFactory> contractFactories = new List<ContractFactory>() {
             new ContractFactory().SetDebugDefault()
@@ -31,18 +40,36 @@ namespace Sesim.Models
         {
             if (obj.TryGetField("employee-first-names", out var firstNames))
             {
+                if (!firstNamesInitialized)
+                {
+                    employeeFirstNames.Clear();
+                    firstNamesInitialized = true;
+                }
+
                 var firstNamesArr = firstNames.Value.GetStringList();
                 employeeFirstNames.AddRange(firstNamesArr);
             }
 
             if (obj.TryGetField("employee-last-names", out var lastNames))
             {
+                if (!lastNamesInitialized)
+                {
+                    employeeLastNames.Clear();
+                    lastNamesInitialized = true;
+                }
+
                 var lastNamesArr = lastNames.Value.GetStringList();
                 employeeLastNames.AddRange(lastNamesArr);
             }
 
             if (obj.TryGetField("company-names", out var companyNames))
             {
+                if (!contractorNamesInitialized)
+                {
+                    contractorNames.Clear();
+                    contractorNamesInitialized = true;
+                }
+
                 var companyNamesArr = companyNames.Value.GetStringList();
                 contractorNames.AddRange(companyNamesArr);
             }
