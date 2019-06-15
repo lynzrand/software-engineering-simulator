@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2734ca21933832c47a581f794efd648b
+guid: fc5ec6c7cc727264d9242d6f484584dd
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -13,9 +13,9 @@ ModelImporter:
     400004: Box003
     400006: //RootNode
     400008: Cylinder001
-    2100000: 01 - Default
-    2100002: 03 - Default
-    2100004: 02 - Default
+    2100000: 02 - Default
+    2100002: 01 - Default
+    2100004: 03 - Default
     2300000: Box001
     2300002: Box002
     2300004: Box003
@@ -28,7 +28,6 @@ ModelImporter:
     4300002: Box001
     4300004: Box002
     4300006: Box003
-    9500000: //RootNode
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -49,7 +48,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 3
+    animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -81,8 +80,8 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.01
-    hasPreviousCalculatedGlobalScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -106,10 +105,10 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 1
+    hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

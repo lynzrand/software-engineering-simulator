@@ -1,34 +1,112 @@
 fileFormatVersion: 2
-guid: 2734ca21933832c47a581f794efd648b
+guid: c9629ea7f78b94249ad37fe820761351
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: Box001
     100002: Box002
     100004: Box003
-    100006: //RootNode
-    100008: Cylinder001
+    100006: Box004
+    100008: Box005
+    100010: Box006
+    100012: Box007
+    100014: Box008
+    100016: Box009
+    100018: Box010
+    100020: Box011
+    100022: Box012
+    100024: Box013
+    100026: Box014
+    100028: //RootNode
+    100030: Torus001
+    100032: Torus002
+    100034: Torus003
+    100036: Torus004
+    100038: Torus005
+    100040: "\u7EC4001"
     400000: Box001
     400002: Box002
     400004: Box003
-    400006: //RootNode
-    400008: Cylinder001
-    2100000: 01 - Default
-    2100002: 03 - Default
+    400006: Box004
+    400008: Box005
+    400010: Box006
+    400012: Box007
+    400014: Box008
+    400016: Box009
+    400018: Box010
+    400020: Box011
+    400022: Box012
+    400024: Box013
+    400026: Box014
+    400028: //RootNode
+    400030: Torus001
+    400032: Torus002
+    400034: Torus003
+    400036: Torus004
+    400038: Torus005
+    400040: "\u7EC4001"
+    2100000: 03 - Default
+    2100002: 01 - Default
     2100004: 02 - Default
+    2100006: 08 - Default
+    2100008: 07 - Default
     2300000: Box001
     2300002: Box002
     2300004: Box003
-    2300006: Cylinder001
+    2300006: Box004
+    2300008: Box005
+    2300010: Box006
+    2300012: Box007
+    2300014: Box008
+    2300016: Box009
+    2300018: Box010
+    2300020: Box011
+    2300022: Box012
+    2300024: Box013
+    2300026: Box014
+    2300028: Torus001
+    2300030: Torus002
+    2300032: Torus003
+    2300034: Torus004
+    2300036: Torus005
     3300000: Box001
     3300002: Box002
     3300004: Box003
-    3300006: Cylinder001
-    4300000: Cylinder001
-    4300002: Box001
-    4300004: Box002
-    4300006: Box003
-    9500000: //RootNode
+    3300006: Box004
+    3300008: Box005
+    3300010: Box006
+    3300012: Box007
+    3300014: Box008
+    3300016: Box009
+    3300018: Box010
+    3300020: Box011
+    3300022: Box012
+    3300024: Box013
+    3300026: Box014
+    3300028: Torus001
+    3300030: Torus002
+    3300032: Torus003
+    3300034: Torus004
+    3300036: Torus005
+    4300000: Box001
+    4300002: Box002
+    4300004: Box003
+    4300006: Box009
+    4300008: Torus005
+    4300010: Box011
+    4300012: Box012
+    4300014: Box013
+    4300016: Box014
+    4300018: Torus001
+    4300020: Box006
+    4300022: Box007
+    4300024: Torus002
+    4300026: Torus003
+    4300028: Box008
+    4300030: Box010
+    4300032: Torus004
+    4300034: Box004
+    4300036: Box005
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -49,7 +127,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 3
+    animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -81,8 +159,8 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.01
-    hasPreviousCalculatedGlobalScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -106,10 +184,10 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 1
+    hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
