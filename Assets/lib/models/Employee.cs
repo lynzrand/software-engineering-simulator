@@ -31,6 +31,8 @@ namespace Sesim.Models
 
         public bool isWorking = true;
 
+        public bool isEmployeed = false;
+
         // This field is reserved for mods
         public Dictionary<string, dynamic> extraData;
 
