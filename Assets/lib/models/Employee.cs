@@ -43,6 +43,11 @@ namespace Sesim.Models
         public AnimationCurve efficiencyHealthCurve;
         public AnimationCurve efficiencyPressureCurve;
 
+        /// <summary>
+        /// The time an employee element lives in employee list
+        /// </summary>
+        public double liveTime;
+
         public Employee()
         {
             SetEfficiencyHealthCurve();

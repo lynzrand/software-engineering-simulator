@@ -45,7 +45,7 @@ namespace Sesim.Models
                 name = title.Replace("$contractor", contractor),
                 description = description.Replace("$contractor", contractor),
                 startTime = c.ut,
-                LiveDuration = 15 * 300 * 24,
+                LiveDuration = RandomLiveDuration(),
                 LimitDuration = durationCurve.Evaluate(c.reputation),
                 totalWorkload = workloadCurve.Evaluate(c.reputation),
                 depositReward = baseDepositReward.Copy(),
@@ -86,6 +86,11 @@ namespace Sesim.Models
         static void MultiplyPow(ref double value, float x, float y)
         {
             value = value * Math.Pow(x, y);
+        }
+
+        public double RandomLiveDuration()
+        {
+            return MathNet.Numerics.Distributions.LogNormal.Sample(7.35, 0.5);
         }
 
         public void ReadFromHocon(HoconValue e)

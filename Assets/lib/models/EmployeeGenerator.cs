@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MathNet.Numerics.Distributions;
 using UnityEngine;
 
@@ -16,6 +17,7 @@ namespace Sesim.Models
             var experience = RandomExperience();
             var base_efficiency = RandomEfficiency();
             var salary = (decimal)RandomSalary(experience);
+            var liveDuration = RandomLiveDuration();
             var employee = new Employee
             {
                 id = Ulid.NewUlid(),
@@ -23,18 +25,20 @@ namespace Sesim.Models
                 baseEfficiency = base_efficiency,
                 experience = experience,
                 salary = salary,
+                liveTime = liveDuration + c.ut,
             };
             return employee;
         }
 
-        // TODO: Read this from file
-        private static string[] employeeNames = {
-            "A people", "B people", "C people", "D people"
-        };
+        IList<String> employeeFirstNames { get => GlobalSettings.Instance.employeeFirstNames; }
+        IList<String> employeeLastNames { get => GlobalSettings.Instance.employeeLastNames; }
 
         public String RandomName()
         {
-            return employeeNames[new System.Random().Next(employeeNames.Length)];
+            System.Random random = new System.Random();
+            var firstName = employeeFirstNames[random.Next(employeeFirstNames.Count)];
+            var lastName = employeeLastNames[random.Next(employeeLastNames.Count)];
+            return $"{firstName} {lastName}";
         }
 
         public float RandomEfficiency()
@@ -50,6 +54,11 @@ namespace Sesim.Models
         {
             decimal baseSalary = 3000m;
             return baseSalary + new decimal(Math.Round(Mathf.Log(exp + 1, 2) * 1000, 2));
+        }
+
+        public double RandomLiveDuration()
+        {
+            return LogNormal.Sample(8.9226, 0.5);
         }
 
     }
