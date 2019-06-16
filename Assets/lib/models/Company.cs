@@ -61,7 +61,7 @@ namespace Sesim.Models
         {
             this.name = name;
             this.ut = 0;
-            this.fund = decimal.Zero;
+            this.fund = 200000m;
             this.reputation = 0f;
             InitMissingItems();
         }
@@ -119,6 +119,8 @@ namespace Sesim.Models
             {
                 GenerateEmployee(avaliableEmployeeLimit - avaliableEmployees.Count);
             }
+
+            ApplySalary(deltaT);
         }
 
         /// <summary>
@@ -214,6 +216,7 @@ namespace Sesim.Models
             x.members = new List<Employee>() { };
             x.status = ContractStatus.Working;
             x.completedWork = 0.0;
+            if (x.depositReward != null) this.ApplyReward(x.depositReward);
             contracts.Add(x);
         }
 
@@ -256,6 +259,14 @@ namespace Sesim.Models
             }
         }
 
+        public void ApplySalary(double deltaTime)
+        {
+            foreach (var employee in this.employees)
+            {
+                this.fund -= employee.salary * (decimal)(deltaTime / (30 * 24 * 300));
+            }
+        }
+
         /// <summary>
         /// This method unconditionally applies the reward to the company
         /// </summary>
@@ -279,6 +290,7 @@ namespace Sesim.Models
             double minutes = (ut % Company.ticksPerHour) / (Company.ticksPerHour / 60);
             return (days, hours, minutes);
         }
+
 
     }
 

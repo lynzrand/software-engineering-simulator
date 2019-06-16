@@ -119,17 +119,17 @@ namespace Sesim.Models
             workloadCurve = AnimationCurve.Constant(0, 100, 10);
             baseDepositReward = new ContractReward()
             {
-                fund = 1,
+                fund = 10000,
                 reputation = 1
             };
             baseFinishReward = new ContractReward()
             {
-                fund = 1,
+                fund = 100000,
                 reputation = 1
             };
             baseAbortPunishment = new ContractReward()
             {
-                fund = -1,
+                fund = -10000,
                 reputation = -1
             };
             return this;
