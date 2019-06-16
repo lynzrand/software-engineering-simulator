@@ -354,7 +354,7 @@ header-includes:
 - 玩家招聘员工
 - 玩家解雇员工
 - 玩家接单
-<!-- - _玩家修改任务参数？_ -->
+- 玩家分配任务人员
 - 玩家完成任务
 - 玩家放弃任务
 <!-- - _玩家与员工互动？_ -->
@@ -459,7 +459,7 @@ header-includes:
 
 1. 玩家在活动任务列表内选择需要放弃的任务；任务被放弃，公司损失相应的声望、资金等，任务相关资源人员被释放。
 
-还没测试 - Rynco, 2019.06.15
+测试通过 - Rynco, 2019.06.15
 
 ### 玩家完成任务
 
@@ -487,6 +487,18 @@ header-includes:
 2. 玩家按键盘上 `,` 键；时间流速变成原来的一半。连续按键情况下，最小 1x。
 
 测试成功 - Rynco, 2019.06.02
+
+### 玩家破产
+
+测试在公司资金耗尽时是否会破产。
+
+前置条件：游戏运行中
+
+输入和预期输出：
+
+1. 玩家放弃某个任务，公司资金小于零；游戏显示破产界面，游戏结束。
+
+测试成功 - Rynco, 2019.06.16
 
 <!-- 
 ### 随机事件发生
@@ -521,9 +533,8 @@ N/A
 
 # 不符合项列表
 
-无。
-
 部分低优先级的功能截至开发周期结束时尚未实装进游戏，故未能测试。这些功能将在以后的开发中补完。包括：
+  - 公司员工在招聘和解雇时需要预付/补偿工资
   - 设置界面（如果需要）
   - 随机事件的生成
   - 公司贷款功能
@@ -532,7 +543,7 @@ N/A
 
 # 测试结论
 
-测试完成于 2019.06.15。
+测试完成于 2019.06.16。
 
 游戏中所有已经存在的功能均符合测试结果预期。
 
@@ -543,12 +554,13 @@ Hash: SHA256
 
 测试结果符合系统要求和预期。
 
-Rynco Maekawa <lynzrand@outlook.com> @ 2019.06.15
+Rynco Maekawa <lynzrand@outlook.com> @ 2019.06.16
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYIAB0WIQQsiA9Dum8YGRE7gopqPm2OT1rWfQUCXQTYcwAKCRBqPm2OT1rW
-fSPWAQCzRj77bvmBwTQbu3239WBgeCKoSx/TM/yF21EAsSmGmwEA4fPLnApWxS6T
-cu+puGVdbaabHKzjceMyw+Y0F/RDcAc=
-=jTqq
+iHUEARYIAB0WIQQsiA9Dum8YGRE7gopqPm2OT1rWfQUCXQWtyQAKCRBqPm2OT1rW
+fYktAQCVo05pfdYF3watmBgZuY181EYBpgGmxCv74wo5ij9y7wEA9tHDfiY4huxs
+AjkxsfjTG2bqCjnnCQTGXeqRUlTREA4=
+=eGxs
 -----END PGP SIGNATURE-----
+
 ```

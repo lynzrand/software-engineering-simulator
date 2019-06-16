@@ -47,4 +47,28 @@ header-includes:
   - \setCJKmonofont{Sarasa Term SC}
 ---
 
-解压压缩包到需要安装的文件夹，点击 `SESim.exe` 运行。
+# 系统需求
+
+操作系统：Windows 7 及更高版本  
+CPU：性能不低于 Intel Core i5-5200U  
+显卡：性能不低于 Intel HD Graphics 520
+
+# 部署步骤
+
+## 可执行文件
+
+如果您拿到的是包含可执行文件的压缩包，请按以下步骤部署：
+
+1. 将压缩包解压至您想安装的位置；
+2. 打开 `SESim.exe` 即可运行。
+
+## 源代码
+
+如果您拿到的是包含源代码的压缩包，请按照以下步骤部署：
+
+1. 安装 Unity 2018.3f12 或更高版本，确保电脑本地有 Microsoft .NET Framework 4.7.1 的 SDK；
+2. 将源代码文件夹解压缩到你认为合适的地方；
+3. 使用 Unity 打开源代码文件夹，在菜单栏中找到 `Build > Build Windows`，点击；
+4. 静待 Unity 编译完成；
+5. 编译结果在 `build/windows` 文件夹中，将其移动至你想安装的位置；
+6. 打开 `SESim.exe` 即可运行。
