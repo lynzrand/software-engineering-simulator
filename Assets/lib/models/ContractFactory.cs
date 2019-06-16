@@ -90,7 +90,7 @@ namespace Sesim.Models
 
         public double RandomLiveDuration()
         {
-            return MathNet.Numerics.Distributions.LogNormal.Sample(9.73, 0.5);
+            return MathNet.Numerics.Distributions.LogNormal.Sample(random, 9.73, 0.5);
         }
 
         public void ReadFromHocon(HoconValue e)

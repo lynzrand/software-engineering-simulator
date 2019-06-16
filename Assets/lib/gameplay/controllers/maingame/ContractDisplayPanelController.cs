@@ -274,9 +274,9 @@ namespace Sesim.Game.Controllers.MainGame
             return new List<KeyValueDisplayElement>()
             {
                 new KeyValueDisplayElement("Status", c.status.ToString()),
-                new KeyValueDisplayElement("TimeLimit", c.timeLimit.ToString()),
+                new KeyValueDisplayElement("Deadline", Company.UtToTimeString(c.timeLimit)),
                 new KeyValueDisplayElement("TotalWorkload", c.totalWorkload.ToString()),
-                new KeyValueDisplayElement("Progress", (c.completedWork/c.totalWorkload).ToString()),
+                new KeyValueDisplayElement("Progress", (c.Progress).ToString()),
                 new KeyValueDisplayElement("Fund", c.completeReward.fund.ToString()),
                 new KeyValueDisplayElement("Reputation", c.completeReward.reputation.ToString()),
             };
@@ -289,7 +289,7 @@ namespace Sesim.Game.Controllers.MainGame
                 new KeyValueDisplayElement("Status", c.status.ToString()),
                 new KeyValueDisplayElement("Contractor", c.contractor.ToString()),
                 new KeyValueDisplayElement("Description", c.description.ToString()),
-                new KeyValueDisplayElement("StartTime", Company.UtToTimeString(c.startTime)),
+                new KeyValueDisplayElement("Deadline", Company.UtToTimeString(c.timeLimit)),
                 new KeyValueDisplayElement("TotalWorkload", c.totalWorkload.ToString()),
             };
         }

@@ -168,7 +168,7 @@ namespace Sesim.Game.Controllers.MainGame
                 new KeyValueDisplayElement("experience", e.experience.ToString()),
                 new KeyValueDisplayElement("health", e.health.ToString()),
                 new KeyValueDisplayElement("pressure", e.pressure.ToString()),
-                new KeyValueDisplayElement("isEmployeed", e.isEmployeed.ToString()),
+                new KeyValueDisplayElement("is Employed", e.isEmployed.ToString()),
             };
         }
 

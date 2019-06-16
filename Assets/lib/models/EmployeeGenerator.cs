@@ -47,11 +47,11 @@ namespace Sesim.Models
 
         public float RandomEfficiency()
         {
-            return (float)LogNormal.Sample(0.5, 0.4);
+            return (float)LogNormal.Sample(random, 0.5, 0.4);
         }
         public float RandomExperience()
         {
-            return (float)LogNormal.Sample(1.0, 1.0);
+            return (float)LogNormal.Sample(random, 1.0, 1.0);
         }
 
         public decimal RandomSalary(float exp)
@@ -62,7 +62,7 @@ namespace Sesim.Models
 
         public double RandomLiveDuration()
         {
-            return LogNormal.Sample(10.3028, 0.5);
+            return LogNormal.Sample(random, 10.3028, 0.5);
         }
 
     }
