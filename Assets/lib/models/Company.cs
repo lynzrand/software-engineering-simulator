@@ -211,7 +211,7 @@ namespace Sesim.Models
         public void AddContract(Contract x)
         {
             avaliableContracts.Remove(x);
-            x.members = new List<Employee>() {};
+            x.members = new List<Employee>() { };
             x.status = ContractStatus.Working;
             x.completedWork = 0.0;
             contracts.Add(x);
@@ -219,6 +219,11 @@ namespace Sesim.Models
 
         public bool RemoveContract(Ulid id)
         {
+            contracts.FindAll(c => c.id == id).ForEach(c =>
+            {
+                if (c.status == ContractStatus.Working && c.breakContractPunishment != null)
+                    ApplyReward(c.breakContractPunishment);
+            });
             return contracts.RemoveAll(c => c.id == id) > 0;
         }
 

@@ -39,6 +39,8 @@ namespace Sesim.Game.Controllers.MainGame
 
         public bool isFocused;
 
+        public GameObject LoseScreenOverlay;
+
         public float timeWarpMultiplier = 1.0f;
 
         public bool isPaused = false;
@@ -123,6 +125,7 @@ namespace Sesim.Game.Controllers.MainGame
 
             this.OnPause += this.PauseBgm;
             this.OnResume += this.ResumeBgm;
+            this.AfterAllUpdates += this.checkBankruptStatus;
         }
 
         // Update is called once per frame
@@ -238,6 +241,16 @@ namespace Sesim.Game.Controllers.MainGame
             {
                 if (isPaused && this.OnPause != null) this.OnPause.Invoke(this);
                 else if (this.OnResume != null) this.OnResume.Invoke(this);
+            }
+        }
+
+        private void checkBankruptStatus(CompanyActionController _)
+        {
+            if (this.company.fund < 0)
+            {
+                LoseScreenOverlay.SetActive(true);
+                // isPaused = true;
+                PauseBgm(_);
             }
         }
 
