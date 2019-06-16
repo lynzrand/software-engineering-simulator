@@ -262,10 +262,10 @@ namespace Sesim.Game.Controllers.MainGame
         {
             return new List<KeyValueDisplayElement>()
             {
-                new KeyValueDisplayElement("salary", e.salary.ToString()),
-                new KeyValueDisplayElement("experience", e.experience.ToString()),
-                new KeyValueDisplayElement("health", e.health.ToString()),
-                new KeyValueDisplayElement("pressure", e.pressure.ToString()),
+                new KeyValueDisplayElement("Salary", e.salary.ToString()),
+                new KeyValueDisplayElement("Experience", e.experience.ToString()),
+                new KeyValueDisplayElement("Health", e.health.ToString()),
+                new KeyValueDisplayElement("Pressure", e.pressure.ToString()),
             };
         }
 
@@ -273,12 +273,12 @@ namespace Sesim.Game.Controllers.MainGame
         {
             return new List<KeyValueDisplayElement>()
             {
-                new KeyValueDisplayElement("status", c.status.ToString()),
-                new KeyValueDisplayElement("timeLimit", c.timeLimit.ToString()),
-                new KeyValueDisplayElement("totalWorkload", c.totalWorkload.ToString()),
-                new KeyValueDisplayElement("Process", (c.completedWork/c.totalWorkload).ToString()),
-                new KeyValueDisplayElement("fund", c.completeReward.fund.ToString()),
-                new KeyValueDisplayElement("reputation", c.completeReward.reputation.ToString()),
+                new KeyValueDisplayElement("Status", c.status.ToString()),
+                new KeyValueDisplayElement("TimeLimit", c.timeLimit.ToString()),
+                new KeyValueDisplayElement("TotalWorkload", c.totalWorkload.ToString()),
+                new KeyValueDisplayElement("Progress", (c.completedWork/c.totalWorkload).ToString()),
+                new KeyValueDisplayElement("Fund", c.completeReward.fund.ToString()),
+                new KeyValueDisplayElement("Reputation", c.completeReward.reputation.ToString()),
             };
         }
 
@@ -286,11 +286,11 @@ namespace Sesim.Game.Controllers.MainGame
         {
             return new List<KeyValueDisplayElement>()
             {
-                new KeyValueDisplayElement("status", c.status.ToString()),
-                new KeyValueDisplayElement("contractor", c.contractor.ToString()),
-                new KeyValueDisplayElement("description", c.description.ToString()),
-                new KeyValueDisplayElement("startTime", Company.UtToTimeString(c.startTime)),
-                new KeyValueDisplayElement("totalWorkload", c.totalWorkload.ToString()),
+                new KeyValueDisplayElement("Status", c.status.ToString()),
+                new KeyValueDisplayElement("Contractor", c.contractor.ToString()),
+                new KeyValueDisplayElement("Description", c.description.ToString()),
+                new KeyValueDisplayElement("StartTime", Company.UtToTimeString(c.startTime)),
+                new KeyValueDisplayElement("TotalWorkload", c.totalWorkload.ToString()),
             };
         }
 
